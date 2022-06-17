@@ -48,6 +48,7 @@ importers:
       npmlog: ^6.0.2
       semver: ^7.3.7
       url-join: ^4.0.1
+      user-home: ^3.0.0
     dependencies:
       axios: 0.27.2
       fs-extra: 10.1.0
@@ -55,6 +56,8 @@ importers:
       npmlog: 6.0.2
       semver: 7.3.7
       url-join: 4.0.1
+    devDependencies:
+      user-home: 3.0.0
 
 packages:
 
@@ -2546,7 +2549,6 @@ packages:
   /os-homedir/1.0.2:
     resolution: {integrity: sha512-B5JU3cabzk8c67mRRd3ECmROafjYMXbuzlwtqdM8IbS8ktlTix8aFGb2bAGKrSRIlnfKwovGUUr72JUPyOb6kQ==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /os-name/1.0.3:
     resolution: {integrity: sha512-f5estLO2KN8vgtTRaILIgEGBoBrMnZ3JQ7W9TMZCnOIGwHe8TRGSpcagnWDo+Dfhd/z08k9Xe75hvciJJ8Qaew==}
@@ -3365,7 +3367,6 @@ packages:
     deprecated: Deprecated. Just use `import {homedir} from os;`.
     dependencies:
       os-homedir: 1.0.2
-    dev: false
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}

@@ -60,10 +60,12 @@ class Package {
       root: this.targetPath,
       storeDir: this.storePath,
       registry: npm.getNpmRegistry(this.useOriginNpm),
-      pkgs: {
-        name: this.packageName,
-        version: this.packageVersion,
-      },
+      pkgs: [
+        {
+          name: this.packageName,
+          version: this.packageVersion,
+        },
+      ],
     })
   }
 
@@ -112,7 +114,7 @@ class Package {
    */
   async getVersion() {
     await this.prepare()
-    return (await this.exists()) ? this.getPackage().version : null
+    return (await this.exists()) ? (await this.getPackage()).version : null
   }
 
   /**

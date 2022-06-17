@@ -13,7 +13,6 @@ function getNpmRegistry(isOriginal = false) {
 function getNpmInfo(npm, registry) {
   const register = registry || getNpmRegistry()
   const url = urlJoin(register, npm)
-  console.log(url)
   return axios.get(url).then((response) => {
     try {
       if (response.status === 200) {
@@ -53,7 +52,7 @@ function getLatestSemverVersion(baseVersion, versions) {
       return semver.satisfies(version, `^${baseVersion}`)
     })
     .sort((a, b) => {
-      return semver.gt(b, a)
+      return semver.gt(b, a) ? 1 : -1
     })
   return versionLists[0]
 }
