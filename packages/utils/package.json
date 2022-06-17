@@ -1,0 +1,27 @@
+{
+  "name": "@munan-cli/utils",
+  "version": "1.0.0",
+  "description": "munan-cli utils",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "fs-extra": "^10.1.0",
+    "npminstall": "^6.3.0",
+    "npmlog": "^6.0.2",
+    "semver": "^7.3.7",
+    "url-join": "^4.0.1"
+  }
+}

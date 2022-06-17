@@ -1,0 +1,35 @@
+{
+  "name": "@munan-cli/core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/munan-cli.js",
+  "bin": {
+    "munan-cli": "bin/munan-cli.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "directories": {
+    "lib": "libs",
+    "test": "__test__"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "vitest __test__/"
+  },
+  "keywords": [],
+  "author": "munanc",
+  "license": "MIT",
+  "dependencies": {
+    "@munan-cli/utils": "^1.0.0",
+    "colors": "^1.4.0",
+    "commander": "^9.3.0",
+    "dotenv": "^16.0.1",
+    "minimist": "^1.2.6",
+    "root-check": "^1.0.0",
+    "semver": "^7.3.7",
+    "user-home": "^3.0.0"
+  }
+}
