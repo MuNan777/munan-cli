@@ -23,11 +23,6 @@ const {
 let args
 let config
 
-function checkPkgVersion() {
-  log.notice('cli', packageConfig.version)
-  log.success('欢迎使用 munan 脚手架')
-}
-
 function checkNodeVersion() {
   if (!semver.gte(process.version, LOWEST_NODE_VERSION)) {
     throw new Error(
@@ -49,7 +44,7 @@ function checkUserHome() {
 }
 
 function checkArgs() {
-  if (args.debug) {
+  if (args.debug || args.d) {
     process.env.LOG_LEVEL = 'verbose'
   } else {
     process.env.LOG_LEVEL = 'info'
@@ -104,7 +99,6 @@ async function checkGlobalUpdate() {
 
 // 准备环境
 async function prepare() {
-  checkPkgVersion() // 检查当前运行版本
   checkNodeVersion() // 检查 node 版本
   checkRoot() // 检查是否为 root 启动
   checkUserHome() // 检查用户主目录
@@ -122,6 +116,7 @@ function handleError(e) {
   process.exit(1)
 }
 
+// 执行命令
 async function execCommand(
   { packagePath, packageName, packageVersion },
   extendOptions
@@ -196,9 +191,17 @@ function registerCommand() {
       const packageVersion = '1.0.0'
       await execCommand(
         { packageName, packageVersion, packagePath },
-        { type, force, useOriginNpm: USE_ORIGIN_NPM }
+        { type, force }
       )
     })
+
+  // 获取输入参数
+  program.option('-d --debug', '打开调试模式').parse(process.argv)
+
+  if (args._.length < 1) {
+    program.outputHelp() // 输出帮助信息
+    console.log() // 换行
+  }
 }
 
 async function cli() {

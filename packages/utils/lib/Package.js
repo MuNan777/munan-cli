@@ -13,9 +13,9 @@ class Package {
     log.verbose('options', options)
     this.targetPath = options.targetPath // 目标路径
     this.storePath = options.storePath // 存储路径
-    this.packageName = options.packageName // 包名
+    this.packageName = options.name // 包名
     this.packageVersion = options.packageVersion // 包版本
-    this.npmFilePathPrefix = options.packageName.replace('/', '_') // npm文件名前缀
+    this.npmFilePathPrefix = this.packageName.replace('/', '_') // npm文件名前缀
     this.useOriginNpm = options.useOriginNpm // 默认使用 npm，如果为 false，则使用淘宝源
   }
 
@@ -32,7 +32,7 @@ class Package {
    */
   async prepare() {
     if (!fs.existsSync(this.targetPath)) {
-      fse.mkdirSync(this.targetPath)
+      fse.mkdirpSync(this.targetPath)
     }
     if (!fs.existsSync(this.storePath)) {
       fse.mkdirpSync(this.storePath)
@@ -101,9 +101,9 @@ class Package {
     const pkg = this.getPackage(isOriginal)
     if (pkg) {
       if (!isOriginal) {
-        return fse.readJSONSync(path.resolve(this.npmFilePath, pkg.main))
+        return formatPath(path.resolve(this.npmFilePath, pkg.main))
       }
-      return fse.readJSONSync(path.resolve(this.storePath, pkg.main))
+      return formatPath(path.resolve(this.storePath, pkg.main))
     }
     return null
   }

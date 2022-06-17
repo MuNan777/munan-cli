@@ -4,8 +4,10 @@ import { Package } from '../lib'
 import packageJson from '../package.json'
 
 const path = require('path')
-const fs = require('fs')
 const { npm } = require('../lib')
+
+const DEFAULT_CLI_HOME = '.munan-cli'
+const DEPENDENCIES_PATH = 'dependencies'
 
 describe('utils', () => {
   describe('npm', () => {
@@ -33,12 +35,16 @@ describe('utils', () => {
     })
   })
   describe('Package', () => {
-    const targetPath = path.resolve(userHome, 'dependencies')
+    const targetPath = path.resolve(
+      userHome,
+      DEFAULT_CLI_HOME,
+      DEPENDENCIES_PATH
+    )
     const storePath = path.resolve(targetPath, 'node_modules')
     const p = new Package({
       targetPath,
       storePath,
-      packageName: '@munan-cli/utils',
+      name: '@munan-cli/utils',
       packageVersion: '1.0.0',
     })
     it('npmFilePath', () => {

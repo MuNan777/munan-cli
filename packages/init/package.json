@@ -1,7 +1,7 @@
 {
-  "name": "@munan-cli/utils",
+  "name": "@munan-cli/init",
   "version": "1.0.0",
-  "description": "munan-cli utils",
+  "description": "munan-cli init",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib",

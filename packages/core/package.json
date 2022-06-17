@@ -31,5 +31,12 @@
     "root-check": "^1.0.0",
     "semver": "^7.3.7",
     "user-home": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
   }
 }
