@@ -2,19 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${file}",
-      "outFiles": ["${workspaceFolder}/**/*.js"]
-    },
-    {
-      "type": "node-terminal",
-      "name": "Run Script: cli test",
-      "request": "launch",
       "command": "munan-cli init test",
-      "cwd": "${workspaceFolder}"
+      "name": "Run cli Test",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }
