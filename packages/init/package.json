@@ -17,10 +17,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@munan-cli/utils": "^1.0.0"
-  },
-  "devDependencies": {
-    "user-home": "^3.0.0"
+    "@munan-cli/utils": "^1.0.0",
+    "fs-extra": "^10.1.0"
   },
   "repository": {
     "type": "git",

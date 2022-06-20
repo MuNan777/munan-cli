@@ -1,6 +1,6 @@
-const path = require('path')
+import path from 'path'
 
-function formatPath(p) {
+function formatPath (p: string) {
   const { sep } = path
   if (sep === '/') {
     return p
@@ -8,4 +8,4 @@ function formatPath(p) {
   return p.replace(/\\/g, '/')
 }
 
-module.exports = formatPath
+export default formatPath

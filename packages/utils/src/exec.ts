@@ -1,4 +1,4 @@
-const childProcess = require('child_process')
+import childProcess from 'child_process'
 
 /**
  * 执行命令
@@ -7,7 +7,7 @@ const childProcess = require('child_process')
  * @param {*} options
  * @returns
  */
-function exec(command, args, options) {
+function exec (command: string, args: string[], options: { [key: string]: string }) {
   // 判断平台
   const win32 = process.platform === 'win32'
   // 判断是否是 windows 系统，windows 使用 cmd ['/c'] 执行命令
@@ -17,4 +17,4 @@ function exec(command, args, options) {
   return childProcess.spawn(cmd, cmdArgs, options || {})
 }
 
-module.exports = exec
+export default exec

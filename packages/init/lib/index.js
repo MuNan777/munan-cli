@@ -1,11 +1,22 @@
 const fs = require('fs')
+const fse = require('fs-extra')
 const { log, inquirer } = require('@munan-cli/utils')
+const { DEFAULT_TYPE, INIT_TYPE } = require('./config')
+
+function getInitType() {
+  return inquirer({
+    type: 'list',
+    choices: INIT_TYPE,
+    message: '请选择初始化类型',
+    defaultValue: DEFAULT_TYPE.value,
+  })
+}
 
 async function prepare(opt) {
   let files = fs.readdirSync(process.cwd())
   // node_modules 模块文件夹 .git 版本控制文件 .DS_Store 文件夹描述文件（macOS）
   files = files.filter(
-    (file) => ['node_modules', '.git', '.DS_Store'].indexOf(file) !== -1
+    (file) => ['node_modules', '.git', '.DS_Store'].indexOf(file) === -1
   )
   log.verbose('files', files)
   let isContinueWhenDirNotEmpty = true
@@ -19,7 +30,17 @@ async function prepare(opt) {
   if (!isContinueWhenDirNotEmpty) {
     return
   }
-  console.log('init')
+  if (opt.force) {
+    const targetDir = opt.targetPath
+    const isEmptyDir = inquirer({
+      type: 'confirm',
+      message: `是否清空 ${targetDir} 目录？`,
+      defaultValue: false,
+    })
+    if (isEmptyDir) {
+      fse.emptyDirSync(targetDir)
+    }
+  }
 }
 
 async function init(opt) {
