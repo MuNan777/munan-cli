@@ -2,22 +2,31 @@
   "name": "@munan-cli/core",
   "version": "1.0.0",
   "description": "",
-  "main": "bin/munan-cli.js",
+  "main": "./lib/index.mjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
   "bin": {
-    "munan-cli": "bin/munan-cli.js"
+    "munan-cli": "lib/cli.mjs"
   },
   "files": [
-    "lib"
+    "lib",
+    "*.d.ts",
+    "*.mjs"
   ],
   "directories": {
     "lib": "libs",
     "test": "__test__"
   },
+  "engines": {
+    "node": ">=v14.16.0"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "vitest __test__/"
+    "test": "vitest __test__/",
+    "build": "rimraf lib && rollup -c",
+    "dev": "rollup -c --watch --watch.include=src/** -m inline"
   },
   "keywords": [],
   "author": "munanc",
@@ -27,8 +36,8 @@
     "colors": "^1.4.0",
     "commander": "^9.3.0",
     "dotenv": "^16.0.1",
+    "downgrade-root": "^2.0.0",
     "minimist": "^1.2.6",
-    "root-check": "^1.0.0",
     "semver": "^7.3.7",
     "user-home": "^3.0.0"
   },
@@ -38,5 +47,10 @@
   },
   "bugs": {
     "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.2",
+    "@types/semver": "^7.3.10",
+    "@types/user-home": "^2.0.0"
   }
 }

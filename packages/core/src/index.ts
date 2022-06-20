@@ -1,72 +1,83 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
 
-const semver = require('semver')
-const colors = require('colors/safe')
-const rootCheck = require('root-check')
-const userHome = require('user-home')
-const minimist = require('minimist')
-const dotenv = require('dotenv')
-const program = require('commander')
+import path from 'path'
+import downgradeRoot from 'downgrade-root'
+import userHome from 'user-home'
+import minimist from 'minimist'
+import dotenv from 'dotenv'
+import { Command } from 'commander'
+import semver from 'semver'
+import colors from 'colors/safe'
 
-const { log, npm, Package, exec } = require('@munan-cli/utils')
+import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
-const packageConfig = require('../package.json')
-const {
-  LOWEST_NODE_VERSION,
-  DEFAULT_CLI_HOME,
-  NPM_NAME,
-  DEPENDENCIES_PATH,
-  USE_ORIGIN_NPM,
-} = require('./config')
+import packageConfig from '../package.json'
+import baseConfig from './config'
+const { DEFAULT_CLI_HOME, DEPENDENCIES_PATH, LOWEST_NODE_VERSION, NPM_NAME, USE_ORIGIN_NPM } = baseConfig
 
-let args
-let config
+let args: minimist.ParsedArgs
+let config: {
+  home: string
+  cliHome: string
+  useOriginNpm: boolean
+}
 
-function checkNodeVersion() {
+const program = new Command()
+
+function checkNodeVersion(): void {
+  log.verbose('info', '检查 node 版本')
   if (!semver.gte(process.version, LOWEST_NODE_VERSION)) {
     throw new Error(
       colors.red(
-        `munan-cli 需要安装 v${LOWEST_NODE_VERSION} 以上版本的 Node.js`
-      )
+        `munan-cli 需要安装 v${LOWEST_NODE_VERSION} 以上版本的 Node.js`,
+      ),
     )
   }
 }
 
 function checkRoot() {
-  rootCheck(colors.red('请避免使用 root 账户启动本应用'))
+  log.verbose('info', '检查是否为 root 启动')
+  try {
+    downgradeRoot() // root 降级
+  }
+  catch (e) {
+    colors.red('请避免使用 root 账户启动本应用')
+  }
 }
 
 function checkUserHome() {
-  if (!userHome || !fs.existsSync(userHome)) {
+  log.verbose('info', '检查用户主目录')
+  if (!userHome || !fs.existsSync(userHome))
     throw new Error(colors.red('当前登录用户不存在主目录'))
-  }
 }
 
 function checkArgs() {
-  if (args.debug || args.d) {
+  if (args.debug || args.d)
     process.env.LOG_LEVEL = 'verbose'
-  } else {
+  else
     process.env.LOG_LEVEL = 'info'
-  }
+
   log.level = process.env.LOG_LEVEL
 }
 
 function checkInputArgs() {
-  log.verbose('检查用户输入参数')
+  log.verbose('info', '检查用户输入参数')
   args = minimist(process.argv.slice(2))
-  checkArgs(args)
+  checkArgs()
 }
 
 function createCliConfig() {
   const cliConfig = {
     home: userHome,
+    cliHome: '',
+    useOriginNpm: true,
   }
-  if (process.env.CLI_HOME) {
+  if (process.env.CLI_HOME)
     cliConfig.cliHome = path.join(userHome, process.env.CLI_HOME)
-  } else {
+
+  else
     cliConfig.cliHome = path.join(userHome, DEFAULT_CLI_HOME)
-  }
+
   cliConfig.useOriginNpm = process.env.USE_ORIGIN_NPM
     ? process.env.USE_ORIGIN_NPM !== 'false'
     : USE_ORIGIN_NPM
@@ -74,54 +85,57 @@ function createCliConfig() {
 }
 
 function checkEnv() {
-  log.verbose('开始检查环境变量')
+  log.verbose('info', '开始检查环境变量')
   dotenv.config({
     path: path.resolve(userHome, '.env'),
   })
   config = createCliConfig()
-  log.verbose('环境变量', config)
+  log.verbose('环境变量', JSON.stringify(config))
 }
 
 async function checkGlobalUpdate() {
-  log.verbose('检查工具是否需要更新')
+  log.verbose('info', '检查工具是否需要更新')
   const currentVersion = packageConfig.version
-  const lastVersion = await npm.getNpmLatestSemverVersion(
+  const lastVersion = await getNpmLatestSemverVersion(
     NPM_NAME,
-    currentVersion
+    currentVersion,
+    getNpmRegistry(),
   )
   if (lastVersion && semver.gt(lastVersion, currentVersion)) {
     log.warn(
+      'warn',
       colors.yellow(`请手动更新 ${NPM_NAME}，当前版本：${packageConfig.version}，最新版本：${lastVersion}
-                更新命令： npm install -g ${NPM_NAME}`)
+                更新命令： npm install -g ${NPM_NAME}`),
     )
   }
 }
 
 // 准备环境
 async function prepare() {
+  checkInputArgs() // 检查用户输入参数
   checkNodeVersion() // 检查 node 版本
   checkRoot() // 检查是否为 root 启动
   checkUserHome() // 检查用户主目录
-  checkInputArgs() // 检查用户输入参数
   checkEnv() // 检查环境变量
   await checkGlobalUpdate() // 检查工具是否需要更新
 }
 
 function handleError(e) {
-  if (args.debug) {
+  if (args.debug)
     log.error('Error', e.stack)
-  } else {
+
+  else
     log.error('Error', e.message)
-  }
+
   process.exit(1)
 }
 
 // 执行命令
 async function execCommand(
   { packagePath, packageName, packageVersion },
-  extendOptions
+  extendOptions,
 ) {
-  let rootFile
+  let rootFile: string
   const { useOriginNpm } = config
   try {
     if (packagePath) {
@@ -129,12 +143,13 @@ async function execCommand(
         targetPath: packagePath,
         storePath: packagePath,
         name: packageName,
-        version: packageVersion,
+        packageVersion,
         useOriginNpm,
       })
       // 包的根文件路径
-      rootFile = execPackage.getRootFilePath(true)
-    } else {
+      rootFile = await execPackage.getRootFilePath(true) || ''
+    }
+    else {
       const { cliHome } = config
       const packageDir = `${DEPENDENCIES_PATH}`
       const targetPath = path.resolve(cliHome, packageDir)
@@ -143,38 +158,41 @@ async function execCommand(
         targetPath,
         storePath,
         name: packageName,
-        version: packageVersion,
+        packageVersion,
         useOriginNpm,
       })
       // 判断是否已经安装
       if (await initPackage.exists()) {
         // 如果已经安装，则尝试更新包
         await initPackage.update()
-      } else {
+      }
+      else {
         // 如果未安装，则安装包
         await initPackage.install()
       }
       // 包的根文件路径
-      rootFile = initPackage.getRootFilePath()
+      rootFile = await initPackage.getRootFilePath() || ''
     }
     const _config = { ...config, ...extendOptions, debug: args.debug }
     if (fs.existsSync(rootFile)) {
-      const code = `require('${rootFile}')(${_config})`
+      const code = `require('${rootFile}')(${JSON.stringify(_config)})`
       const pack = exec('node', ['-e', code], { stdio: 'inherit' })
       pack.on('error', (e) => {
-        log.verbose('命令执行失败', e)
+        log.verbose('命令执行失败', `${e}`)
         handleError(e)
       })
 
       pack.on('exit', (c) => {
-        log.verbose('命令执行完成', c)
-        process.exit(c)
+        log.verbose('命令执行完成', `${c}`)
+        process.exit(c || 0)
       })
-    } else {
+    }
+    else {
       throw new Error('入口文件不存在，请重试！')
     }
-  } catch (err) {
-    log.error(err.message)
+  }
+  catch (err) {
+    log.error('error', err.message)
   }
 }
 
@@ -191,7 +209,7 @@ function registerCommand() {
       const packageVersion = '1.0.0'
       await execCommand(
         { packageName, packageVersion, packagePath },
-        { type, force }
+        { type, force },
       )
     })
 
@@ -200,6 +218,7 @@ function registerCommand() {
 
   if (args._.length < 1) {
     program.outputHelp() // 输出帮助信息
+    // eslint-disable-next-line no-console
     console.log() // 换行
   }
 }
@@ -208,9 +227,10 @@ async function cli() {
   try {
     await prepare() // 准备环境
     registerCommand()
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err.message)
   }
 }
 
-module.exports = cli
+export default cli

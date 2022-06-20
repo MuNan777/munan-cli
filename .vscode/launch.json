@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "munan-cli init test",
+      "command": "munan-cli",
       "name": "Run cli Test",
       "request": "launch",
       "type": "node-terminal"

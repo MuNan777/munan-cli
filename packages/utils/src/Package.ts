@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 
-import fse, { PathLike } from 'fs-extra'
+import fse from 'fs-extra'
 import npminstall from 'npminstall'
 
 import log from './log'
@@ -34,42 +34,41 @@ class Package {
   }
 
   // 包默认下载文件路径
-  get npmFilePath () {
+  get npmFilePath() {
     return path.resolve(
       this.storePath,
-      `_${this.npmFilePathPrefix}@${this.packageVersion}@${this.packageName}`
+      `_${this.npmFilePathPrefix}@${this.packageVersion}@${this.packageName}`,
     )
   }
 
   /**
    * 初始化
    */
-  async prepare () {
-    if (!fs.existsSync(this.targetPath)) {
+  async prepare() {
+    if (!fs.existsSync(this.targetPath))
       fse.mkdirpSync(this.targetPath)
-    }
-    if (!fs.existsSync(this.storePath)) {
+
+    if (!fs.existsSync(this.storePath))
       fse.mkdirpSync(this.storePath)
-    }
+
     log.verbose('targetPath', this.targetPath)
     log.verbose('storePath', this.storePath)
     // 获取最新版本
     const latestVersion = await getNpmLatestSemverVersion(
       this.packageName,
       this.packageVersion,
-      getNpmRegistry(this.useOriginNpm)
+      getNpmRegistry(this.useOriginNpm),
     )
     log.verbose('latestVersion', this.packageName, latestVersion)
-    if (latestVersion) {
+    if (latestVersion)
       this.packageVersion = latestVersion
-    }
   }
 
   /**
    * 下载包
    * @returns
    */
-  async install () {
+  async install() {
     await this.prepare()
     return npminstall({
       root: this.targetPath,
@@ -88,7 +87,7 @@ class Package {
    * 检查包是否存在
    * @returns boolean
    */
-  async exists () {
+  async exists() {
     await this.prepare()
     return fs.existsSync(this.npmFilePath)
   }
@@ -98,7 +97,7 @@ class Package {
    * @param {*} isOriginal boolean
    * @returns {*} package.json
    */
-  async getPackage (isOriginal: boolean = false) {
+  async getPackage(isOriginal = false) {
     if (!isOriginal) {
       // 原始 npm 下载本地保存地址
       return fse.readJSONSync(path.resolve(this.npmFilePath, 'package.json'))
@@ -112,12 +111,12 @@ class Package {
    * @param {*} isOriginal boolean
    * @returns 入口文件
    */
-  async getRootFilePath (isOriginal: boolean = false) {
+  async getRootFilePath(isOriginal = false) {
     const pkg = await this.getPackage(isOriginal)
     if (pkg) {
-      if (!isOriginal) {
+      if (!isOriginal)
         return formatPath(path.resolve(this.npmFilePath, pkg.main))
-      }
+
       return formatPath(path.resolve(this.storePath, pkg.main))
     }
     return null
@@ -127,7 +126,7 @@ class Package {
    * 获取当前版本
    * @returns {string}
    */
-  async getVersion () {
+  async getVersion() {
     await this.prepare()
     return (await this.exists()) ? (await this.getPackage()).version : null
   }
@@ -136,13 +135,13 @@ class Package {
    * 获取最新版本
    * @returns {string}
    */
-  async getLatestVersion () {
+  async getLatestVersion() {
     const version = await this.getVersion()
     if (version) {
       const latestVersion = await getNpmLatestSemverVersion(
         this.packageName,
         version,
-        getNpmRegistry(this.useOriginNpm)
+        getNpmRegistry(this.useOriginNpm),
       )
       return latestVersion
     }
@@ -153,7 +152,7 @@ class Package {
    * 更新包
    * @returns {string}
    */
-  async update () {
+  async update() {
     const latestVersion = await this.getLatestVersion()
     return npminstall({
       root: this.targetPath,
