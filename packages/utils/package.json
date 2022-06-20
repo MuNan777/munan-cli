@@ -19,7 +19,7 @@
   },
   "scripts": {
     "test": "vitest __test__/",
-    "build": "rimraf dist && rollup -c",
+    "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch --watch.include=src/** -m inline"
   },
   "publishConfig": {
