@@ -8,6 +8,8 @@ import dotenv from 'dotenv'
 import { Command } from 'commander'
 import semver from 'semver'
 import colors from 'colors/safe'
+import validate from 'validate-npm-package-name'
+import fse from 'fs-extra'
 
 import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
@@ -25,7 +27,6 @@ let config: {
 const program = new Command()
 
 function checkNodeVersion(): void {
-  log.verbose('info', '检查 node 版本')
   if (!semver.gte(process.version, LOWEST_NODE_VERSION)) {
     throw new Error(
       colors.red(
@@ -36,7 +37,6 @@ function checkNodeVersion(): void {
 }
 
 function checkRoot() {
-  log.verbose('info', '检查是否为 root 启动')
   try {
     downgradeRoot() // root 降级
   }
@@ -46,7 +46,6 @@ function checkRoot() {
 }
 
 function checkUserHome() {
-  log.verbose('info', '检查用户主目录')
   if (!userHome || !fs.existsSync(userHome))
     throw new Error(colors.red('当前登录用户不存在主目录'))
 }
@@ -112,10 +111,10 @@ async function checkGlobalUpdate() {
 
 // 准备环境
 async function prepare() {
-  checkInputArgs() // 检查用户输入参数
   checkNodeVersion() // 检查 node 版本
   checkRoot() // 检查是否为 root 启动
   checkUserHome() // 检查用户主目录
+  checkInputArgs() // 检查用户输入参数
   checkEnv() // 检查环境变量
   await checkGlobalUpdate() // 检查工具是否需要更新
 }
@@ -175,8 +174,8 @@ async function execCommand(
     }
     const _config = { ...config, ...extendOptions, debug: args.debug }
     if (fs.existsSync(rootFile)) {
-      const code = `require('${rootFile}')(${JSON.stringify(_config)})`
-      const pack = exec('node', ['-e', code], { stdio: 'inherit' })
+      const code = `import('file://${rootFile}').then(callback => callback.default(${JSON.stringify(_config)}))`
+      const pack = exec('node', ['--experimental-modules', '-e', code], { stdio: 'inherit' })
       pack.on('error', (e) => {
         log.verbose('命令执行失败', `${e}`)
         handleError(e)
@@ -202,7 +201,7 @@ function registerCommand() {
   program
     .command('init [type]')
     .description('初始化项目')
-    .option('--package-path <packagePath>', '指定包的路径')
+    .option('-P --package-path <packagePath>', '指定包的路径')
     .option('--force', '强制覆盖已存在的文件')
     .action(async (type, { packagePath, force }) => {
       const packageName = '@munan-cli/init'
@@ -210,6 +209,36 @@ function registerCommand() {
       await execCommand(
         { packageName, packageVersion, packagePath },
         { type, force },
+      )
+    })
+
+  program
+    .command('template [moduleName]')
+    .description('创建模板')
+    .option('-P --package-path <packagePath>', '指定包的路径')
+    .option('--force', '强制覆盖已存在的文件')
+    .action(async (moduleName, { packagePath, force }) => {
+      const packageName = '@munan-cli/template'
+      const packageVersion = '1.0.0'
+      if (!moduleName) {
+        log.error('Error:', '请指定模板名称')
+        process.exit(0)
+      }
+      const result = validate(moduleName)
+      if (!result.validForNewPackages) {
+        log.error('Error:', '模板名称不合法')
+        process.exit(0)
+      }
+      const templatePath = `${process.cwd().replaceAll('\\', '/')}/packages/${moduleName}-template`
+      // eslint-disable-next-line no-console
+      console.log(templatePath)
+      if (fse.existsSync(templatePath)) {
+        log.error('Error:', `模板 ${templatePath} 已存在`)
+        process.exit(0)
+      }
+      await execCommand(
+        { packageName, packageVersion, packagePath },
+        { moduleName, force },
       )
     })
 

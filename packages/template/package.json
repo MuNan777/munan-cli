@@ -1,7 +1,7 @@
 {
-  "name": "@munan-cli/init",
+  "name": "@munan-cli/template",
   "version": "1.0.0",
-  "description": "munan-cli init",
+  "description": "",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
@@ -22,16 +22,13 @@
     "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch --watch.include=src/** -m inline"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@munan-cli/utils": "^1.0.0",
     "fs-extra": "^10.1.0"
   },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MuNan777/munan-cli.git"

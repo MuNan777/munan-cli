@@ -1,18 +1,21 @@
 import inquirer from 'inquirer'
 
-type typeProps = 'number' | 'input' | 'password' | 'list' | 'expand' | 'checkbox' | 'confirm' | 'editor' | 'rawlist'
+type typeProps = 'number' | 'input' | 'list' | 'checkbox'
 
 interface ChoicesProps {
   name: string
   value: unknown
 }
 
-export async function prompt({
+const Prompt = inquirer.createPromptModule()
+
+export function prompt<T = unknown>({
   choices,
-  defaultValue,
+  defaultValue = '',
   message,
   type = 'list',
-}: { type: typeProps; message: string; defaultValue: unknown; choices?: ChoicesProps[] }) {
+  require = true,
+}: { type: typeProps; message: string; defaultValue?: unknown; choices?: ChoicesProps[]; require?: boolean }) {
   const options = {
     type,
     name: 'name',
@@ -20,6 +23,8 @@ export async function prompt({
     default: defaultValue,
     require,
   }
-  const answer = await inquirer.prompt(Object.assign(options, type === 'list' ? { choices } : {}))
-  return answer.name
+
+  return new Promise<T>((resolve, reject) => {
+    Prompt([Object.assign(options, type === 'list' ? { choices } : {})]).then(answer => resolve(answer.name)).catch(error => reject(error))
+  })
 }
