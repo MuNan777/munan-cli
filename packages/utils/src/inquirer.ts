@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 
-type typeProps = 'number' | 'input' | 'list' | 'checkbox'
+type typeProps = 'number' | 'input' | 'list' | 'checkbox' | 'confirm'
 
 interface ChoicesProps {
   name: string

@@ -43,7 +43,7 @@ async function prepare(opt: { debug?: boolean; targetPath: string; force?: any }
       fse.emptyDirSync(targetDir)
   }
   const initType = await getInitType()
-  log.verbose('initType', initType)
+  log.verbose('initType', JSON.stringify(initType))
 }
 
 async function init(opt: { debug: boolean; targetPath: string }) {

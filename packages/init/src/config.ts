@@ -7,10 +7,6 @@ const INIT_TYPE = [
     name: '组件',
     value: 'component',
   },
-  {
-    name: '脚手架',
-    value: 'cli',
-  },
 ]
 
 export default {
