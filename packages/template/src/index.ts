@@ -1,12 +1,36 @@
+import path from 'path'
+import fs from 'fs'
+
 import fse from 'fs-extra'
 
-import { log, prompt } from '@munan-cli/utils'
+import { log, prompt, renderFiles } from '@munan-cli/utils'
 import Config from './config'
 const { TEMPLATE_TYPE_LIST, TEMPLATE_TAG_LIST } = Config
 
 async function build(options: optionsProps) {
-  // eslint-disable-next-line no-console
-  console.log(options)
+  const modulePath = path.resolve(process.cwd(), 'packages', `${options.moduleName}-template`)
+  const templatePath = path.resolve(process.cwd(), 'packages/template/src/template', `${options.templateType}Template`)
+  try {
+    fs.mkdirSync(modulePath)
+  }
+  catch (err) {
+    if (options.debug)
+      log.error('Error:', err.stack)
+    else
+      log.error('error', '创建模板文件夹失败')
+  }
+  try {
+    fse.copySync(templatePath, modulePath)
+    await renderFiles(modulePath, options)
+  }
+  catch (err) {
+    if (options.debug)
+      log.error('Error:', err.stack)
+    else
+      log.error('error', '渲染文件夹失败')
+  }
+  log.info('info', '创建模板成功')
+  log.info('info', `cd packages/${options.moduleName}-template`)
 }
 
 interface optionsProps {
@@ -23,7 +47,17 @@ interface optionsProps {
 }
 
 async function prepare(options: optionsProps) {
-  const pkg = fse.readJSONSync(`${process.cwd()}/package.json`)
+  let pkg = { name: '' }
+  try {
+    pkg = fse.readJSONSync(`${process.cwd()}/package.json`)
+  }
+  catch (err) {
+    if (options.debug)
+      log.error('Error:', err.stack)
+    else
+      log.error('Error:', '请在 munan-cli 工作空间下使用')
+    return null
+  }
   if (pkg.name !== 'munan-cli') {
     log.error('Error:', '请在 munan-cli 工作空间下使用')
     return null

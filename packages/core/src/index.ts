@@ -230,8 +230,6 @@ function registerCommand() {
         process.exit(0)
       }
       const templatePath = `${process.cwd().replaceAll('\\', '/')}/packages/${moduleName}-template`
-      // eslint-disable-next-line no-console
-      console.log(templatePath)
       if (fse.existsSync(templatePath)) {
         log.error('Error:', `模板 ${templatePath} 已存在`)
         process.exit(0)

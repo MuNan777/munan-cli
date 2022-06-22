@@ -1,0 +1,30 @@
+{
+  "name": "@munan-cli/<%=moduleName %>-template",
+  "version": "1.0.0",
+  "description": "munan-cli <%=templateName %>",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "templateConfig": {
+    "moduleName": "@munan-cli/<%=moduleName %>-template",
+    "templateName": "<%=templateName %>",
+    "templateType": "<%=templateType %>",
+    "templateTag": "<%=templateTag %>",
+    "startCommand": "<%=startCommand %>",
+    "buildPath": "<%=buildPath %>",
+    "ejsIgnoreFiles": <%-JSON.stringify(ejsIgnoreFiles) %>
+  }
+}
