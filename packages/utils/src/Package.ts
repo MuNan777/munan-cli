@@ -13,7 +13,7 @@ interface PackageProps {
   storePath: string
   packageVersion: string
   name: string
-  useOriginNpm: boolean
+  useOriginNpm?: boolean
 }
 
 class Package {
@@ -30,7 +30,7 @@ class Package {
     this.packageName = options.name // 包名
     this.packageVersion = options.packageVersion // 包版本
     this.npmFilePathPrefix = this.packageName.replace('/', '_') // npm文件名前缀
-    this.useOriginNpm = options.useOriginNpm // 默认使用 npm，如果为 false，则使用淘宝源
+    this.useOriginNpm = options.useOriginNpm || true // 默认使用 npm，如果为 false，则使用淘宝源
   }
 
   // 包默认下载文件路径

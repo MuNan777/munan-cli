@@ -7,7 +7,7 @@ import childProcess from 'child_process'
  * @param {*} options
  * @returns
  */
-function exec (command: string, args: string[], options: { [key: string]: string }) {
+function exec(command: string, args: string[], options: { [key: string]: string }) {
   // 判断平台
   const win32 = process.platform === 'win32'
   // 判断是否是 windows 系统，windows 使用 cmd ['/c'] 执行命令

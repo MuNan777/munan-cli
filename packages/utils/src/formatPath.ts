@@ -1,10 +1,10 @@
 import path from 'path'
 
-function formatPath (p: string) {
+function formatPath(p: string) {
   const { sep } = path
-  if (sep === '/') {
+  if (sep === '/')
     return p
-  }
+
   return p.replace(/\\/g, '/')
 }
 

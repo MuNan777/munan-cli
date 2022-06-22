@@ -40,7 +40,8 @@
     "npmlog": "^6.0.2",
     "semver": "^7.3.7",
     "url-join": "^4.0.1",
-    "user-home": "^3.0.0"
+    "user-home": "^3.0.0",
+    "validate-npm-package-name": "^4.0.0"
   },
   "repository": {
     "type": "git",
@@ -57,6 +58,7 @@
     "@types/lodash-es": "^4.17.6",
     "@types/npmlog": "^4.1.4",
     "@types/semver": "^7.3.10",
-    "@types/url-join": "^4.0.1"
+    "@types/url-join": "^4.0.1",
+    "@types/validate-npm-package-name": "^3.0.3"
   }
 }
