@@ -131,8 +131,8 @@ function handleError(e) {
 
 // 执行命令
 async function execCommand(
-  { packagePath, packageName, packageVersion },
-  extendOptions,
+  { packagePath, packageName, packageVersion }: { packageName: string; packageVersion: string; packagePath: any },
+  extendOptions: { name?: string; force: boolean; moduleName?: string },
 ) {
   let rootFile: string
   const { useOriginNpm } = config
@@ -199,16 +199,16 @@ function registerCommand() {
   program.version(packageConfig.version).usage('<command> [options]')
 
   program
-    .command('init [type]')
+    .command('init [name]')
     .description('初始化项目')
     .option('-P --package-path <packagePath>', '指定包的路径')
     .option('--force', '强制覆盖已存在的文件')
-    .action(async (type, { packagePath, force }) => {
+    .action(async (name, { packagePath, force }) => {
       const packageName = '@munan-cli/init'
       const packageVersion = '1.0.0'
       await execCommand(
         { packageName, packageVersion, packagePath },
-        { type, force },
+        { name, force },
       )
     })
 

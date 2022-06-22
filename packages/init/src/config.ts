@@ -11,8 +11,10 @@ const INIT_TYPE = [
 
 export default {
   COMPONENT_FILE: '.componentrc',
-  TEMPLATE_TYPE_NORMAL: 'normal',
-  TEMPLATE_TYPE_CUSTOM: 'custom',
+  TEMPLATE_TYPE_GENERAL: 'general',
+  TEMPLATE_TYPE_EXECUTABLE: 'executable',
   DEFAULT_TYPE: INIT_TYPE[0],
+  TYPE_PROJECT: 'project',
+  TYPE_COMPONENT: 'component',
   INIT_TYPE,
 }

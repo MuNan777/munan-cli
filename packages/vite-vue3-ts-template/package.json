@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "munan-cli vite-vue3-ts 模板",
   "main": "index.js",
-  "dependencies": {},
   "devDependencies": {},
   "keywords": [],
   "author": "",
@@ -18,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/MuNan777/munan-cli/issues"
   },
-  "peerDependencies": {
+  "dependencies": {
     "ejs": "^3.1.8",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
@@ -32,6 +31,8 @@
     "templateTag": "project",
     "startCommand": "npm run dev",
     "buildPath": "dist",
-    "ejsIgnoreFiles": ["**/node_modules/**"]
+    "ejsIgnoreFiles": [
+      "**/node_modules/**"
+    ]
   }
 }
