@@ -1,4 +1,4 @@
-import { getLatestVersion, getNpmInfo, getNpmRegistry, log } from '@munan-cli/utils'
+import { getLatestVersion, getNpmInfo, log } from '@munan-cli/utils'
 
 export interface TemplateConfig {
   moduleName: string
@@ -14,13 +14,13 @@ export interface TemplateConfig {
 
 export async function getTemplates(): Promise<TemplateConfig[]> {
   try {
-    const result = await getNpmInfo('@munan-cli/template', getNpmRegistry())
-    const latestVersion = await getLatestVersion('@munan-cli/template', getNpmRegistry())
+    const result = await getNpmInfo('@munan-cli/template')
+    const latestVersion = await getLatestVersion('@munan-cli/template')
     const list = result.versions[latestVersion].templateConfigs
     // list.push({
     //   moduleName: '@munan-cli/git-test-template',
     //   templateName: 'git-test 模板',
-    //   templateType: 'executable',
+    //   templateType: 'git',
     //   templateTag: 'project',
     //   startCommand: 'npm run dev',
     //   buildPath: 'dist',

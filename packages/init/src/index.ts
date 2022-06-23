@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import fse from 'fs-extra'
-import { Package, exec, formatPackageName, getNpmRegistry, getVersions, log, prompt, spinner } from '@munan-cli/utils'
+import { Package, exec, formatPackageName, getNpmRegistry, log, prompt, renderFiles, spinner } from '@munan-cli/utils'
 import baseConfig from './config'
 import type { TemplateConfig } from './get-template'
 import { getTemplates } from './get-template'
@@ -14,6 +14,7 @@ const {
   TEMPLATE_TYPE_GENERAL,
   TEMPLATE_TYPE_EXECUTABLE,
   TEMPLATE_TYPE_GIT,
+  COMPONENT_FILE,
 } = baseConfig
 
 function getInitType() {
@@ -177,13 +178,14 @@ async function downloadTemplate(
   })
   log.verbose('template', templateName)
   let versions: string[] = []
-  try {
-    versions = await getVersions(templateName, getNpmRegistry())
-  }
-  catch (err) {
-    err.message = '获取模板版本失败，请检查网络'
-    throw err
-  }
+  // try {
+  //   versions = await getVersions(templateName)
+  // }
+  // catch (err) {
+  //   err.message = '获取模板版本失败，请检查网络'
+  //   throw err
+  // }
+  versions = ['1.0.0']
   const templateVersion = await prompt<string>({
     type: 'list',
     choices: versions.map((item: string) => ({
@@ -196,13 +198,11 @@ async function downloadTemplate(
   const targetPath = path.resolve(cliHome, 'template')
   const selectedTemplate = templateList.find(item => item.moduleName === templateName)
   if (selectedTemplate) {
-    let isGitTemplate = false
     let templateSourcePath = ''
     let templatePath = ''
     // 判断是否存在远程仓库
     if (selectedTemplate.gitRepository) {
       await gitPullTemplate({ selectedTemplate, projectPath, projectName })
-      isGitTemplate = true
     }
     else {
       // 基于模板生成 Package 对象
@@ -234,9 +234,9 @@ async function downloadTemplate(
     }
     const template = {
       ...selectedTemplate,
-      isGitTemplate,
       path: templatePath,
       sourcePath: templateSourcePath,
+      templateVersion,
     }
     return template
   }
@@ -246,13 +246,13 @@ async function downloadTemplate(
 }
 
 interface TemplateProps {
-  isGitTemplate: boolean
   path: string
   sourcePath: string
   moduleName: string
   templateName: string
   templateType: string
   templateTag: string
+  templateVersion: string
   startCommand: string
   buildPath: string
   ejsIgnoreFiles: string[]
@@ -267,9 +267,87 @@ interface ProjectProps {
   description?: string
 }
 
+// 如果是组件项目，则创建组件相关文件
+async function createComponentFile(template: TemplateProps, project: ProjectProps, dir: string) {
+  if (template.templateTag === TYPE_COMPONENT) {
+    const componentData = {
+      buildPath: template.buildPath,
+      examplePath: template.examplePath,
+      npmName: project.packageName,
+      npmVersion: template.templateVersion,
+    }
+    const componentFile = path.resolve(dir, COMPONENT_FILE)
+    fs.writeFileSync(componentFile, JSON.stringify(componentData))
+  }
+}
+
+async function npmInstall(targetPath: string) {
+  return new Promise((resolve, reject) => {
+    const event = exec('npm', ['install', `--registry=${getNpmRegistry()}`], { stdio: 'inherit', cwd: targetPath })
+    event.on('close', (data) => {
+      if (data && data > 0)
+        reject(new Error('安装依赖失败'))
+      else
+        resolve(null)
+    })
+  })
+}
+
+async function execStartCommand(targetPath: string, startCommand: string[]) {
+  return new Promise((resolve, reject) => {
+    const event = exec(startCommand[0], startCommand.slice(1), { stdio: 'inherit', cwd: targetPath })
+    event.on('close', (data) => {
+      if (data && data > 0)
+        reject(new Error('启动失败'))
+      else
+        resolve(null)
+    })
+  })
+}
+
+async function installTemplate(
+  template: TemplateProps,
+  projectData: ProjectProps,
+) {
+  // 安装模板
+  const spinnerStart = spinner('正在安装模板...')
+  const sourceDir = template.path
+  const targetDir = projectData.projectPath
+  fse.ensureDirSync(sourceDir)
+  fse.ensureDirSync(targetDir)
+  fse.copySync(sourceDir, targetDir)
+  spinnerStart.stop(true)
+  log.success('模板安装成功')
+  // ejs 模板渲染
+  const ejsIgnoreFiles = [
+    '**/node_modules/**',
+    '**/.git/**',
+    '**/.vscode/**',
+    '**/.DS_Store',
+  ]
+  if (template.ejsIgnoreFiles)
+    ejsIgnoreFiles.push(...template.ejsIgnoreFiles)
+  log.verbose('projectData', JSON.stringify(projectData))
+  await renderFiles(targetDir, projectData, {
+    ignore: ejsIgnoreFiles,
+  })
+  // 如果是组件，则进行特殊处理
+  await createComponentFile(template, projectData, targetDir)
+  // 安装依赖文件
+  log.notice('info', '开始安装依赖')
+  await npmInstall(targetDir)
+  log.success('依赖安装成功')
+  // 启动代码
+  if (template.startCommand) {
+    log.notice('init', '开始执行启动命令')
+    const startCommand = template.startCommand.split(' ')
+    await execStartCommand(targetDir, startCommand)
+  }
+}
+
 async function installExecutableTemplate(
   template: TemplateProps,
-  ejsData: ProjectProps,
+  projectData: ProjectProps,
 ) {
   const pkgPath = path.resolve(template.sourcePath, 'package.json')
   const pkg = fse.readJsonSync(pkgPath)
@@ -277,10 +355,10 @@ async function installExecutableTemplate(
   if (!fs.existsSync(rootFile))
     throw new Error('入口文件不存在！')
   log.notice('info', '开始执行自定义模板')
-  const targetPath = ejsData.projectPath
+  const targetPath = projectData.projectPath
   await execExecutableTemplate(rootFile, {
     targetPath,
-    ...ejsData,
+    ...projectData,
     template,
   })
   log.success('自定义模板执行成功')
@@ -299,6 +377,25 @@ function execExecutableTemplate(rootFile: string, options: {
       resolve(data)
     })
   })
+}
+
+async function installGitTemplate(
+  template: TemplateProps,
+  projectData: ProjectProps,
+) {
+  const targetDir = projectData.projectPath
+  // 如果是组件，则进行特殊处理
+  await createComponentFile(template, projectData, targetDir)
+  // 安装依赖文件
+  log.notice('info', '开始安装依赖')
+  await npmInstall(targetDir)
+  log.success('依赖安装成功')
+  // 启动代码
+  if (template.startCommand) {
+    log.notice('init', '开始执行启动命令')
+    const startCommand = template.startCommand.split(' ')
+    await execStartCommand(targetDir, startCommand)
+  }
 }
 
 async function init(opt: { debug: boolean; targetPath: string }) {
@@ -322,17 +419,13 @@ async function init(opt: { debug: boolean; targetPath: string }) {
     log.verbose('template', JSON.stringify(template))
     if (template.templateType === TEMPLATE_TYPE_GENERAL) {
       // 安装项目模板
-      // await installTemplate(template, project, options)
-      // eslint-disable-next-line no-console
-      console.log(TEMPLATE_TYPE_GENERAL, '>>>>>>>>>>>>>>>>>>>')
+      await installTemplate(template, project)
     }
     else if (template.templateType === TEMPLATE_TYPE_EXECUTABLE) {
       await installExecutableTemplate(template, project)
     }
     else if (template.templateType === TEMPLATE_TYPE_GIT) {
-      // await installGitTemplate(template, project, options)
-      // eslint-disable-next-line no-console
-      console.log(TEMPLATE_TYPE_GIT, '>>>>>>>>>>>>>>>>>>>')
+      await installGitTemplate(template, project)
     }
     else {
       throw new Error('未知的模板类型！')

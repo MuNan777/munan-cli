@@ -17,18 +17,11 @@ describe('utils', () => {
       expect(info.name).toBe('@munan-cli/utils')
     })
     it('getLatestVersion', async () => {
-      const version = await getLatestVersion(
-        '@munan-cli/utils',
-        getNpmRegistry(),
-      )
+      const version = await getLatestVersion('@munan-cli/utils')
       expect(version).toBe(packageJson.version)
     })
     it('getNpmLatestSemverVersion', async () => {
-      const version = await getNpmLatestSemverVersion(
-        '@munan-cli/utils',
-        '1.0.0',
-        getNpmRegistry(),
-      )
+      const version = await getNpmLatestSemverVersion('@munan-cli/utils', '1.0.0')
       expect(version).toBe(packageJson.version)
     })
   })

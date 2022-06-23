@@ -13,7 +13,6 @@ interface PackageProps {
   storePath: string
   packageVersion: string
   name: string
-  useOriginNpm?: boolean
 }
 
 class Package {
@@ -22,7 +21,6 @@ class Package {
   packageName: string
   packageVersion: string
   npmFilePathPrefix: string
-  useOriginNpm: boolean
   constructor(options: PackageProps) {
     log.verbose('options', JSON.stringify(options))
     this.targetPath = options.targetPath // 目标路径
@@ -30,7 +28,6 @@ class Package {
     this.packageName = options.name // 包名
     this.packageVersion = options.packageVersion // 包版本
     this.npmFilePathPrefix = this.packageName.replace('/', '_') // npm文件名前缀
-    this.useOriginNpm = options.useOriginNpm || true // 默认使用 npm，如果为 false，则使用淘宝源
   }
 
   // 包默认下载文件路径
@@ -57,7 +54,6 @@ class Package {
     const latestVersion = await getNpmLatestSemverVersion(
       this.packageName,
       this.packageVersion,
-      getNpmRegistry(this.useOriginNpm),
     )
     log.verbose('latestVersion', this.packageName, latestVersion)
     if (latestVersion)
@@ -73,7 +69,7 @@ class Package {
     return npminstall({
       root: this.targetPath,
       storeDir: this.storePath,
-      registry: getNpmRegistry(this.useOriginNpm),
+      registry: getNpmRegistry(),
       pkgs: [
         {
           name: this.packageName,
@@ -94,11 +90,11 @@ class Package {
 
   /**
    * 获取 package.json
-   * @param {*} isOriginal boolean
+   * @param {*} useCustomPackage boolean
    * @returns {*} package.json
    */
-  async getPackage(isOriginal = false) {
-    if (!isOriginal) {
+  async getPackage(useCustomPackage = false) {
+    if (!useCustomPackage) {
       // 原始 npm 下载本地保存地址
       return fse.readJSONSync(path.resolve(this.npmFilePath, 'package.json'))
     }
@@ -108,13 +104,13 @@ class Package {
 
   /**
    * 获取入口文件
-   * @param {*} isOriginal boolean
+   * @param {*} useCustomPackage boolean
    * @returns 入口文件
    */
-  async getRootFilePath(isOriginal = false) {
-    const pkg = await this.getPackage(isOriginal)
+  async getRootFilePath(useCustomPackage = false) {
+    const pkg = await this.getPackage(useCustomPackage)
     if (pkg) {
-      if (!isOriginal)
+      if (!useCustomPackage)
         return formatPath(path.resolve(this.npmFilePath, pkg.main))
 
       return formatPath(path.resolve(this.storePath, pkg.main))
@@ -141,7 +137,6 @@ class Package {
       const latestVersion = await getNpmLatestSemverVersion(
         this.packageName,
         version,
-        getNpmRegistry(this.useOriginNpm),
       )
       return latestVersion
     }
@@ -157,7 +152,7 @@ class Package {
     return npminstall({
       root: this.targetPath,
       storeDir: this.storePath,
-      registry: getNpmRegistry(this.useOriginNpm),
+      registry: getNpmRegistry(),
       pkgs: [
         {
           name: this.packageName,

@@ -101,7 +101,7 @@ async function checkGlobalUpdate() {
   const lastVersion = await getNpmLatestSemverVersion(
     NPM_NAME,
     currentVersion,
-    getNpmRegistry(),
+    getNpmRegistry(config.useOriginNpm),
   )
   if (lastVersion && semver.gt(lastVersion, currentVersion)) {
     log.warn(
@@ -137,7 +137,6 @@ async function execCommand(
   extendOptions: { name?: string; force: boolean; moduleName?: string },
 ) {
   let rootFile: string
-  const { useOriginNpm } = config
   try {
     if (packagePath) {
       const execPackage = new Package({
@@ -145,7 +144,6 @@ async function execCommand(
         storePath: packagePath,
         name: packageName,
         packageVersion,
-        useOriginNpm,
       })
       // 包的根文件路径
       rootFile = await execPackage.getRootFilePath(true) || ''
@@ -160,7 +158,6 @@ async function execCommand(
         storePath,
         name: packageName,
         packageVersion,
-        useOriginNpm,
       })
       // 判断是否已经安装
       if (await initPackage.exists()) {
