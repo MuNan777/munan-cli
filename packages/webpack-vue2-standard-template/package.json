@@ -1,0 +1,31 @@
+{
+  "name": "@munan-cli/webpack-vue2-standard-template",
+  "version": "1.0.0",
+  "description": "munan-cli webpack-vue2-standard 模板",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "templateConfig": {
+    "moduleName": "@munan-cli/webpack-vue2-standard-template",
+    "templateName": "webpack-vue2-standard 模板",
+    "templateType": "general",
+    "templateTag": "project",
+    "startCommand": "npm run serve",
+    "buildPath": "dist",
+    
+    "ejsIgnoreFiles": ["**/node_modules/**"]
+  }
+}
