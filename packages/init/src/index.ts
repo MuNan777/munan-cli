@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import fse from 'fs-extra'
-import { Package, exec, formatPackageName, getNpmRegistry, log, prompt, renderFiles, spinner } from '@munan-cli/utils'
+import { Package, exec, formatPackageName, getNpmRegistry, getVersions, log, prompt, renderFiles, spinner } from '@munan-cli/utils'
 import baseConfig from './config'
 import type { TemplateConfig } from './get-template'
 import { getTemplates } from './get-template'
@@ -178,14 +178,13 @@ async function downloadTemplate(
   })
   log.verbose('template', templateName)
   let versions: string[] = []
-  // try {
-  //   versions = await getVersions(templateName)
-  // }
-  // catch (err) {
-  //   err.message = '获取模板版本失败，请检查网络'
-  //   throw err
-  // }
-  versions = ['1.0.0']
+  try {
+    versions = await getVersions(templateName)
+  }
+  catch (err) {
+    err.message = '获取模板版本失败，请检查网络'
+    throw err
+  }
   const templateVersion = await prompt<string>({
     type: 'list',
     choices: versions.map((item: string) => ({
