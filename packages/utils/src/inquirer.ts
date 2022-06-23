@@ -25,6 +25,10 @@ export function prompt<T = unknown>({
   }
 
   return new Promise<T>((resolve, reject) => {
-    Prompt([Object.assign(options, type === 'list' ? { choices } : {})]).then(answer => resolve(answer.name)).catch(error => reject(error))
+    Prompt([Object.assign(options, type === 'list' ? { choices } : {})]).then(
+      answer => resolve(answer.name),
+    ).catch(
+      error => reject(error),
+    )
   })
 }

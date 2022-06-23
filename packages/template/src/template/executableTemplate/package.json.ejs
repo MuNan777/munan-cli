@@ -31,6 +31,9 @@
     "templateTag": "<%=templateTag %>",
     "startCommand": "<%=startCommand %>",
     "buildPath": "<%=buildPath %>",
+    <% if (examplePath) { %>
+      "examplePath": "<%=examplePath %>",
+    <% } %>
     "ejsIgnoreFiles": <%-JSON.stringify(ejsIgnoreFiles) %>
   }
 }

@@ -18,6 +18,9 @@ async function build(options: optionsProps) {
       log.error('Error:', err.stack)
     else
       log.error('error', '创建模板文件夹失败')
+    if (fse.existsSync(modulePath))
+      fse.removeSync(modulePath)
+    return false
   }
   try {
     fse.copySync(templatePath, modulePath)
@@ -28,9 +31,11 @@ async function build(options: optionsProps) {
       log.error('Error:', err.stack)
     else
       log.error('error', '渲染文件夹失败')
+    if (fse.existsSync(modulePath))
+      fse.removeSync(modulePath)
+    return false
   }
-  log.info('info', '创建模板成功')
-  log.info('info', `cd packages/${options.moduleName}-template`)
+  return true
 }
 
 interface optionsProps {
@@ -44,6 +49,7 @@ interface optionsProps {
   examplePath?: string
   ejsIgnoreFiles?: string[]
   debug?: string
+  gitRepository?: string
 }
 
 async function prepare(options: optionsProps) {
@@ -93,13 +99,22 @@ async function prepare(options: optionsProps) {
       defaultValue: 'dist',
     })
     options.buildPath = buildPath
-    if (templateTag === 'component') {
+    options.examplePath = ''
+    if (options.templateType === 'component') {
       const examplePath = await prompt<string>({
         type: 'input',
         message: '示例路径',
         defaultValue: 'example',
       })
       options.examplePath = examplePath
+    }
+    if (options.templateType === 'git') {
+      const gitRepository = await prompt<string>({
+        type: 'input',
+        message: 'git 远程仓库',
+        defaultValue: '',
+      })
+      options.gitRepository = gitRepository
     }
     const ejsIgnoreFiles = await prompt<string>({
       type: 'input',
@@ -108,7 +123,11 @@ async function prepare(options: optionsProps) {
     })
     options.ejsIgnoreFiles = (ejsIgnoreFiles as string).split(' ')
     log.notice('info', '开始构建模板')
-    await build(options)
+    const result = await build(options)
+    if (result) {
+      log.info('info', '创建模板成功')
+      log.info('info', `cd packages/${options.moduleName}-template`)
+    }
   }
   catch (err) {
     log.error('Error:', err.message)

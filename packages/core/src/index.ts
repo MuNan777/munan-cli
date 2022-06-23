@@ -62,6 +62,9 @@ function checkArgs() {
 function checkInputArgs() {
   log.verbose('info', '检查用户输入参数')
   args = minimist(process.argv.slice(2))
+  if (args.d)
+    args.debug = true
+
   checkArgs()
 }
 
@@ -122,7 +125,6 @@ async function prepare() {
 function handleError(e) {
   if (args.debug)
     log.error('Error', e.stack)
-
   else
     log.error('Error', e.message)
 
@@ -221,7 +223,7 @@ function registerCommand() {
       const packageName = '@munan-cli/template'
       const packageVersion = '1.0.0'
       if (!moduleName) {
-        log.error('Error:', '请指定模板名称')
+        log.error('Error:', '请指定模板包名')
         process.exit(0)
       }
       const result = validate(moduleName)
