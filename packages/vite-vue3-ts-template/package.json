@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/vite-vue3-ts-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "munan-cli vite-vue3-ts 模板",
   "main": "index.js",
   "devDependencies": {},

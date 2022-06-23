@@ -7,15 +7,7 @@ const render = require('./lib/render')
 module.exports = async function (options) {
   // eslint-disable-next-line no-console
   console.log(options)
-  let packageName = ''
   let description = ''
-  while (!packageName) {
-    packageName = await inquirer({
-      type: 'string',
-      message: '请输入项目名称',
-      defaultValue: '',
-    })
-  }
   while (!description) {
     description = await inquirer({
       type: 'string',
