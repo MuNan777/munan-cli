@@ -204,10 +204,12 @@ function registerCommand() {
     .command('init [name]')
     .description('初始化项目')
     .option('-P --package-path <packagePath>', '指定包的路径')
-    .option('--force', '强制覆盖已存在的文件')
-    .action(async (name, { packagePath, force }) => {
+    .option('-f --force', '强制覆盖已存在的文件')
+    .action(async (name, { packagePath, force, f }) => {
       const packageName = '@munan-cli/init'
       const packageVersion = '1.0.0'
+      if (f)
+        force = true
       await execCommand(
         { packageName, packageVersion, packagePath },
         { name, force },

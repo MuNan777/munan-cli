@@ -13,6 +13,7 @@ export default {
   COMPONENT_FILE: '.componentrc',
   TEMPLATE_TYPE_GENERAL: 'general',
   TEMPLATE_TYPE_EXECUTABLE: 'executable',
+  TEMPLATE_TYPE_GIT: 'git',
   DEFAULT_TYPE: INIT_TYPE[0],
   TYPE_PROJECT: 'project',
   TYPE_COMPONENT: 'component',

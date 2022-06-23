@@ -12,28 +12,14 @@ async function build(options: optionsProps) {
   const templatePath = path.resolve(process.cwd(), 'packages/template/src/template', `${options.templateType}Template`)
   try {
     fs.mkdirSync(modulePath)
-  }
-  catch (err) {
-    if (options.debug)
-      log.error('Error:', err.stack)
-    else
-      log.error('error', '创建模板文件夹失败')
-    if (fse.existsSync(modulePath))
-      fse.removeSync(modulePath)
-    return false
-  }
-  try {
     fse.copySync(templatePath, modulePath)
     await renderFiles(modulePath, options)
   }
   catch (err) {
-    if (options.debug)
-      log.error('Error:', err.stack)
-    else
-      log.error('error', '渲染文件夹失败')
     if (fse.existsSync(modulePath))
       fse.removeSync(modulePath)
-    return false
+    err.message = '渲染文件夹失败'
+    throw err
   }
   return true
 }
@@ -130,7 +116,10 @@ async function prepare(options: optionsProps) {
     }
   }
   catch (err) {
-    log.error('Error:', err.message)
+    if (options.debug)
+      log.error('Error:', err.stack)
+    else
+      log.error('Error:', err.message)
   }
 }
 
