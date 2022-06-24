@@ -32,7 +32,7 @@
   "author": "munanc",
   "license": "MIT",
   "dependencies": {
-    "@munan-cli/utils": "^1.0.1",
+    "@munan-cli/utils": "^1.0.3",
     "colors": "^1.4.0",
     "commander": "^9.3.0",
     "dotenv": "^16.0.1",

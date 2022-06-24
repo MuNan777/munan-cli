@@ -26,7 +26,7 @@
     "dev": "rollup -c --watch --watch.include=src/** -m inline"
   },
   "dependencies": {
-    "@munan-cli/utils": "^1.0.1",
+    "@munan-cli/utils": "^1.0.3",
     "fs-extra": "^10.1.0"
   },
   "keywords": [],
