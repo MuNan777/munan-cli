@@ -30,6 +30,8 @@ npm run test
 ## Command
 
 ```sh
+Usage: munan-cli <command> [options]
+
 Options:
   -V, --version                    查看脚手架版本  
   -d --debug                       打开调试模式    
