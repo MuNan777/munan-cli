@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/webpack-vue2-standard-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "munan-cli webpack-vue2-standard 模板",
   "main": "index.js",
   "dependencies": {},
@@ -25,7 +25,9 @@
     "templateTag": "project",
     "startCommand": "npm run serve",
     "buildPath": "dist",
-    
-    "ejsIgnoreFiles": ["**/node_modules/**"]
+    "ejsIgnoreFiles": [
+      "**/node_modules/**",
+      "**/public/**"
+    ]
   }
 }

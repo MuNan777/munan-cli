@@ -2,6 +2,24 @@ lockfileVersion: 5.4
 
 importers:
 
+  packages/core:
+    specifiers:
+      '@munan-cli/utils': ^1.0.1
+    dependencies:
+      '@munan-cli/utils': link:../utils
+
+  packages/init:
+    specifiers:
+      '@munan-cli/utils': ^1.0.1
+    dependencies:
+      '@munan-cli/utils': link:../utils
+
+  packages/template:
+    specifiers:
+      '@munan-cli/utils': ^1.0.1
+    dependencies:
+      '@munan-cli/utils': link:../utils
+
   packages/utils:
     specifiers:
       '@types/ejs': ^3.1.1

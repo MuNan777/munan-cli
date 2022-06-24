@@ -11,7 +11,7 @@ import colors from 'colors/safe'
 import validate from 'validate-npm-package-name'
 import fse from 'fs-extra'
 
-import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
+import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log, spinner } from '@munan-cli/utils'
 
 import packageConfig from '../package.json'
 import baseConfig from './config'
@@ -195,7 +195,11 @@ async function execCommand(
 }
 
 function registerCommand() {
-  program.version(packageConfig.version).usage('<command> [options]')
+  program
+    .version(packageConfig.version, undefined, '查看脚手架版本')
+    .helpOption('-h, --help', '查看帮助信息')
+    .addHelpCommand('help [command]', '查看命令帮助信息')
+    .usage('<command> [options]')
 
   program
     .command('init [name]')
@@ -253,7 +257,9 @@ function registerCommand() {
 
 async function cli() {
   try {
+    const spinnerStart = spinner('初始化脚手架')
     await prepare() // 准备环境
+    spinnerStart.stop(true)
     registerCommand()
   }
   catch (err) {

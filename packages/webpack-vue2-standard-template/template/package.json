@@ -1,5 +1,6 @@
 {
-  "name": "test-vue",
+  "name": "<%=packageName %>",
+  "description": "<%=description %>",
   "version": "0.1.0",
   "private": true,
   "scripts": {

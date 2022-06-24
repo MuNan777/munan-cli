@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/init",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "munan-cli init",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
@@ -29,7 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@munan-cli/utils": "^1.0.0",
+    "@munan-cli/utils": "^1.0.1",
     "fs-extra": "^10.1.0"
   },
   "repository": {

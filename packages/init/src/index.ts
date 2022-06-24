@@ -213,9 +213,8 @@ async function downloadTemplate(
       })
       // 如果模板不存在，进行下载
       if (!await templatePkg.exists()) {
-        const spinnerStart = spinner('正在下载模板...')
+        log.notice('info', '正在下载模板...')
         await templatePkg.install()
-        spinnerStart.stop(true)
         log.success('下载模板成功')
       }
       else {
@@ -228,8 +227,6 @@ async function downloadTemplate(
       log.verbose('template path', templatePath)
       if (!fs.existsSync(templatePath))
         throw new Error(`[${templateName}]项目模板不存在！`)
-      // eslint-disable-next-line no-console
-      console.log(templatePkg, options)
     }
     const template = {
       ...selectedTemplate,
@@ -326,6 +323,7 @@ async function installTemplate(
   ]
   if (template.ejsIgnoreFiles)
     ejsIgnoreFiles.push(...template.ejsIgnoreFiles)
+  log.verbose('ejsIgnoreFiles', JSON.stringify(ejsIgnoreFiles))
   log.verbose('projectData', JSON.stringify(projectData))
   await renderFiles(targetDir, projectData, {
     ignore: ejsIgnoreFiles,
