@@ -11,7 +11,7 @@ import colors from 'colors/safe'
 import validate from 'validate-npm-package-name'
 import fse from 'fs-extra'
 
-import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log, spinner } from '@munan-cli/utils'
+import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
 import packageConfig from '../package.json'
 import baseConfig from './config'
@@ -24,7 +24,7 @@ let config: {
   useOriginNpm: boolean
 }
 
-const program = new Command()
+const program = new Command('munan-cli')
 
 function checkNodeVersion(): void {
   if (!semver.gte(process.version, LOWEST_NODE_VERSION)) {
@@ -257,9 +257,7 @@ function registerCommand() {
 
 async function cli() {
   try {
-    const spinnerStart = spinner('初始化脚手架')
     await prepare() // 准备环境
-    spinnerStart.stop(true)
     registerCommand()
   }
   catch (err) {

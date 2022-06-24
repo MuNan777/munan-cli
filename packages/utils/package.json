@@ -1,7 +1,7 @@
 {
   "name": "@munan-cli/utils",
-  "version": "1.0.2",
-  "description": "munan-cli utils",
+  "version": "1.0.3",
+  "description": "munan-cli 脚手架工具包",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",

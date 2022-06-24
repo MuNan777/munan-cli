@@ -1,7 +1,7 @@
 {
   "name": "@munan-cli/template",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "munan-cli 模板构建模块",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
