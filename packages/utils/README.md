@@ -7,9 +7,6 @@
   <a href="https://github.com/MuNan777/munan-cli/graphs/commit-activity" target="_blank">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
-  <a href="https://github.com/MuNan777/munan-cli/blob/master/LICENSE" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/MuNan777/@munan-cli/utils" />
-  </a>
 </p>
 
 > munan-cli 脚手架工具包
