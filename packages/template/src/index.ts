@@ -1,15 +1,15 @@
 import path from 'path'
 import fs from 'fs'
-
+import validate from 'validate-npm-package-name'
 import fse from 'fs-extra'
+import { getDirName, log, prompt, renderFiles } from '@munan-cli/utils'
 
-import { log, prompt, renderFiles } from '@munan-cli/utils'
 import Config from './config'
 const { TEMPLATE_TYPE_LIST, TEMPLATE_TAG_LIST } = Config
 
 async function build(options: optionsProps) {
-  const modulePath = path.resolve(process.cwd(), 'packages', `${options.moduleName}-template`)
-  const templatePath = path.resolve(process.cwd(), 'packages/template/src/template', `${options.templateType}Template`)
+  const modulePath = path.resolve(options.targetPath, `${options.moduleName}-template`)
+  const templatePath = path.resolve(options.targetPath, 'template/src/template', `${options.templateType}Template`)
   try {
     fs.mkdirSync(modulePath)
     fse.copySync(templatePath, modulePath)
@@ -26,7 +26,7 @@ async function build(options: optionsProps) {
 
 interface optionsProps {
   targetPath: string
-  moduleName?: string
+  moduleName: string
   templateName?: string
   templateType?: string
   templateTag?: string
@@ -34,117 +34,110 @@ interface optionsProps {
   buildPath?: string
   examplePath?: string
   ejsIgnoreFiles?: string[]
-  debug?: string
   gitRepository?: string
 }
 
 async function prepare(options: optionsProps) {
-  let pkg = { name: '' }
-  try {
-    pkg = fse.readJSONSync(`${process.cwd()}/package.json`)
-  }
-  catch (err) {
-    if (options.debug)
-      log.error('Error:', err.stack)
-    else
-      log.error('Error:', '请在 munan-cli 工作空间下使用')
-    return null
-  }
-  if (pkg.name !== 'munan-cli') {
-    log.error('Error:', '请在 munan-cli 工作空间下使用')
-    return null
-  }
-  try {
-    const templateName = await prompt<string>({
+  const templateName = await prompt<string>({
+    type: 'input',
+    message: '输入模板名称',
+    defaultValue: `${options.moduleName} 模板`,
+  })
+  options.templateName = templateName
+  const templateType = await prompt<string>({
+    type: 'list',
+    message: '选择模板类型',
+    choices: TEMPLATE_TYPE_LIST,
+  })
+  options.templateType = templateType
+  const templateTag = await prompt<string>({
+    type: 'list',
+    message: '选择模板分类',
+    choices: TEMPLATE_TAG_LIST,
+  })
+  options.templateTag = templateTag
+  const startCommand = await prompt<string>({
+    type: 'input',
+    message: '启动命令',
+    defaultValue: 'npm run start',
+  })
+  options.startCommand = startCommand
+  const buildPath = await prompt<string>({
+    type: 'input',
+    message: '构建路径',
+    defaultValue: 'dist',
+  })
+  options.buildPath = buildPath
+  options.examplePath = ''
+  if (options.templateType === 'component') {
+    const examplePath = await prompt<string>({
       type: 'input',
-      message: '输入模板名称',
-      defaultValue: `${options.moduleName} 模板`,
+      message: '示例路径',
+      defaultValue: 'example',
     })
-    options.templateName = templateName
-    const templateType = await prompt<string>({
-      type: 'list',
-      message: '选择模板类型',
-      choices: TEMPLATE_TYPE_LIST,
-    })
-    options.templateType = templateType
-    const templateTag = await prompt<string>({
-      type: 'list',
-      message: '选择模板分类',
-      choices: TEMPLATE_TAG_LIST,
-    })
-    options.templateTag = templateTag
-    const startCommand = await prompt<string>({
-      type: 'input',
-      message: '启动命令',
-      defaultValue: 'npm run start',
-    })
-    options.startCommand = startCommand
-    const buildPath = await prompt<string>({
-      type: 'input',
-      message: '构建路径',
-      defaultValue: 'dist',
-    })
-    options.buildPath = buildPath
-    options.examplePath = ''
-    if (options.templateType === 'component') {
-      const examplePath = await prompt<string>({
-        type: 'input',
-        message: '示例路径',
-        defaultValue: 'example',
-      })
-      options.examplePath = examplePath
-    }
-    if (options.templateType === 'git') {
-      const gitRepository = await prompt<string>({
-        type: 'input',
-        message: 'git 远程仓库',
-        defaultValue: '',
-      })
-      options.gitRepository = gitRepository
-    }
-    const ejsIgnoreFiles = await prompt<string>({
-      type: 'input',
-      message: 'ejs忽略文件, 使用空格分隔',
-      defaultValue: '**/node_modules/**',
-    })
-    options.ejsIgnoreFiles = (ejsIgnoreFiles as string).split(' ')
-    log.notice('info', '开始构建模板')
-    const result = await build(options)
-    if (result) {
-      log.info('info', '创建模板成功')
-      log.info('info', `cd packages/${options.moduleName}-template`)
-    }
+    options.examplePath = examplePath
   }
-  catch (err) {
-    if (options.debug)
-      log.error('Error:', err.stack)
-    else
-      log.error('Error:', err.message)
+  if (options.templateType === 'git') {
+    const gitRepository = await prompt<string>({
+      type: 'input',
+      message: 'git 远程仓库',
+      defaultValue: '',
+    })
+    options.gitRepository = gitRepository
   }
+  const ejsIgnoreFiles = await prompt<string>({
+    type: 'input',
+    message: 'ejs忽略文件, 使用空格分隔',
+    defaultValue: '**/node_modules/**',
+  })
+  options.ejsIgnoreFiles = (ejsIgnoreFiles as string).split(' ')
+  return options
 }
 
-async function template(options: optionsProps) {
+async function template() {
   try {
-    // 设置 targetPath
-    const targetPath = process.cwd()
-    if (!options.targetPath)
-      options.targetPath = targetPath
-
-    log.verbose('template', JSON.stringify(options))
+    const targetPath = path.resolve(getDirName(import.meta.url), '../../')
+    const argv = process.argv
+    let moduleName = argv[2]
+    while (!moduleName) {
+      moduleName = await prompt<string>({
+        type: 'input',
+        message: '输入模板名称',
+        defaultValue: '',
+      })
+      const valid = validate(moduleName)
+      if (!valid.validForNewPackages) {
+        log.error('Error:', '模板名称不合法')
+        moduleName = ''
+      }
+      const templatePath = `${moduleName}-template`
+      if (fse.existsSync(templatePath)) {
+        log.error('Error:', `模板 ${templatePath} 已存在`)
+        moduleName = ''
+      }
+    }
+    const templatePath = `${moduleName}-template`
+    if (fse.existsSync(path.resolve(targetPath, templatePath))) {
+      log.error('Error:', `模板 ${templatePath} 已存在`)
+      process.exit(0)
+    }
+    const options = { moduleName, targetPath }
+    log.notice('template', JSON.stringify(options))
     // 完成项目初始化的准备和校验工作
-    await prepare(options)
-    log.verbose('result', '12345')
+    const configs = await prepare(options)
+    log.notice('info', '开始构建模板')
+    const result = await build(configs)
+    if (result) {
+      log.info('info', '创建模板成功')
+      log.info('info', `cd packages/${configs.moduleName}-template`)
+    }
   }
   catch (e) {
-    if (options.debug)
-      log.error('Error:', e.stack)
-
-    else
-      log.error('Error:', e.message)
+    log.error('Error:', e.stack)
   }
   finally {
     process.exit(0)
   }
 }
 
-export default template
+template()

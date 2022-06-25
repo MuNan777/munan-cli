@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest packages/",
-    "lint": "eslint \"packages/**/*.{js,ts}\""
+    "lint": "eslint \"packages/**/*.{js,ts}\"",
+    "create:template": "pnpm -F @munan-cli/template run create"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@antfu/eslint-config": "^0.25.1",
+    "@antfu/eslint-config": "^0.25.2",
     "@rollup/plugin-alias": "^3.1.9",
-    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/node": "^18.0.0",

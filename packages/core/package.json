@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/core",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "munan-cli 脚手架核心包",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
@@ -37,11 +37,9 @@
     "commander": "^9.3.0",
     "dotenv": "^16.0.1",
     "downgrade-root": "^2.0.0",
-    "fs-extra": "^10.1.0",
     "minimist": "^1.2.6",
     "semver": "^7.3.7",
-    "user-home": "^3.0.0",
-    "validate-npm-package-name": "^4.0.0"
+    "user-home": "^3.0.0"
   },
   "repository": {
     "type": "git",
@@ -51,10 +49,8 @@
     "url": "https://github.com/MuNan777/munan-cli/issues"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
     "@types/minimist": "^1.2.2",
     "@types/semver": "^7.3.10",
-    "@types/user-home": "^2.0.0",
-    "@types/validate-npm-package-name": "^3.0.3"
+    "@types/user-home": "^2.0.0"
   }
 }

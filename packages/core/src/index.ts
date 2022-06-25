@@ -8,8 +8,6 @@ import dotenv from 'dotenv'
 import { Command } from 'commander'
 import semver from 'semver'
 import colors from 'colors/safe'
-import validate from 'validate-npm-package-name'
-import fse from 'fs-extra'
 
 import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
@@ -214,34 +212,6 @@ function registerCommand() {
       await execCommand(
         { packageName, packageVersion, packagePath },
         { name, force },
-      )
-    })
-
-  program
-    .command('template [moduleName]')
-    .description('创建模板')
-    .option('-P --package-path <packagePath>', '指定包的路径')
-    .option('--force', '强制覆盖已存在的文件')
-    .action(async (moduleName, { packagePath, force }) => {
-      const packageName = '@munan-cli/template'
-      const packageVersion = '1.0.0'
-      if (!moduleName) {
-        log.error('Error:', '请指定模板包名')
-        process.exit(0)
-      }
-      const result = validate(moduleName)
-      if (!result.validForNewPackages) {
-        log.error('Error:', '模板名称不合法')
-        process.exit(0)
-      }
-      const templatePath = `${process.cwd().replaceAll('\\', '/')}/packages/${moduleName}-template`
-      if (fse.existsSync(templatePath)) {
-        log.error('Error:', `模板 ${templatePath} 已存在`)
-        process.exit(0)
-      }
-      await execCommand(
-        { packageName, packageVersion, packagePath },
-        { moduleName, force },
       )
     })
 
