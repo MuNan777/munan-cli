@@ -15,19 +15,6 @@
 
 - node >=v14.16.0
 
-### Command
-
-```sh
-Usage: munan-cli template [options] [moduleName]       
-
-创建模板
-
-Options:
-  -P --package-path <packagePath>  指定包的路径        
-  --force                          强制覆盖已存在的文件
-  -h, --help                       查看帮助信息  
-```
-
 ## Author
 
 * Github: [@MuNan777](https://github.com/MuNan777)
