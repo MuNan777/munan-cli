@@ -37,7 +37,6 @@ describe('utils', () => {
       storePath,
       name: '@munan-cli/utils',
       packageVersion: '1.0.0',
-      useOriginNpm: false,
     })
     it('npmFilePath', () => {
       expect(p.npmFilePath).toBe(

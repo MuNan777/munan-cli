@@ -40,6 +40,7 @@
     "npminstall": "^6.3.0",
     "npmlog": "^6.0.2",
     "semver": "^7.3.7",
+    "simple-git": "^3.10.0",
     "url-join": "^4.0.1",
     "user-home": "^3.0.0",
     "validate-npm-package-name": "^4.0.0"
@@ -60,6 +61,7 @@
     "@types/npmlog": "^4.1.4",
     "@types/semver": "^7.3.10",
     "@types/url-join": "^4.0.1",
+    "@types/user-home": "^2.0.0",
     "@types/validate-npm-package-name": "^3.0.3"
   }
 }
