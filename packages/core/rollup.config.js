@@ -4,13 +4,17 @@ import resolve from '@rollup/plugin-node-resolve' // 让rollup支持nodejs的模
 import commonjs from '@rollup/plugin-commonjs' // 将CommonJs模块转换为es6
 import { defineConfig } from 'rollup'
 import json from '@rollup/plugin-json'
+import fse from 'fs-extra'
 import pkg from './package.json'
 
-const entries = {
-  cli: 'src/cli.ts',
-  index: 'src/index.ts',
-  config: 'src/config.ts',
-}
+const { createEntries } = require('../../utils')
+const files = fse.readdirSync('src')
+
+const entries = {}
+
+files.forEach((file) => {
+  createEntries(file, __dirname, 'src', entries)
+})
 
 const plugins = [
   resolve({
