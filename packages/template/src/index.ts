@@ -5,11 +5,11 @@ import fse from 'fs-extra'
 import { getDirName, log, prompt, renderFiles } from '@munan-cli/utils'
 
 import Config from './config'
-const { TEMPLATE_TYPE_LIST, TEMPLATE_TAG_LIST } = Config
+const { TEMPLATE_TYPE_LIST, TEMPLATE_TAG_LIST, CREATE_TYPE_LIST } = Config
 
-async function build(options: optionsProps) {
-  const modulePath = path.resolve(options.targetPath, `${options.moduleName}-template`)
-  const templatePath = path.resolve(options.targetPath, 'template/src/template', `${options.templateType}Template`)
+async function build(options: optionsProps, modulePath: string, templatePath: string) {
+  // eslint-disable-next-line no-console
+  console.log(modulePath, templatePath)
   try {
     fs.mkdirSync(modulePath)
     fse.copySync(templatePath, modulePath)
@@ -35,9 +35,10 @@ interface optionsProps {
   examplePath?: string
   ejsIgnoreFiles?: string[]
   gitRepository?: string
+  moduleDescription?: string
 }
 
-async function prepare(options: optionsProps) {
+async function prepareTemplate(options: optionsProps) {
   const templateName = await prompt<string>({
     type: 'input',
     message: '输入模板名称',
@@ -94,42 +95,74 @@ async function prepare(options: optionsProps) {
   return options
 }
 
+async function prepareModule(options: optionsProps) {
+  const moduleDescription = await prompt<string>({
+    type: 'input',
+    message: '输入模块描述信息',
+    defaultValue: `${options.moduleName} 模块`,
+  })
+  options.moduleDescription = moduleDescription
+  return options
+}
+
 async function template() {
   try {
     const targetPath = path.resolve(getDirName(import.meta.url), '../../')
     const argv = process.argv
-    let moduleName = argv[2]
+    const isCreateModule = argv[2].match(/^-.*$/)
+    let moduleName = isCreateModule ? argv[3] : argv[2]
+    let createType = 'template'
+    if (isCreateModule)
+      createType = argv[2]
+    const createName = (CREATE_TYPE_LIST.find(type => type.value === createType) || CREATE_TYPE_LIST[0]).name
+    // eslint-disable-next-line no-console
+    console.log(isCreateModule, argv, targetPath, moduleName)
     while (!moduleName) {
       moduleName = await prompt<string>({
         type: 'input',
-        message: '输入模板名称',
+        message: `输入${createName}包名称`,
         defaultValue: '',
       })
       const valid = validate(moduleName)
       if (!valid.validForNewPackages) {
-        log.error('Error:', '模板名称不合法')
+        log.error('Error:', `${createName}名称不合法`)
         moduleName = ''
       }
       const templatePath = `${moduleName}-template`
       if (fse.existsSync(templatePath)) {
-        log.error('Error:', `模板 ${templatePath} 已存在`)
+        log.error('Error:', `${createName} ${templatePath} 已存在`)
         moduleName = ''
       }
     }
-    const templatePath = `${moduleName}-template`
+    const templatePath = isCreateModule ? `${moduleName}` : `${moduleName}-template`
     if (fse.existsSync(path.resolve(targetPath, templatePath))) {
-      log.error('Error:', `模板 ${templatePath} 已存在`)
+      log.error('Error:', `${createName} ${templatePath} 已存在`)
       process.exit(0)
     }
     const options = { moduleName, targetPath }
     log.notice('template', JSON.stringify(options))
     // 完成项目初始化的准备和校验工作
-    const configs = await prepare(options)
-    log.notice('info', '开始构建模板')
-    const result = await build(configs)
+    let result: null | boolean = null
+    let cd = ''
+    if (!isCreateModule) {
+      const configs = await prepareTemplate(options)
+      log.notice('info', '开始构建模板')
+      const modulePath = path.resolve(options.targetPath, `${options.moduleName}-template`)
+      const templatePath = path.resolve(options.targetPath, 'template/templates', `${configs.templateType}Template`)
+      result = await build(configs, modulePath, templatePath)
+      cd = `cd packages/${configs.moduleName}-template`
+    }
+    else {
+      const configs = await prepareModule(options)
+      log.notice('info', '开始构建模块')
+      const modulePath = path.resolve(options.targetPath, `${options.moduleName}`)
+      const templatePath = path.resolve(options.targetPath, 'template/templates/module/base')
+      result = await build(configs, modulePath, templatePath)
+      cd = `cd packages/${configs.moduleName}`
+    }
     if (result) {
-      log.info('info', '创建模板成功')
-      log.info('info', `cd packages/${configs.moduleName}-template`)
+      log.info('info', `创建${createName}成功`)
+      log.info('info', cd)
     }
   }
   catch (e) {

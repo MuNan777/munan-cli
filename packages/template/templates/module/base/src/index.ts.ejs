@@ -1,0 +1,20 @@
+import Config from './config'
+import { log } from '@munan-cli/utils'
+
+async function prepare() {
+}
+
+async function <%=moduleName %>(opt: { debug: boolean }) {
+  try {
+    // 完成项目初始化的准备和校验工作
+    await prepare()
+  }
+  catch (e) {
+    if (opt.debug)
+      log.error('Error:', e.stack)
+    else
+      log.error('Error:', e.message)
+  }
+}
+
+export default <%=moduleName %>

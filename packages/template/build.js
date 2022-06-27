@@ -25,7 +25,7 @@ const build = () => {
       const pkgPath = path.resolve(__dirname, 'package.json')
       const pkg = fse.readJSONSync(pkgPath)
       pkg.templateConfigs = templateConfigs
-      fse.writeJSONSync(pkgPath, pkg)
+      fse.writeJSONSync(pkgPath, pkg, { spaces: 2 })
     }
   }
   catch (err) {
