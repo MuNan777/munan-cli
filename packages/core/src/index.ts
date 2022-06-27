@@ -129,10 +129,28 @@ function handleError(e) {
   process.exit(1)
 }
 
+interface InitExtendOptions {
+  name: string
+  moduleName: string
+}
+interface PublishExtendOptions {
+  refreshToken: boolean
+  refreshOwner: boolean
+  refreshServer: boolean
+  buildCmd: string
+  useCNpm: boolean
+  prod: boolean
+  keepCache: boolean
+  sshUser: string
+  sshIp: string
+  sshPath: string
+}
+type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
+
 // 执行命令
 async function execCommand(
   { packagePath, packageName, packageVersion }: { packageName: string; packageVersion: string; packagePath: any },
-  extendOptions: { name?: string; force: boolean; moduleName?: string },
+  extendOptions: ExtendOptions,
 ) {
   let rootFile: string
   try {
@@ -213,6 +231,52 @@ function registerCommand() {
         { packageName, packageVersion, packagePath },
         { name, force },
       )
+    })
+
+  program
+    .command('publish')
+    .description('项目发布')
+    .option('-P --packagePath <packagePath>', '手动指定publish包路径')
+    .option('--refreshToken', '强制更新git token信息')
+    .option('--refreshOwner', '强制更新git owner信息')
+    .option('--refreshServer', '强制更新git server信息')
+    .option('--buildCmd <buildCmd>', '手动指定build命令')
+    .option('--cnpm', '使用cnpm')
+    .option('--force', '强制更新所有缓存信息')
+    .option('--prod', '正式发布')
+    .action(async ({
+      packagePath,
+      force,
+      refreshToken,
+      refreshOwner,
+      refreshServer,
+      buildCmd,
+      cnpm,
+      prod,
+      keepCache,
+      sshUser,
+      sshIp,
+      sshPath,
+    }) => {
+      const packageName = '@imooc-cli/publish'
+      const packageVersion = '1.0.0'
+      if (force) {
+        refreshToken = true
+        refreshOwner = true
+        refreshServer = true
+      }
+      await execCommand({ packagePath, packageName, packageVersion }, {
+        refreshToken,
+        refreshOwner,
+        refreshServer,
+        buildCmd,
+        useCNpm: cnpm,
+        prod,
+        keepCache,
+        sshUser,
+        sshIp,
+        sshPath,
+      })
     })
 
   // 获取输入参数

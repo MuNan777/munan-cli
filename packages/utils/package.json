@@ -41,6 +41,7 @@
     "npmlog": "^6.0.2",
     "semver": "^7.3.7",
     "simple-git": "^3.10.0",
+    "terminal-link": "^3.0.0",
     "url-join": "^4.0.1",
     "user-home": "^3.0.0",
     "validate-npm-package-name": "^4.0.0"
