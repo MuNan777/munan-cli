@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest packages/",
     "lint": "eslint \"packages/**/*.{js,ts}\"",
-    "create:template": "pnpm -F @munan-cli/template run create"
+    "create:template": "pnpm -F @munan-cli/template run create",
+    "create:module": "pnpm -F @munan-cli/template run create:module"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "@types/node": "^18.0.0",
     "esbuild": "^0.14.47",
     "eslint": "^8.18.0",
+    "fs-extra": "^10.1.0",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.75.7",
