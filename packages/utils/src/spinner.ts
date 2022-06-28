@@ -1,8 +1,7 @@
-import { Spinner } from 'cli-spinner'
+import ora from 'ora'
 
-export default function (msg: string, spinnerString = '|/-\\') {
-  const spinner = new Spinner(`${msg} %s`)
-  spinner.setSpinnerString(spinnerString)
+export default function (msg: string) {
+  const spinner = ora(msg)
   spinner.start()
   return spinner
 }

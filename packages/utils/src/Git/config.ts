@@ -3,6 +3,52 @@ const GITEE = 'gitee'
 const REPO_OWNER_USER = 'user' // 用户仓库
 const REPO_OWNER_ORG = 'org' // 组织仓库
 
+const COMPONENT_GITIGNORE = `.DS_Store
+node_modules
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?`
+
+const PROJECT_GITIGNORE = `.DS_Store
+node_modules
+/dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?`
+
 export default {
   DEFAULT_CLI_HOME: '.munan-cli', // 脚手架默认主目录
   GIT_ROOT_DIR: '.git-root', // git 缓存目录
@@ -32,4 +78,8 @@ export default {
     name: '个人',
     value: REPO_OWNER_USER,
   }],
+  GIT_IGNORE_FILE: '.gitignore',
+  COMPONENT_FILE: '.componentrc',
+  COMPONENT_GITIGNORE,
+  PROJECT_GITIGNORE,
 }

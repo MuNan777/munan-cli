@@ -1,7 +1,9 @@
 import path from 'path'
 import fs from 'fs'
+import childProcess from 'child_process'
 
 import userHome from 'user-home'
+import circularJson from 'circular-json'
 
 import type { SimpleGit } from 'simple-git'
 import SimpleGitFactory from 'simple-git'
@@ -29,6 +31,10 @@ const {
   GIT_LOGIN_FILE,
   GIT_OWNER_TYPE,
   GIT_OWNER_TYPE_ONLY,
+  GIT_IGNORE_FILE,
+  COMPONENT_FILE,
+  COMPONENT_GITIGNORE,
+  PROJECT_GITIGNORE,
 } = Config
 
 interface GitConfig {
@@ -93,6 +99,7 @@ class Git {
   token: string
   user: GitUser
   orgs: GitOrganize[]
+  remote: string | void
 
   constructor(
     { dir, name, version }: GitConfig,
@@ -130,10 +137,45 @@ class Git {
       await this.checkUserAndOrgs()
       await this.checkGitOwner()
       await this.checkRepo()
+      this.checkGitIgnore()
+      this.checkComponent()
+      await this.init()
     }
     else {
       throw new Error('获取托管的Git平台失败')
     }
+  }
+
+  init = async () => {
+    if (this.getRemote())
+      return true
+    await this.initAndAddRemote()
+    await this.initCommit()
+  }
+
+  // 检查 git 是否初始化
+  getRemote = () => {
+    const gitPath = path.resolve(this.dir, GIT_ROOT_DIR)
+    if (this.gitServerInfo!.type === 'github')
+      this.remote = this.gitServerInfo!.getRemote(this.name, this.login!, this.token)
+    else
+      this.remote = this.gitServerInfo!.getRemote(this.name, this.login!)
+
+    if (fs.existsSync(gitPath)) {
+      log.success('git 已完成初始化')
+      return true
+    }
+  }
+
+  // 初始化 git
+  initAndAddRemote = async () => {
+    log.notice('info', '执行 git 初始化')
+    await this.git.init()
+    log.notice('info', '添加 git remote')
+    const remotes = await this.git.getRemotes()
+    log.verbose('git remotes', JSON.stringify(remotes))
+    if (!remotes.find(item => item.name === 'origin'))
+      await this.git.addRemote('origin', this.remote!)
   }
 
   // 检查缓存主目录
@@ -148,6 +190,101 @@ class Git {
     fse.ensureDirSync(this.homePath)
     if (!fs.existsSync(this.homePath))
       throw new Error('用户主目录获取失败！')
+  }
+
+  // 初始化 commit
+  initCommit = async () => {
+    await this.checkConflicted()
+    await this.checkNotCommitted()
+    if (await this.checkRemoteMaster()) {
+      log.notice('info', '远程存在 master 分支，强制合并')
+      // --allow-unrelated-histories 强行合并
+      await this.pullRemoteRepo('master', { '--allow-unrelated-histories': null })
+    }
+    else {
+      await this.pushRemoteRepo('master')
+    }
+  }
+
+  // 检查 master 目录
+  checkRemoteMaster = async () => {
+    let hanMaster = false
+    // git ls-remote --refs
+    const refs = await this.git.listRemote(['--refs'])
+    if (refs.includes('refs/heads/master'))
+      hanMaster = true
+    return hanMaster
+  }
+
+  // 检查代码冲突
+  checkConflicted = async () => {
+    log.notice('init', '代码冲突检查')
+    const status = await this.git.status()
+    if (status.conflicted.length > 0)
+      throw new Error('当前代码存在冲突，请手动处理合并后再试！')
+    log.success('代码检查通过')
+  }
+
+  // 检查未提交
+  checkNotCommitted = async () => {
+    const status = await this.git.status()
+    if (status.not_added.length > 0
+      || status.created.length > 0
+      || status.deleted.length > 0
+      || status.modified.length > 0
+      || status.renamed.length > 0) {
+      log.verbose('status', JSON.stringify(status))
+      await this.git.add(status.not_added)
+      await this.git.add(status.created)
+      await this.git.add(status.deleted)
+      await this.git.add(status.modified)
+      status.renamed.forEach(async (rename) => {
+        await this.git.mv(rename.from, rename.to)
+      })
+      let message = ''
+      while (!message) {
+        message = await prompt({
+          type: 'input',
+          message: '请输入 commit 信息：',
+          defaultValue: '',
+        })
+      }
+      await this.git.commit(message)
+      log.success('本地 commit 提交成功')
+    }
+  }
+
+  getNotPermissionMessage = () => {
+    let message = ''
+    if (this.gitServerInfo!.type === 'github')
+      message += '请重新输入一个具有 repo 权限的 token (munan-cli publish --refreshToken)\n'
+    message += `或者获取本地 ssh publickey 并配置到：${this.gitServerInfo!.getSSHKeysUrl()}，配置方法：${this.gitServerInfo!.getSSHKeysHelpUrl()}`
+    return message
+  }
+
+  // 同步代码
+  pullRemoteRepo = async (branchName: string, options = {}) => {
+    log.notice('info', `同步远程 ${branchName} 分支代码`)
+    await this.git.pull('origin', branchName, options).catch((error) => {
+      if (error.message.includes('403'))
+        throw new Error(this.getNotPermissionMessage())
+      else
+        log.error('error', error.message)
+      log.error('!!!', '请重新执行 munan-cli publish，如仍然报错请尝试删除 .git 目录后重试')
+      process.exit(0)
+    })
+  }
+
+  // 推送代码
+  pushRemoteRepo = async (branchName: string) => {
+    log.notice('info', `推送代码至远程 ${branchName} 分支`)
+    await this.git.push('origin', branchName).catch((error) => {
+      if (error.message.includes('403'))
+        throw new Error(this.getNotPermissionMessage())
+      else
+        log.error('error', error.message)
+    })
+    log.success('推送代码成功')
   }
 
   // 检查 git API 必须的 token
@@ -189,6 +326,9 @@ class Git {
     const loginPath = this.createPath(GIT_LOGIN_FILE)
     let owner = readFile(ownerPath)
     let login = readFile(loginPath)
+    if (login !== this.user.login && !(this.orgs && this.orgs.find(org => org.login === login)))
+      login = null
+
     if (!owner || !login || this.refreshOwner) {
       log.notice('info', `${this.gitServerInfo!.type} owner 未生成，先选择 owner`)
       owner = await prompt<string>({
@@ -220,21 +360,21 @@ class Git {
     this.login = login
   }
 
+  // 检查远程仓库
   checkRepo = async () => {
-    const repo = await this.gitServerInfo!.getRepo(this.login!, this.name)
+    let repo = await this.gitServerInfo!.getRepo(this.name, this.login!)
     if (!repo) {
       const spinnerStart = spinner('开始创建远程仓库...')
       try {
-        if (this.owner === REPO_OWNER_USER) {
-          // repo = await this.gitServerInfo!.getRepo(this.name)
-        }
-        else {
-          // repo = await this.gitServerInfo!.createOrgRepo(this.name, this.login!)
-        }
+        if (this.owner === REPO_OWNER_USER)
+          repo = await this.gitServerInfo!.createRepo(this.name)
+        else
+          repo = await this.gitServerInfo!.createOrgRepo(this.name, this.login!)
       }
       finally {
-        spinnerStart.stop(true)
+        spinnerStart.stop()
       }
+      log.verbose('repo', circularJson.stringify(repo))
       if (repo)
         log.success('远程仓库创建成功')
       else
@@ -242,6 +382,58 @@ class Git {
     }
     log.success('远程仓库信息获取成功')
     this.repo = repo
+  }
+
+  // 检查 .gitignore
+  checkGitIgnore = () => {
+    const gitIgnore = path.resolve(this.dir, GIT_IGNORE_FILE)
+    if (!fs.existsSync(gitIgnore)) {
+      if (this.isComponent()) {
+        writeFile(gitIgnore, COMPONENT_GITIGNORE)
+        log.success('自动写入 .gitignore 文件')
+      }
+      else {
+        writeFile(gitIgnore, PROJECT_GITIGNORE)
+        log.success('自动写入 .gitignore 文件')
+      }
+    }
+  }
+
+  // 判断是否为组件
+  isComponent = () => {
+    const componentFilePath = path.resolve(this.dir, COMPONENT_FILE)
+    return fs.existsSync(componentFilePath) && fse.readJsonSync(componentFilePath)
+  }
+
+  // 检查 component
+  checkComponent = () => {
+    const componentFile = this.isComponent()
+    // 只有 component 才启动该逻辑
+    if (componentFile) {
+      log.notice('info', '开始检查 build 结果')
+      childProcess.execSync('npm run build', {
+        cwd: this.dir,
+        stdio: 'inherit',
+      })
+      const buildPath = path.resolve(this.dir, componentFile.buildPath)
+      if (!fs.existsSync(buildPath))
+        throw new Error(`构建结果：${buildPath} 不存在！`)
+
+      const pkg = this.getPackageJson()
+      if (!pkg.files || !pkg.files.includes(componentFile.buildPath))
+        throw new Error(`package.json 中 files 属性未添加构建结果目录：[${componentFile.buildPath}]，请在 package.json 中手动添加！`)
+
+      log.notice('info', 'build 结果检查通过')
+    }
+  }
+
+  // 获取项目package.json文件
+  getPackageJson = () => {
+    const pkgPath = path.resolve(this.dir, 'package.json')
+    if (!fs.existsSync(pkgPath))
+      throw new Error('package.json 不存在！')
+
+    return fse.readJsonSync(pkgPath)
   }
 
   // 创建缓存目录

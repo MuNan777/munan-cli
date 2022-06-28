@@ -29,9 +29,35 @@ class Gitee extends GitServer {
     return this.handleResponse(response)
   }
 
-  getRepo = async (owner: string, repo: string) => {
-    const response = await this.request.get(`/repos/${owner}/${repo}`)
+  getRepo = async (repo: string, owner: string) => {
+    const response = await this.request.get(`/repos/${owner}/${repo}/branches`)
     return this.handleResponse(response)
+  }
+
+  createRepo = async (repo: string) => {
+    const response = await this.request.post('/user/repos', {
+      name: repo,
+    })
+    return this.handleResponse(response)
+  }
+
+  createOrgRepo = async (repo: string, owner: string) => {
+    const response = await this.request.post(`/orgs/${owner}/repos`, {
+      name: repo,
+    })
+    return this.handleResponse(response)
+  }
+
+  getRemote = (repo: string, owner: string) => {
+    return `https://gitee.com/${owner}/${repo}.git`
+  }
+
+  getSSHKeysUrl = () => {
+    return 'https://gitee.com/profile/sshkeys'
+  }
+
+  getSSHKeysHelpUrl = () => {
+    return 'https://gitee.com/help/articles/4191'
   }
 }
 

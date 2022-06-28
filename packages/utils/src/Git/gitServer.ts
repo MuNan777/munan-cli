@@ -1,4 +1,5 @@
 import type { AxiosResponse } from 'axios'
+import log from '../log'
 
 function error(methodName: string) {
   throw new Error(`${methodName} must be implemented!`)
@@ -29,8 +30,28 @@ class GitServer {
     error('getOrgs')
   }
 
-  getRepo = (_owner: string, _repo: string) => {
+  getRepo = (_repo: string, _owner: string) => {
     error('getRepo')
+  }
+
+  createRepo = (_repo: string) => {
+    error('createRepo')
+  }
+
+  createOrgRepo = (_repo: string, _owner: string) => {
+    error('createOrgRepo')
+  }
+
+  getRemote = (_repo: string, _owner: string, _token?: string) => {
+    error('getRemote')
+  }
+
+  getSSHKeysUrl = () => {
+    error('getSSHKeysUrl')
+  }
+
+  getSSHKeysHelpUrl = () => {
+    error('getSSHKeysHelpUrl')
   }
 
   isHttpResponse = (response: AxiosResponse) => {
@@ -43,10 +64,16 @@ class GitServer {
   }
 
   handleResponse = (response: AxiosResponse) => {
-    if (this.isHttpResponse(response) && response.status !== 200)
+    if (this.isHttpResponse(response) && response.status !== 200) {
+      if (response.data) {
+        if (response.data.message)
+          log.verbose('error', response.data.message)
+        else
+          log.verbose('error', response.data)
+      }
       return null
-    else
-      return response
+    }
+    else { return response }
   }
 }
 

@@ -35,9 +35,9 @@ export default class GithubRequest {
 
   post(url: string, data: { [key: string]: unknown }, headers?: AxiosRequestHeaders | undefined) {
     return this.service(url, {
-      method: 'GET',
+      method: 'POST',
       headers,
-      data,
+      data: { access_token: this.token, ...data },
     })
   }
 }
