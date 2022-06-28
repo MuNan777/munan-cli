@@ -2,6 +2,50 @@ lockfileVersion: 5.4
 
 importers:
 
+  packages/core:
+    specifiers:
+      '@munan-cli/utils': workspace:^1.0.4
+      '@types/fs-extra': ^9.0.13
+      '@types/minimist': ^1.2.2
+      '@types/semver': ^7.3.10
+      '@types/user-home': ^2.0.0
+      colors: ^1.4.0
+      commander: ^9.3.0
+      dotenv: ^16.0.1
+      downgrade-root: ^2.0.0
+      fs-extra: ^10.1.0
+      minimist: ^1.2.6
+      semver: ^7.3.7
+      user-home: ^3.0.0
+    dependencies:
+      '@munan-cli/utils': link:../utils
+      colors: 1.4.0
+      commander: 9.3.0
+      dotenv: 16.0.1
+      downgrade-root: 2.0.0
+      fs-extra: 10.1.0
+      minimist: 1.2.6
+      semver: 7.3.7
+      user-home: 3.0.0
+    devDependencies:
+      '@types/fs-extra': 9.0.13
+      '@types/minimist': 1.2.2
+      '@types/semver': 7.3.10
+      '@types/user-home': 2.0.0
+
+  packages/publish:
+    specifiers:
+      '@munan-cli/utils': workspace:^1.0.4
+      '@types/fs-extra': ^9.0.13
+      colors: ^1.4.0
+      fs-extra: ^10.1.0
+    dependencies:
+      '@munan-cli/utils': link:../utils
+      colors: 1.4.0
+      fs-extra: 10.1.0
+    devDependencies:
+      '@types/fs-extra': 9.0.13
+
   packages/utils:
     specifiers:
       '@types/circular-json': ^0.4.0
@@ -195,6 +239,10 @@ packages:
 
   /@types/minimatch/3.0.5:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+    dev: true
+
+  /@types/minimist/1.2.2:
+    resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: true
 
   /@types/node/18.0.0:
@@ -575,11 +623,21 @@ packages:
     hasBin: true
     dev: false
 
+  /colors/1.4.0:
+    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
+    engines: {node: '>=0.1.90'}
+    dev: false
+
   /combined-stream/1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
+    dev: false
+
+  /commander/9.3.0:
+    resolution: {integrity: sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw==}
+    engines: {node: ^12.20.0 || >=14}
     dev: false
 
   /concat-map/0.0.1:
@@ -628,6 +686,11 @@ packages:
 
   /deep-is/0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+    dev: false
+
+  /default-uid/2.0.0:
+    resolution: {integrity: sha512-aMYTP7vinmUN/dR5n9JUNCB85jy+N+41jx53lMzR6DyGE6NeVPIxCPGbWjDYVNjz6Ei8C9hyeYAfuxVOe3UdsQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /default-user-agent/1.0.0:
@@ -687,6 +750,19 @@ packages:
     engines: {node: '>= 0.10.0'}
     dependencies:
       utility: 0.1.11
+    dev: false
+
+  /dotenv/16.0.1:
+    resolution: {integrity: sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /downgrade-root/2.0.0:
+    resolution: {integrity: sha512-tke0knZzG76FThh9diBex027u3qsoXv6PKZDva1fsEuqlzlstkcyoJgdHE/wQc2nBU1rnUcmhMUnQA3gucXc0Q==}
+    engines: {node: '>=12'}
+    dependencies:
+      default-uid: 2.0.0
+      is-root: 3.0.0
     dev: false
 
   /eastasianwidth/0.2.0:
@@ -1175,6 +1251,11 @@ packages:
 
   /is-lambda/1.0.1:
     resolution: {integrity: sha512-z7CMFGNrENq5iFB9Bqo64Xk6Y9sg+epq1myIcdHaGnbMTYOxvzsEtdYqQUylB7LxfkvgrrjP32T6Ywciio9UIQ==}
+    dev: false
+
+  /is-root/3.0.0:
+    resolution: {integrity: sha512-C13bL54yQdgniduW8KFe81ttgQINcwMgil/zyNuDzr/xjIyDMkcvcc9dON62RH9VBAHOI7le+lTo/U3PY3irwg==}
+    engines: {node: '>=12'}
     dev: false
 
   /is-type-of/1.2.1:

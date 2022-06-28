@@ -121,6 +121,8 @@ class Git {
     this.login = null
     this.repo = null
     this.homePath = cliHome
+    // eslint-disable-next-line no-console
+    console.log(this.homePath, cliHome)
     this.refreshToken = refreshToken
     this.refreshOwner = refreshOwner
     this.refreshServer = refreshServer

@@ -1,6 +1,6 @@
 import fs from 'fs'
-
 import path from 'path'
+
 import downgradeRoot from 'downgrade-root'
 import userHome from 'user-home'
 import minimist from 'minimist'
@@ -8,12 +8,20 @@ import dotenv from 'dotenv'
 import { Command } from 'commander'
 import semver from 'semver'
 import colors from 'colors/safe'
+import fse from 'fs-extra'
 
 import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
 import packageConfig from '../package.json'
 import baseConfig from './config'
-const { DEFAULT_CLI_HOME, DEPENDENCIES_PATH, LOWEST_NODE_VERSION, NPM_NAME, USE_ORIGIN_NPM } = baseConfig
+const {
+  DEFAULT_CLI_HOME,
+  DEPENDENCIES_PATH,
+  LOWEST_NODE_VERSION,
+  NPM_NAME,
+  USE_ORIGIN_NPM,
+  WORKPLACE_GIT_CONFIG_PATH,
+} = baseConfig
 
 let args: minimist.ParsedArgs
 let config: {
@@ -143,6 +151,7 @@ interface PublishExtendOptions {
   sshUser: string
   sshIp: string
   sshPath: string
+  cliHome: string
 }
 type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
 
@@ -241,11 +250,13 @@ function registerCommand() {
     .option('--refreshServer', '强制更新git server信息')
     .option('--buildCmd <buildCmd>', '手动指定build命令')
     .option('--cnpm', '使用cnpm')
-    .option('--force', '强制更新所有缓存信息')
+    .option('-f --force', '强制更新所有缓存信息')
     .option('--prod', '正式发布')
+    .option('-CWC --createWorkPackConfig', '创建工作空间发布配置, 以后默认使用工作空间配置')
     .action(async ({
       packagePath,
       force,
+      f,
       refreshToken,
       refreshOwner,
       refreshServer,
@@ -256,26 +267,40 @@ function registerCommand() {
       sshUser,
       sshIp,
       sshPath,
+      CWC,
+      createWorkPackConfig,
     }) => {
-      const packageName = '@imooc-cli/publish'
-      const packageVersion = '1.0.0'
-      if (force) {
-        refreshToken = true
-        refreshOwner = true
-        refreshServer = true
+      if (CWC || createWorkPackConfig) {
+        fse.ensureDirSync(WORKPLACE_GIT_CONFIG_PATH)
+        log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH} 成功`)
       }
-      await execCommand({ packagePath, packageName, packageVersion }, {
-        refreshToken,
-        refreshOwner,
-        refreshServer,
-        buildCmd,
-        useCNpm: cnpm,
-        prod,
-        keepCache,
-        sshUser,
-        sshIp,
-        sshPath,
-      })
+      else {
+        const packageName = '@imooc-cli/publish'
+        const packageVersion = '1.0.0'
+        if (f || force) {
+          refreshToken = true
+          refreshOwner = true
+          refreshServer = true
+        }
+        let cliHome = config.cliHome
+        if (fse.existsSync(WORKPLACE_GIT_CONFIG_PATH))
+          cliHome = path.resolve(process.cwd(), WORKPLACE_GIT_CONFIG_PATH)
+        log.verbose('cliHome', cliHome)
+
+        await execCommand({ packagePath, packageName, packageVersion }, {
+          refreshToken,
+          refreshOwner,
+          refreshServer,
+          buildCmd,
+          useCNpm: cnpm,
+          prod,
+          keepCache,
+          sshUser,
+          sshIp,
+          sshPath,
+          cliHome,
+        })
+      }
     })
 
   // 获取输入参数

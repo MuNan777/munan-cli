@@ -2,6 +2,7 @@ const GITHUB = 'github'
 const GITEE = 'gitee'
 const REPO_OWNER_USER = 'user' // 用户仓库
 const REPO_OWNER_ORG = 'org' // 组织仓库
+const WORKPLACE_GIT_CONFIG_PATH = 'munan-cli.git.config'
 
 const COMPONENT_GITIGNORE = `.DS_Store
 node_modules
@@ -24,7 +25,11 @@ pnpm-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?`
+*.sw?
+
+# workplace publish config
+${WORKPLACE_GIT_CONFIG_PATH} 
+`
 
 const PROJECT_GITIGNORE = `.DS_Store
 node_modules
@@ -47,7 +52,11 @@ pnpm-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?`
+*.sw?
+
+# workplace publish config
+${WORKPLACE_GIT_CONFIG_PATH} 
+`
 
 export default {
   DEFAULT_CLI_HOME: '.munan-cli', // 脚手架默认主目录
