@@ -312,7 +312,7 @@ async function installTemplate(
   fse.ensureDirSync(sourceDir)
   fse.ensureDirSync(targetDir)
   fse.copySync(sourceDir, targetDir)
-  spinnerStart.stop(true)
+  spinnerStart.stop()
   log.success('模板安装成功')
   // ejs 模板渲染
   const ejsIgnoreFiles = [

@@ -74,7 +74,6 @@ function createCliConfig() {
   }
   if (process.env.CLI_HOME)
     cliConfig.cliHome = path.join(userHome, process.env.CLI_HOME)
-
   else
     cliConfig.cliHome = path.join(userHome, DEFAULT_CLI_HOME)
 
