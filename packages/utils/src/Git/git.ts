@@ -8,6 +8,8 @@ import circularJson from 'circular-json'
 import type { SimpleGit } from 'simple-git'
 import SimpleGitFactory from 'simple-git'
 import fse from 'fs-extra'
+import type { ReleaseType } from 'semver'
+import semver from 'semver'
 
 import log from '../log'
 import { readFile, writeFile } from '../file'
@@ -35,6 +37,8 @@ const {
   COMPONENT_FILE,
   COMPONENT_GITIGNORE,
   PROJECT_GITIGNORE,
+  VERSION_RELEASE,
+  VERSION_DEVELOP,
 } = Config
 
 interface GitConfig {
@@ -100,6 +104,7 @@ class Git {
   user: GitUser
   orgs: GitOrganize[]
   remote: string | void
+  branch: string
 
   constructor(
     { dir, name, version }: GitConfig,
@@ -424,6 +429,129 @@ class Git {
         throw new Error(`package.json 中 files 属性未添加构建结果目录：[${componentFile.buildPath}]，请在 package.json 中手动添加！`)
 
       log.notice('info', 'build 结果检查通过')
+    }
+  }
+
+  // 合并分支
+  pullRemoteMasterAndBranch = async () => {
+    log.notice('info', `合并 [master] -> [${this.branch}]`)
+    await this.pullRemoteRepo('master')
+    log.success('合并远程 [master] 分支内容成功')
+    await this.checkConflicted()
+    log.notice('info', '检查远程分支')
+    const remoteBranchList = await this.getRemoteBranchList()
+    if (remoteBranchList.includes(this.version)) {
+      log.notice('info', `合并 [${this.branch}] -> [${this.branch}]`)
+      await this.pullRemoteRepo(this.branch)
+      log.success(`合并远程 [${this.branch}] 分支内容成功`)
+      await this.checkConflicted()
+    }
+    else {
+      log.success(`不存在远程分支 [${this.branch}]`)
+    }
+  }
+
+  commit = async () => {
+    await this.getCorrectVersion()
+    await this.checkStash()
+    await this.checkConflicted()
+    await this.checkNotCommitted()
+    await this.checkoutBranch(this.branch)
+    await this.pullRemoteMasterAndBranch()
+    await this.pushRemoteRepo(this.branch)
+  }
+
+  // 切换分支
+  checkoutBranch = async (branch: string) => {
+    const localBranchList = await this.git.branchLocal()
+    if (localBranchList.all.includes(branch))
+      await this.git.checkout(branch)
+    else
+      await this.git.checkoutLocalBranch(branch)
+    log.success(`分支切换到${branch}`)
+  }
+
+  // 检查 stash 记录
+  checkStash = async () => {
+    log.notice('info', '检查 stash 记录')
+    const stash = await this.git.stashList()
+    if (stash.all.length > 0) {
+      await this.git.stash(['pop'])
+      log.success('stash pop 成功')
+    }
+  }
+
+  // 获取线上发布版本
+  getRemoteBranchList = async (type?: string) => {
+    // git ls-remote --refs
+    const remoteList = await this.git.listRemote(['--refs'])
+    let reg: RegExp
+    if (type === VERSION_RELEASE)
+      reg = /.+?refs\/tags\/release\/(\d+\.\d+\.\d+)/g
+    else
+      reg = /.+?refs\/heads\/dev\/(\d+\.\d+\.\d+)/g
+    return remoteList.split('\n').map((re) => {
+      const match = reg.exec(re.trim())
+      reg.lastIndex = 0
+      if (match && semver.valid(match[1]))
+        return match[1]
+      else
+        return null
+    }).filter(_ => _).sort((a, b) => {
+      if (semver.lte(b!, a!)) {
+        if (a === b)
+          return 0
+        return -1
+      }
+      return 1
+    })
+  }
+
+  // 获取版本号
+  getCorrectVersion = async () => {
+    log.notice('info', '获取代码分支')
+    const remoteBranchList = await this.getRemoteBranchList(VERSION_RELEASE)
+    let releaseVersion: string | null = null
+    if (remoteBranchList && remoteBranchList.length > 0) {
+      // 获取最近的线上版本
+      releaseVersion = remoteBranchList[0]
+    }
+    const devVersion = this.version
+    if (!releaseVersion) { this.branch = `${VERSION_DEVELOP}/${devVersion}` }
+    else if (semver.gt(this.version, releaseVersion)) {
+      log.info('当前版本大于线上最新版本', `${devVersion} >= ${releaseVersion}`)
+      this.branch = `${VERSION_DEVELOP}/${devVersion}`
+    }
+    else {
+      log.notice('当前线上版本大于或等于本地版本', `${releaseVersion} >= ${devVersion}`)
+      const incType = await prompt<ReleaseType>({
+        type: 'list',
+        choices: [{
+          name: `小版本（${releaseVersion} -> ${semver.inc(releaseVersion, 'patch')}）`,
+          value: 'patch',
+        }, {
+          name: `中版本（${releaseVersion} -> ${semver.inc(releaseVersion, 'minor')}）`,
+          value: 'minor',
+        }, {
+          name: `大版本（${releaseVersion} -> ${semver.inc(releaseVersion, 'major')}）`,
+          value: 'major',
+        }],
+        defaultValue: 'patch',
+        message: '自动升级版本，请选择升级版本类型',
+      })
+      const incVersion = semver.inc(releaseVersion, incType)
+      this.branch = `${VERSION_DEVELOP}/${incVersion}`
+      this.version = incVersion!
+      this.syncVersionToPackageJson()
+    }
+    log.success(`代码分支获取成功 ${this.branch}`)
+  }
+
+  syncVersionToPackageJson = () => {
+    const pkg = fse.readJSONSync(`${this.dir}/package.json`)
+    if (pkg && pkg.version !== this.version) {
+      pkg.version = this.version
+      fse.writeJsonSync(`${this.dir}/package.json`, pkg, { spaces: 2 })
     }
   }
 

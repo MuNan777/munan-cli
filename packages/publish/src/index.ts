@@ -35,8 +35,11 @@ async function publish(opt: { debug: boolean; buildCmd: string }) {
     const git = new Git(projectInfo, opt)
     log.info(colors.red('==='), colors.gray('git配置检查'), colors.red('==='))
     await git.prepare()
-    // eslint-disable-next-line no-console
-    console.log(startTime)
+    log.info(colors.red('==='), colors.gray('git自动提交'), colors.red('==='))
+    await git.commit()
+    const endTime = new Date().getTime()
+    log.verbose('elapsed time', `${new Date(startTime)}, ${new Date(endTime)}`)
+    log.info('本次发布耗时：', `${Math.floor((endTime - startTime) / 1000)}秒`)
   }
   catch (e) {
     if (opt.debug)

@@ -82,4 +82,6 @@ export default {
   COMPONENT_FILE: '.componentrc',
   COMPONENT_GITIGNORE,
   PROJECT_GITIGNORE,
+  VERSION_RELEASE: 'release',
+  VERSION_DEVELOP: 'dev',
 }
