@@ -12,7 +12,7 @@ import type { ReleaseType } from 'semver'
 import semver from 'semver'
 
 import log from '../log'
-import { readFile, writeFile } from '../file'
+import { writeFile, writeJSONFile } from '../file'
 import { prompt } from '../inquirer'
 import { terminalLink } from '../terminalLink'
 import spinner from '../spinner'
@@ -23,14 +23,14 @@ import Gitee from './gitee'
 const {
   REPO_OWNER_USER,
   DEFAULT_CLI_HOME,
-  GIT_ROOT_DIR,
-  GIT_SERVER_FILE,
   GIT_SERVER_TYPE,
   GITEE,
   GITHUB,
-  GIT_TOKEN_FILE,
-  GIT_OWN_FILE,
-  GIT_LOGIN_FILE,
+  GIT_ROOT_DIR,
+  GIT_SERVER_NAME,
+  GIT_TOKEN_NAME,
+  GIT_OWN_NAME,
+  GIT_LOGIN_NAME,
   GIT_OWNER_TYPE,
   GIT_OWNER_TYPE_ONLY,
   GIT_IGNORE_FILE,
@@ -39,6 +39,7 @@ const {
   PROJECT_GITIGNORE,
   VERSION_RELEASE,
   VERSION_DEVELOP,
+  GIT_ROOT_CONFIG_NAME,
 } = Config
 
 interface GitConfig {
@@ -80,6 +81,13 @@ function createGitServer(gitServer) {
   return null
 }
 
+interface publishConfigProps {
+  gitLogin: string
+  gitOwn: string
+  gitServer: string
+  gitToken: string
+}
+
 class Git {
   git: SimpleGit // git 实例
   name: string
@@ -105,6 +113,8 @@ class Git {
   orgs: GitOrganize[]
   remote: string | void
   branch: string
+  publishConfig: Partial<publishConfigProps>
+  useWorkPlacePublishConfig: boolean
 
   constructor(
     { dir, name, version }: GitConfig,
@@ -121,8 +131,6 @@ class Git {
     this.login = null
     this.repo = null
     this.homePath = cliHome
-    // eslint-disable-next-line no-console
-    console.log(this.homePath, cliHome)
     this.refreshToken = refreshToken
     this.refreshOwner = refreshOwner
     this.refreshServer = refreshServer
@@ -138,6 +146,7 @@ class Git {
 
   prepare = async () => {
     this.checkHomePath()
+    await this.checkConfig()
     await this.checkGitServer()
     if (this.gitServerInfo) {
       await this.checkGitToken()
@@ -154,21 +163,50 @@ class Git {
   }
 
   init = async () => {
-    if (this.getRemote())
+    if (await this.getRemote())
       return true
     await this.initAndAddRemote()
     await this.initCommit()
   }
 
+  // 检查配置
+  checkConfig = async () => {
+    let publishConfig = null
+    if (fse.existsSync(`${GIT_ROOT_CONFIG_NAME}.json`)) {
+      publishConfig = await fse.readJSONSync(`${this.dir}/${GIT_ROOT_CONFIG_NAME}.json`)
+      this.useWorkPlacePublishConfig = true
+    }
+    else {
+      const publishConfigHomePath = `${this.homePath!}/${GIT_ROOT_CONFIG_NAME}.json`
+      if (fse.existsSync(publishConfigHomePath))
+        publishConfig = await fse.readJSONSync(publishConfigHomePath)
+      else
+        fse.writeFileSync(publishConfigHomePath, '{}')
+      this.useWorkPlacePublishConfig = false
+    }
+    if (publishConfig) {
+      this.publishConfig = publishConfig
+      if (
+        !this.publishConfig.gitLogin
+        || !this.publishConfig.gitToken
+        || !this.publishConfig.gitOwn
+        || !this.publishConfig.gitServer
+      )
+        return false
+      return true
+    }
+    return false
+  }
+
   // 检查 git 是否初始化
-  getRemote = () => {
+  getRemote = async () => {
     const gitPath = path.resolve(this.dir, GIT_ROOT_DIR)
     if (this.gitServerInfo!.type === 'github')
       this.remote = this.gitServerInfo!.getRemote(this.name, this.login!, this.token)
     else
       this.remote = this.gitServerInfo!.getRemote(this.name, this.login!)
 
-    if (fs.existsSync(gitPath)) {
+    if (fse.existsSync(gitPath)) {
       log.success('git 已完成初始化')
       return true
     }
@@ -296,8 +334,7 @@ class Git {
 
   // 检查 git API 必须的 token
   checkGitToken = async () => {
-    const tokenPath = this.createPath(GIT_TOKEN_FILE)
-    let token = readFile(tokenPath)
+    let token = this.publishConfig.gitToken
     if (!token || this.refreshToken) {
       log.notice(`${this.gitServerInfo!.type} token未生成`, `请先生成 ${this.gitServerInfo!.type} token，${terminalLink('链接', this.gitServerInfo!.getTokenHelpUrl())}`)
       token = await prompt<string>({
@@ -305,12 +342,13 @@ class Git {
         message: '请将 token 复制到这里',
         defaultValue: '',
       })
-      writeFile(tokenPath, token)
-      log.success('token 写入成功', `${token} -> ${tokenPath}`)
+      const configPath = this.createPath()
+      writeJSONFile(configPath, { [GIT_TOKEN_NAME]: token })
+      log.success('token 写入成功', `${token} -> ${configPath}`)
     }
     else {
       log.verbose('token', token)
-      log.success('token 获取成功', tokenPath)
+      log.success('token 获取成功')
     }
     this.token = token
     this.gitServerInfo!.setToken(token)
@@ -329,10 +367,8 @@ class Git {
 
   // 检查 git owner 是否选择
   checkGitOwner = async () => {
-    const ownerPath = this.createPath(GIT_OWN_FILE)
-    const loginPath = this.createPath(GIT_LOGIN_FILE)
-    let owner = readFile(ownerPath)
-    let login = readFile(loginPath)
+    let owner = this.publishConfig.gitOwn
+    let login = this.publishConfig.gitLogin || null
     if (login !== this.user.login && !(this.orgs && this.orgs.find(org => org.login === login)))
       login = null
 
@@ -354,10 +390,11 @@ class Git {
           message: '请选择',
         })
       }
-      writeFile(ownerPath, owner)
-      writeFile(loginPath, login)
-      log.success('git owner写入成功', `${owner} -> ${ownerPath}`)
-      log.success('git login写入成功', `${login} -> ${loginPath}`)
+      const configPath = this.createPath()
+      writeJSONFile(configPath, { [GIT_OWN_NAME]: owner })
+      writeJSONFile(configPath, { [GIT_LOGIN_NAME]: login })
+      log.success('git owner写入成功', `${owner} -> ${configPath}`)
+      log.success('git login写入成功', `${login} -> ${configPath}`)
     }
     else {
       log.success('git owner 获取成功', owner)
@@ -567,32 +604,80 @@ class Git {
   }
 
   // 创建缓存目录
-  createPath = (file: string) => {
-    const rootDir = path.resolve(this.homePath!, GIT_ROOT_DIR)
-    const filePath = path.resolve(rootDir, file)
-    fse.ensureDirSync(rootDir)
+  createPath = () => {
+    let filePath = path.resolve(this.homePath!, `${GIT_ROOT_CONFIG_NAME}.json`)
+    if (this.useWorkPlacePublishConfig)
+      filePath = path.resolve(this.dir, `${GIT_ROOT_CONFIG_NAME}.json`)
+
+    if (!fse.existsSync(filePath))
+      fse.writeFileSync(filePath, '{}')
     return filePath
   }
 
   // 选择远程 git 平台
   checkGitServer = async () => {
-    const gitServerPath = this.createPath(GIT_SERVER_FILE)
-    let gitServerInfo = readFile(gitServerPath)
-    if (!gitServerInfo || this.refreshServer) {
-      gitServerInfo = await prompt<string>({
+    let gitServer = this.publishConfig.gitServer
+    if (!gitServer || this.refreshServer) {
+      gitServer = await prompt<string>({
         type: 'list',
         choices: GIT_SERVER_TYPE,
         message: '请选择您想要托管的Git平台',
       })
-      if (writeFile(gitServerPath, gitServerInfo))
-        log.success('git server写入成功', `${gitServerInfo} -> ${gitServerPath}`)
+      const configPath = this.createPath()
+      if (writeJSONFile(this.createPath(), { [GIT_SERVER_NAME]: gitServer }))
+        log.success('git server写入成功', `${gitServer} -> ${configPath}`)
       else
-        log.verbose('git server写入失败', `${gitServerInfo} -> ${gitServerPath}`)
+        log.verbose('git server写入失败', `${gitServer} -> ${configPath}`)
     }
     else {
-      log.success('git server获取成功', gitServerInfo)
+      log.success('git server获取成功', gitServer)
     }
-    this.gitServerInfo = createGitServer(gitServerInfo)
+    this.gitServerInfo = createGitServer(gitServer)
+  }
+
+  saveComponentToDB = async () => { }
+
+  // 发布前自动检查
+  prePublish = async () => {
+    log.notice('info', '开始执行发布前自动检查任务')
+    // 代码检查
+    this.checkProject()
+    // build 检查
+    log.success('自动检查通过')
+  }
+
+  // build结果检查
+  checkProject = () => {
+    log.notice('info', '开始检查代码结构')
+    const pkg = this.getPackageJson()
+    if (!pkg.scripts || !Object.keys(pkg.scripts).includes('build'))
+      throw new Error('build命令不存在！')
+
+    log.success('代码结构检查通过')
+    log.notice('info', '开始检查 build 结果')
+    if (this.buildCmd) {
+      childProcess.execSync(this.buildCmd, {
+        cwd: this.dir,
+      })
+    }
+    else {
+      childProcess.execSync('npm run build', {
+        cwd: this.dir,
+      })
+    }
+    log.notice('info', 'build 结果检查通过')
+  }
+
+  // 测试/正式发布
+  publish = async () => {
+    // const buildRet = false
+    if (this.isComponent()) {
+      log.notice('info', '开始发布组件')
+      await this.saveComponentToDB()
+    }
+    else {
+      await this.prePublish()
+    }
   }
 }
 

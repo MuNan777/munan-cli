@@ -37,6 +37,8 @@ async function publish(opt: { debug: boolean; buildCmd: string }) {
     await git.prepare()
     log.info(colors.red('==='), colors.gray('git自动提交'), colors.red('==='))
     await git.commit()
+    log.info(colors.red('==='), colors.gray('云构建+云发布'), colors.red('==='))
+    await git.publish()
     const endTime = new Date().getTime()
     log.verbose('elapsed time', `${new Date(startTime)}, ${new Date(endTime)}`)
     log.info('本次发布耗时：', `${Math.floor((endTime - startTime) / 1000)}秒`)

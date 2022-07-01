@@ -140,6 +140,7 @@ interface InitExtendOptions {
   name: string
   moduleName: string
 }
+
 interface PublishExtendOptions {
   refreshToken: boolean
   refreshOwner: boolean
@@ -271,8 +272,9 @@ function registerCommand() {
       createWorkPackConfig,
     }) => {
       if (CWC || createWorkPackConfig) {
-        fse.ensureDirSync(WORKPLACE_GIT_CONFIG_PATH)
-        log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH} 成功`)
+        fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
+        fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
+        log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
       }
       else {
         const packageName = '@imooc-cli/publish'
@@ -282,9 +284,8 @@ function registerCommand() {
           refreshOwner = true
           refreshServer = true
         }
-        let cliHome = config.cliHome
-        if (fse.existsSync(WORKPLACE_GIT_CONFIG_PATH))
-          cliHome = path.resolve(process.cwd(), WORKPLACE_GIT_CONFIG_PATH)
+
+        const cliHome = config.cliHome
         log.verbose('cliHome', cliHome)
 
         await execCommand({ packagePath, packageName, packageVersion }, {

@@ -1,6 +1,8 @@
 import path from 'path'
 import url from 'url'
 import fs from 'fs'
+import type { WriteOptions } from 'fs-extra'
+import fse from 'fs-extra'
 
 export function getDirName(importMetaUrl: string) {
   return path.dirname(getFileName(importMetaUrl))
@@ -41,5 +43,21 @@ export function writeFile(
   else {
     fs.writeFileSync(path, data, { flag: 'a+' })
     return true
+  }
+}
+
+export function writeJSONFile(
+  path: string,
+  data: { [key: string]: unknown },
+  options?: WriteOptions,
+) {
+  try {
+    let temp = fse.readJSONSync(path)
+    temp = Object.assign(temp, data)
+    fse.writeJSONSync(path, temp, { spaces: 2, ...options })
+    return true
+  }
+  catch (e) {
+    return false
   }
 }

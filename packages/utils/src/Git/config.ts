@@ -28,7 +28,8 @@ pnpm-debug.log*
 *.sw?
 
 # workplace publish config
-${WORKPLACE_GIT_CONFIG_PATH} 
+${WORKPLACE_GIT_CONFIG_PATH}.mjs
+${WORKPLACE_GIT_CONFIG_PATH}.json
 `
 
 const PROJECT_GITIGNORE = `.DS_Store
@@ -55,13 +56,18 @@ pnpm-debug.log*
 *.sw?
 
 # workplace publish config
-${WORKPLACE_GIT_CONFIG_PATH} 
+${WORKPLACE_GIT_CONFIG_PATH}.mjs
+${WORKPLACE_GIT_CONFIG_PATH}.json
 `
 
 export default {
   DEFAULT_CLI_HOME: '.munan-cli', // 脚手架默认主目录
-  GIT_ROOT_DIR: '.git-root', // git 缓存目录
-  GIT_SERVER_FILE: '.git_server', // git 服务缓存目录
+  GIT_ROOT_DIR: '.git', // git 缓存目录
+  GIT_ROOT_CONFIG_NAME: 'munan-cli.git.config', // git 配置文件名称
+  GIT_SERVER_NAME: 'gitServer', // git 服务缓存目录
+  GIT_TOKEN_NAME: 'gitToken',
+  GIT_OWN_NAME: 'gitOwn',
+  GIT_LOGIN_NAME: 'gitLogin',
   GITHUB,
   GITEE,
   GIT_SERVER_TYPE: [{
@@ -71,9 +77,6 @@ export default {
     name: 'Gitee(码云)',
     value: GITEE,
   }],
-  GIT_TOKEN_FILE: '.git_token',
-  GIT_OWN_FILE: '.git_own',
-  GIT_LOGIN_FILE: '.git_login',
   REPO_OWNER_USER,
   REPO_OWNER_ORG,
   GIT_OWNER_TYPE: [{
