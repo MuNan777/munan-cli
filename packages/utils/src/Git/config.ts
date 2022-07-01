@@ -68,6 +68,7 @@ export default {
   GIT_TOKEN_NAME: 'gitToken',
   GIT_OWN_NAME: 'gitOwn',
   GIT_LOGIN_NAME: 'gitLogin',
+  GIT_PUBLISH_NAME: 'gitPublish',
   GITHUB,
   GITEE,
   GIT_SERVER_TYPE: [{
@@ -96,4 +97,11 @@ export default {
   PROJECT_GITIGNORE,
   VERSION_RELEASE: 'release',
   VERSION_DEVELOP: 'dev',
+  GIT_PUBLISH_TYPE: [{
+    name: 'COS',
+    value: 'cos',
+  }, {
+    name: 'OSS',
+    value: 'oss',
+  }],
 }

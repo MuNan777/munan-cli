@@ -16,6 +16,7 @@ import { writeFile, writeJSONFile } from '../file'
 import { prompt } from '../inquirer'
 import { terminalLink } from '../terminalLink'
 import spinner from '../spinner'
+import CloudBuild from '../build/CloudBuild'
 import Config from './config'
 import Github from './github'
 import Gitee from './gitee'
@@ -31,6 +32,7 @@ const {
   GIT_TOKEN_NAME,
   GIT_OWN_NAME,
   GIT_LOGIN_NAME,
+  GIT_PUBLISH_NAME,
   GIT_OWNER_TYPE,
   GIT_OWNER_TYPE_ONLY,
   GIT_IGNORE_FILE,
@@ -40,6 +42,7 @@ const {
   VERSION_RELEASE,
   VERSION_DEVELOP,
   GIT_ROOT_CONFIG_NAME,
+  GIT_PUBLISH_TYPE,
 } = Config
 
 interface GitConfig {
@@ -86,6 +89,7 @@ interface publishConfigProps {
   gitOwn: string
   gitServer: string
   gitToken: string
+  gitPublishType: string
 }
 
 class Git {
@@ -670,13 +674,39 @@ class Git {
 
   // 测试/正式发布
   publish = async () => {
-    // const buildRet = false
+    let buildRet = false
     if (this.isComponent()) {
       log.notice('info', '开始发布组件')
       await this.saveComponentToDB()
     }
     else {
       await this.prePublish()
+      let gitPublishType = this.publishConfig.gitPublishType
+      if (!gitPublishType) {
+        gitPublishType = await prompt({
+          type: 'list',
+          choices: GIT_PUBLISH_TYPE,
+          message: '请选择您想要上传代码的平台',
+        })
+        const configPath = this.createPath()
+        writeJSONFile(configPath, { [GIT_PUBLISH_NAME]: gitPublishType })
+        log.success('git publish类型写入成功', `${gitPublishType} -> ${configPath}`)
+      }
+      else {
+        log.success('git publish类型获取成功', gitPublishType)
+      }
+      const cloudBuild = new CloudBuild(this, gitPublishType!, {
+        prod: !!this.prod,
+        keepCache: !!this.keepCache,
+        cnpm: !!this.useCNpm,
+        buildCmd: this.buildCmd,
+      })
+      // await cloudBuild.prepare()
+      await cloudBuild.init()
+      buildRet = await cloudBuild.build()
+      if (buildRet)
+        // eslint-disable-next-line no-console
+        console.log(buildRet)
     }
   }
 }
