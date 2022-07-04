@@ -57,7 +57,7 @@ interface ActionConfig {
   refreshOwner: boolean // 是否强制刷新用户
   refreshServer: boolean // 是否强制刷新 git 远程仓库类型
   prod: boolean // 是否为正式发布
-  useCNpm: string // 是否使用 cnpm
+  useCNpm: string // 是否使用 useCNpm
   keepCache: string // 是否保留服务端缓存（用于调试bug）
   buildCmd: string // 手动指定build命令
 }
@@ -698,7 +698,7 @@ class Git {
       const cloudBuild = new CloudBuild(this, gitPublishType!, {
         prod: !!this.prod,
         keepCache: !!this.keepCache,
-        cnpm: !!this.useCNpm,
+        useCNpm: !!this.useCNpm,
         buildCmd: this.buildCmd,
       })
       // await cloudBuild.prepare()

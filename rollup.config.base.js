@@ -26,6 +26,7 @@ export function createConfig(entries, pkg) {
   const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    'child_process',
   ]
   return defineConfig([
     {

@@ -5,8 +5,9 @@ import { Git, log } from '@munan-cli/utils'
 import colors from 'colors'
 
 async function prepare(options: { buildCmd: string }) {
-  if (options.buildCmd) {
-    const { buildCmd } = options
+  const { buildCmd } = options
+  if (!buildCmd) { options.buildCmd = 'npm run build' }
+  else {
     if (!buildCmd.startsWith('npm run build'))
       throw new Error('buildCmd参数不符合规范，正确格式：npm run build:xxx')
   }

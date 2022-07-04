@@ -1,8 +1,9 @@
 import { get } from 'lodash-es'
-import type { Socket } from 'socket.io-client'
+import type { ManagerOptions, Socket, SocketOptions } from 'socket.io-client'
 import io from 'socket.io-client'
 import log from '../log'
 import type Git from '../Git/git'
+import type { SocketOn } from './type'
 import Config from './config'
 import { parseMsg } from './parse'
 const { WS_SERVER, FAILED_CODE } = Config
@@ -10,20 +11,21 @@ const { WS_SERVER, FAILED_CODE } = Config
 interface CloudBuildOptions {
   prod: boolean
   keepCache: boolean
-  cnpm: boolean
+  useCNpm: boolean
   buildCmd: string
 }
 
+type SocketType = Socket & SocketOn
 class CloudBuild {
   _git: Git
   _type: string
   _timeout: number
   _prod?: boolean
   _keepCache?: boolean
-  _cnpm?: boolean
+  _useCNpm?: boolean
   _buildCmd?: string
   timer: NodeJS.Timeout
-  _socket: Socket
+  _socket: SocketType
 
   constructor(git: Git, type: string, options: Partial<CloudBuildOptions>) {
     log.verbose('CloudBuild options', JSON.stringify(options))
@@ -32,7 +34,7 @@ class CloudBuild {
     this._timeout = get(options, 'timeout') || 1200 * 1000 // 默认超时时间20分钟
     this._prod = options.prod
     this._keepCache = options.keepCache
-    this._cnpm = options.cnpm
+    this._useCNpm = options.useCNpm
     this._buildCmd = options.buildCmd
   }
 
@@ -46,7 +48,7 @@ class CloudBuild {
     log.notice('info', '开始云构建任务初始化')
     log.verbose('remote', `${this._git.remote}`)
     return new Promise((resolve, reject) => {
-      const socket = io(WS_SERVER, {
+      const socket = io(`${WS_SERVER}/build`, {
         query: {
           repo: this._git.remote,
           type: this._type,
@@ -55,11 +57,11 @@ class CloudBuild {
           version: this._git.version,
           prod: this._prod,
           keepCache: this._keepCache,
-          cnpm: this._cnpm,
+          useCNpm: this._useCNpm,
           buildCmd: this._buildCmd,
         },
         transports: ['websocket'],
-      })
+      } as Partial<ManagerOptions & SocketOptions>) as unknown as SocketType
       const disconnect = () => {
         clearTimeout(this.timer)
         socket.disconnect()
@@ -76,7 +78,7 @@ class CloudBuild {
           log.error('error', '云构建服务执行超时，自动终止')
           disconnect()
         }, this._timeout)
-        socket.on(id, (msg) => {
+        socket.on(id, (msg: string) => {
           const parsedMsg = parseMsg(msg)
           log.success(parsedMsg.action, parsedMsg.message)
         })
@@ -100,6 +102,7 @@ class CloudBuild {
     return new Promise((resolve, reject) => {
       this._socket.emit('build')
       this._socket.on('build', (msg) => {
+        log.verbose('msg', msg)
         const parsedMsg = parseMsg(msg)
         if (FAILED_CODE.includes(parsedMsg.action)) {
           log.error('error', parsedMsg.action, parsedMsg.message)
@@ -113,14 +116,13 @@ class CloudBuild {
         }
       })
       this._socket.on('building', (msg) => {
-        log.notice('info', msg)
-        resolve(ret)
+        log.notice('building', msg)
       })
       this._socket.on('disconnect', () => {
         resolve(ret)
       })
       this._socket.on('error', (err) => {
-        log.error('error', err)
+        log.error('error', JSON.stringify(err))
         reject(err)
       })
     })
