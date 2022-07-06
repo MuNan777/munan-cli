@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs'
-import childProcess from 'child_process'
 import userHome from 'user-home'
 import circularJson from 'circular-json'
 
@@ -10,6 +9,7 @@ import fse from 'fs-extra'
 import type { ReleaseType } from 'semver'
 import semver from 'semver'
 
+import { execCommand } from '../exec'
 import log from '../log'
 import { writeFile, writeJSONFile } from '../file'
 import { prompt } from '../inquirer'
@@ -149,7 +149,7 @@ class Git {
       await this.checkGitOwner()
       await this.checkRepo()
       this.checkGitIgnore()
-      this.checkComponent()
+      await this.checkComponent()
       await this.init()
     }
     else {
@@ -455,12 +455,12 @@ class Git {
   }
 
   // 检查 component
-  checkComponent = () => {
+  checkComponent = async () => {
     const componentFile = this.isComponent()
     // 只有 component 才启动该逻辑
     if (componentFile) {
       log.notice('info', '开始检查 build 结果')
-      childProcess.execSync('npm run build', {
+      await execCommand('npm run build', {
         cwd: this.dir,
         stdio: 'inherit',
       })
@@ -644,13 +644,13 @@ class Git {
   prePublish = async () => {
     log.notice('info', '开始执行发布前自动检查任务')
     // 代码检查
-    this.checkProject()
+    await this.checkProject()
     // build 检查
     log.success('自动检查通过')
   }
 
   // build结果检查
-  checkProject = () => {
+  checkProject = async () => {
     log.notice('info', '开始检查代码结构')
     const pkg = this.getPackageJson()
     if (!pkg.scripts || !Object.keys(pkg.scripts).filter(name => name.startsWith('build')))
@@ -658,31 +658,45 @@ class Git {
     log.success('代码结构检查通过')
     log.notice('info', '开始检查 build 结果')
     if (this.buildCmd) {
-      childProcess.execSync(this.buildCmd, {
+      await execCommand(this.buildCmd, {
         cwd: this.dir,
       })
     }
     else {
-      childProcess.execSync('npm run build', {
+      await execCommand('npm run build', {
         cwd: this.dir,
       })
     }
     log.notice('info', 'build 结果检查通过')
   }
 
+  checkPkgInstall = async () => {
+    log.notice('info', '检查依赖安装')
+    if (!fse.existsSync('./node_modules')) {
+      let installRes = true
+      if (this.useCNpm)
+        installRes = await execCommand('cnpm install')
+      else if (this.usePNpm)
+        installRes = await execCommand('pnpm install')
+      else installRes = await execCommand('npm install')
+      if (!installRes)
+        log.error('error', '安装依赖失败')
+      else
+        log.success('安装依赖成功')
+    }
+    else {
+      log.success('node_modules 已经存在')
+    }
+  }
+
   // 本地发布
   localPublish = async () => {
-    await this.prePublish()
     const localBuild = new LocalBuild(this, {
       prod: !!this.prod,
-      keepCache: !!this.keepCache,
-      useCNpm: !!this.useCNpm,
-      usePNpm: !!this.usePNpm,
-      buildCmd: this.buildCmd,
       deployCmd: this.deployCmd,
     })
-    await localBuild.install()
-    await localBuild.build()
+    await this.checkPkgInstall()
+    await this.prePublish()
     await localBuild.deploy()
   }
 

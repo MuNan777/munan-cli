@@ -37,7 +37,7 @@
     "glob": "^8.0.3",
     "inquirer": "^9.0.0",
     "lodash-es": "^4.17.21",
-    "npminstall": "^6.3.0",
+    "npminstall": "^6.4.0",
     "npmlog": "^6.0.2",
     "ora": "^6.1.2",
     "semver": "^7.3.7",

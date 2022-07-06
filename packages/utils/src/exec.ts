@@ -17,4 +17,21 @@ function exec(command: string, args: string[], options: { [key: string]: string 
   return childProcess.spawn(cmd, cmdArgs, options || {})
 }
 
+export function execCommand(commandStr: string, options: { [key: string]: string } = { stdio: 'inherit' }): Promise<boolean> {
+  const commands = commandStr.split(' ')
+  if (commands.length === 0)
+    return Promise.resolve(false)
+  const command = commands[0]
+  const argv = commands.slice(1) || []
+  return new Promise((resolve, reject) => {
+    const event = exec(command, argv, options)
+    event.on('close', (data) => {
+      if (data && data > 0)
+        reject(new Error(`命令 ${commandStr} 执行失败`))
+      else
+        resolve(true)
+    })
+  })
+}
+
 export default exec
