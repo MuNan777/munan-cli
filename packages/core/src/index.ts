@@ -146,13 +146,16 @@ interface PublishExtendOptions {
   refreshOwner: boolean
   refreshServer: boolean
   buildCmd: string
+  deployCmd: string
   useCNpm: boolean
+  usePNpm: boolean
   prod: boolean
   keepCache: boolean
   sshUser: string
   sshIp: string
   sshPath: string
   cliHome: string
+  cloudBuild: boolean
 }
 type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
 
@@ -249,9 +252,12 @@ function registerCommand() {
     .option('--refreshToken', '强制更新git token信息')
     .option('--refreshOwner', '强制更新git owner信息')
     .option('--refreshServer', '强制更新git server信息')
-    .option('--buildCmd <buildCmd>', '手动指定build命令')
+    .option('--buildCmd <buildCmd>', '手动指定 build 命令')
+    .option('--deployCmd <deployCmd>', '手动指定 deploy 命令')
     .option('--cnpm', '使用cnpm')
+    .option('--pnpm', '使用pnpm')
     .option('-f --force', '强制更新所有缓存信息')
+    .option('-CBuild --cloudBuild', '使用云发布')
     .option('--prod', '正式发布')
     .option('-CWC --createWorkPackConfig', '创建工作空间发布配置, 以后默认使用工作空间配置')
     .action(async ({
@@ -262,7 +268,9 @@ function registerCommand() {
       refreshOwner,
       refreshServer,
       buildCmd,
+      deployCmd,
       cnpm,
+      pnpm,
       prod,
       keepCache,
       sshUser,
@@ -270,11 +278,20 @@ function registerCommand() {
       sshPath,
       CWC,
       createWorkPackConfig,
+      CBuild,
+      cloudBuild,
     }) => {
       if (CWC || createWorkPackConfig) {
-        fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
-        fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
-        log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
+        if (!fse.existsSync(`./${WORKPLACE_GIT_CONFIG_PATH}.json`)) {
+          const gitignoreConfig = `
+# munan-cli-config.json
+${WORKPLACE_GIT_CONFIG_PATH}.json`
+          fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
+          fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
+          log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
+          if (fse.existsSync('./.gitignore'))
+            fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
+        }
       }
       else {
         const packageName = '@imooc-cli/publish'
@@ -288,18 +305,24 @@ function registerCommand() {
         const cliHome = config.cliHome
         log.verbose('cliHome', cliHome)
 
+        if (CBuild)
+          cloudBuild = true
+
         await execCommand({ packagePath, packageName, packageVersion }, {
           refreshToken,
           refreshOwner,
           refreshServer,
           buildCmd,
+          deployCmd,
           useCNpm: cnpm,
+          usePNpm: pnpm,
           prod,
           keepCache,
           sshUser,
           sshIp,
           sshPath,
           cliHome,
+          cloudBuild,
         })
       }
     })

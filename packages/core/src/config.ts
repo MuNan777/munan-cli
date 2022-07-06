@@ -4,5 +4,5 @@ export default {
   NPM_NAME: '@munan-cli/core',
   DEPENDENCIES_PATH: 'dependencies',
   USE_ORIGIN_NPM: true,
-  WORKPLACE_GIT_CONFIG_PATH: 'munan-cli.git.config',
+  WORKPLACE_GIT_CONFIG_PATH: 'munan-cli.config',
 }

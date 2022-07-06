@@ -13,29 +13,30 @@ interface CloudBuildOptions {
   keepCache: boolean
   useCNpm: boolean
   buildCmd: string
+  deployCmd: string
 }
 
 type SocketType = Socket & SocketOn
 class CloudBuild {
   _git: Git
-  _type: string
   _timeout: number
   _prod?: boolean
   _keepCache?: boolean
   _useCNpm?: boolean
   _buildCmd?: string
+  _deployCmd?: string
   timer: NodeJS.Timeout
   _socket: SocketType
 
-  constructor(git: Git, type: string, options: Partial<CloudBuildOptions>) {
+  constructor(git: Git, options: Partial<CloudBuildOptions>) {
     log.verbose('CloudBuild options', JSON.stringify(options))
     this._git = git
-    this._type = type // 发布类型，目前仅支持oss
     this._timeout = get(options, 'timeout') || 1200 * 1000 // 默认超时时间20分钟
     this._prod = options.prod
     this._keepCache = options.keepCache
     this._useCNpm = options.useCNpm
     this._buildCmd = options.buildCmd
+    this._deployCmd = options.deployCmd
   }
 
   timeout = (fn: () => void, timeout: number) => {
@@ -51,7 +52,6 @@ class CloudBuild {
       const socket = io(`${WS_SERVER}/build`, {
         query: {
           repo: this._git.remote,
-          type: this._type,
           name: this._git.name,
           branch: this._git.branch,
           version: this._git.version,
@@ -59,6 +59,7 @@ class CloudBuild {
           keepCache: this._keepCache,
           useCNpm: this._useCNpm,
           buildCmd: this._buildCmd,
+          deployCmd: this._deployCmd,
         },
         transports: ['websocket'],
       } as Partial<ManagerOptions & SocketOptions>) as unknown as SocketType

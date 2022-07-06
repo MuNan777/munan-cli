@@ -1,7 +1,6 @@
 import path from 'path'
 import fs from 'fs'
 import childProcess from 'child_process'
-
 import userHome from 'user-home'
 import circularJson from 'circular-json'
 
@@ -14,9 +13,9 @@ import semver from 'semver'
 import log from '../log'
 import { writeFile, writeJSONFile } from '../file'
 import { prompt } from '../inquirer'
-import { terminalLink } from '../terminalLink'
 import spinner from '../spinner'
 import CloudBuild from '../build/CloudBuild'
+import LocalBuild from '../build/LocalBuild'
 import Config from './config'
 import Github from './github'
 import Gitee from './gitee'
@@ -32,7 +31,6 @@ const {
   GIT_TOKEN_NAME,
   GIT_OWN_NAME,
   GIT_LOGIN_NAME,
-  GIT_PUBLISH_NAME,
   GIT_OWNER_TYPE,
   GIT_OWNER_TYPE_ONLY,
   GIT_IGNORE_FILE,
@@ -42,7 +40,6 @@ const {
   VERSION_RELEASE,
   VERSION_DEVELOP,
   GIT_ROOT_CONFIG_NAME,
-  GIT_PUBLISH_TYPE,
 } = Config
 
 interface GitConfig {
@@ -57,15 +54,11 @@ interface ActionConfig {
   refreshOwner: boolean // 是否强制刷新用户
   refreshServer: boolean // 是否强制刷新 git 远程仓库类型
   prod: boolean // 是否为正式发布
-  useCNpm: string // 是否使用 useCNpm
+  useCNpm: string // 是否使用 cnpm
+  usePNpm: string // 是否使用 pnpm
   keepCache: string // 是否保留服务端缓存（用于调试bug）
   buildCmd: string // 手动指定build命令
-}
-
-interface SSHConfig {
-  sshUser: string // 远程服务器用户名
-  sshIp: string // 远程服务器IP
-  sshPath: string // 远程服务器路径
+  deployCmd: string // 手动指定deploy命令
 }
 
 export interface GitUser { // git 用户信息
@@ -104,14 +97,13 @@ class Git {
   refreshToken: boolean | undefined
   refreshOwner: boolean | undefined
   refreshServer: boolean | undefined
-  sshUser: string | undefined
-  sshIp: string | undefined
-  sshPath: string | undefined
   gitServerInfo: Github | Gitee | null
   prod: boolean | undefined
   keepCache: string | undefined
   useCNpm: string | undefined
+  usePNpm: string | undefined
   buildCmd: string | undefined
+  deployCmd: string | undefined
   token: string
   user: GitUser
   orgs: GitOrganize[]
@@ -124,8 +116,8 @@ class Git {
     { dir, name, version }: GitConfig,
     {
       cliHome, refreshToken, refreshOwner, refreshServer,
-      sshUser, sshIp, sshPath, prod, keepCache, useCNpm, buildCmd,
-    }: Partial<ActionConfig & SSHConfig>,
+      prod, keepCache, useCNpm, buildCmd, deployCmd, usePNpm,
+    }: Partial<ActionConfig>,
   ) {
     this.git = SimpleGitFactory(dir)
     this.name = name
@@ -138,14 +130,13 @@ class Git {
     this.refreshToken = refreshToken
     this.refreshOwner = refreshOwner
     this.refreshServer = refreshServer
-    this.sshUser = sshUser
-    this.sshIp = sshIp
-    this.sshPath = sshPath
     this.gitServerInfo = null
     this.prod = prod
     this.keepCache = keepCache
     this.useCNpm = useCNpm
+    this.usePNpm = usePNpm
     this.buildCmd = buildCmd
+    this.deployCmd = deployCmd
   }
 
   prepare = async () => {
@@ -211,6 +202,9 @@ class Git {
       this.remote = this.gitServerInfo!.getRemote(this.name, this.login!)
 
     if (fse.existsSync(gitPath)) {
+      const remotes = await this.git.getRemotes()
+      if (!remotes.find(item => item.name === 'origin'))
+        await this.git.addRemote('origin', this.remote!)
       log.success('git 已完成初始化')
       return true
     }
@@ -319,7 +313,9 @@ class Git {
         throw new Error(this.getNotPermissionMessage())
       else
         log.error('error', error.message)
-      log.error('!!!', '请重新执行 munan-cli publish，如仍然报错请尝试删除 .git 目录后重试')
+      log.error('!!!', '请先解决，合并远程分支导致的冲突或者错误')
+      log.error('!!!', `可使用 git pull origin ${branchName} 命令, 进行手动尝试`)
+      log.error('!!!', '再重新执行 munan-cli publish，如仍然报错请尝试删除 .git 目录后重试')
       process.exit(0)
     })
   }
@@ -340,12 +336,17 @@ class Git {
   checkGitToken = async () => {
     let token = this.publishConfig.gitToken
     if (!token || this.refreshToken) {
-      log.notice(`${this.gitServerInfo!.type} token未生成`, `请先生成 ${this.gitServerInfo!.type} token，${terminalLink('链接', this.gitServerInfo!.getTokenHelpUrl())}`)
+      log.notice(`${this.gitServerInfo!.type} token未生成`, `请先生成 ${this.gitServerInfo!.type} token，'链接', ${this.gitServerInfo!.getTokenHelpUrl()}`)
       token = await prompt<string>({
         type: 'password',
         message: '请将 token 复制到这里',
         defaultValue: '',
       })
+
+      // github token 更新，清除 remote origin
+      if (this.gitServerInfo!.type === 'github')
+        this.git.removeRemote('origin')
+
       const configPath = this.createPath()
       writeJSONFile(configPath, { [GIT_TOKEN_NAME]: token })
       log.success('token 写入成功', `${token} -> ${configPath}`)
@@ -639,8 +640,6 @@ class Git {
     this.gitServerInfo = createGitServer(gitServer)
   }
 
-  saveComponentToDB = async () => { }
-
   // 发布前自动检查
   prePublish = async () => {
     log.notice('info', '开始执行发布前自动检查任务')
@@ -654,9 +653,8 @@ class Git {
   checkProject = () => {
     log.notice('info', '开始检查代码结构')
     const pkg = this.getPackageJson()
-    if (!pkg.scripts || !Object.keys(pkg.scripts).includes('build'))
+    if (!pkg.scripts || !Object.keys(pkg.scripts).filter(name => name.startsWith('build')))
       throw new Error('build命令不存在！')
-
     log.success('代码结构检查通过')
     log.notice('info', '开始检查 build 结果')
     if (this.buildCmd) {
@@ -672,43 +670,55 @@ class Git {
     log.notice('info', 'build 结果检查通过')
   }
 
-  // 测试/正式发布
-  publish = async () => {
+  // 本地发布
+  localPublish = async () => {
+    await this.prePublish()
+    const localBuild = new LocalBuild(this, {
+      prod: !!this.prod,
+      keepCache: !!this.keepCache,
+      useCNpm: !!this.useCNpm,
+      usePNpm: !!this.usePNpm,
+      buildCmd: this.buildCmd,
+      deployCmd: this.deployCmd,
+    })
+    await localBuild.install()
+    await localBuild.build()
+    await localBuild.deploy()
+  }
+
+  // 线上发布
+  cloudPublish = async () => {
     let buildRet = false
-    if (this.isComponent()) {
-      log.notice('info', '开始发布组件')
-      await this.saveComponentToDB()
-    }
-    else {
-      await this.prePublish()
-      let gitPublishType = this.publishConfig.gitPublishType
-      if (!gitPublishType) {
-        gitPublishType = await prompt({
-          type: 'list',
-          choices: GIT_PUBLISH_TYPE,
-          message: '请选择您想要上传代码的平台',
-        })
-        const configPath = this.createPath()
-        writeJSONFile(configPath, { [GIT_PUBLISH_NAME]: gitPublishType })
-        log.success('git publish类型写入成功', `${gitPublishType} -> ${configPath}`)
-      }
-      else {
-        log.success('git publish类型获取成功', gitPublishType)
-      }
-      const cloudBuild = new CloudBuild(this, gitPublishType!, {
-        prod: !!this.prod,
-        keepCache: !!this.keepCache,
-        useCNpm: !!this.useCNpm,
-        buildCmd: this.buildCmd,
-      })
-      // await cloudBuild.prepare()
-      await cloudBuild.init()
-      buildRet = await cloudBuild.build()
-      if (buildRet)
-        // eslint-disable-next-line no-console
-        console.log(buildRet)
-    }
+    await this.prePublish()
+    const cloudBuild = new CloudBuild(this, {
+      prod: !!this.prod,
+      keepCache: !!this.keepCache,
+      useCNpm: !!this.useCNpm,
+      buildCmd: this.buildCmd,
+      deployCmd: this.deployCmd,
+    })
+    // await cloudBuild.prepare()
+    await cloudBuild.init()
+    buildRet = await cloudBuild.build()
+    if (buildRet)
+      // eslint-disable-next-line no-console
+      console.log(buildRet)
   }
 }
+
+// let gitPublishType = this.publishConfig.gitPublishType
+// if (!gitPublishType) {
+//   gitPublishType = await prompt({
+//     type: 'list',
+//     choices: GIT_PUBLISH_TYPE,
+//     message: '请选择您想要上传代码的平台',
+//   })
+//   const configPath = this.createPath()
+//   writeJSONFile(configPath, { [GIT_PUBLISH_NAME]: gitPublishType })
+//   log.success('git publish类型写入成功', `${gitPublishType} -> ${configPath}`)
+// }
+// else {
+//   log.success('git publish类型获取成功', gitPublishType)
+// }
 
 export default Git

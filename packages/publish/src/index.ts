@@ -4,12 +4,18 @@ import fse from 'fs-extra'
 import { Git, log } from '@munan-cli/utils'
 import colors from 'colors'
 
-async function prepare(options: { buildCmd: string }) {
+async function prepare(options: { buildCmd: string; deployCmd: string }) {
   const { buildCmd } = options
   if (!buildCmd) { options.buildCmd = 'npm run build' }
   else {
     if (!buildCmd.startsWith('npm run build'))
       throw new Error('buildCmd参数不符合规范，正确格式：npm run build:xxx')
+  }
+  const { deployCmd } = options
+  if (!deployCmd) { options.deployCmd = 'npm run deploy' }
+  else {
+    if (!deployCmd.startsWith('npm run deploy'))
+      throw new Error('deployCmd参数不符合规范，正确格式：npm run deploy:xxx')
   }
 }
 
@@ -25,7 +31,7 @@ function checkProjectInfo() {
   return { name, version, dir: projectPath }
 }
 
-async function publish(opt: { debug: boolean; buildCmd: string }) {
+async function publish(opt: { debug: boolean; buildCmd: string; cloudBuild: boolean; deployCmd: string }) {
   try {
     const startTime = new Date().getTime()
     // 完成项目初始化的准备和校验工作
@@ -34,12 +40,18 @@ async function publish(opt: { debug: boolean; buildCmd: string }) {
     // 检查项目的基本信息
     const projectInfo = checkProjectInfo()
     const git = new Git(projectInfo, opt)
-    log.info(colors.red('==='), colors.gray('git配置检查'), colors.red('==='))
+    log.info(colors.green('==='), colors.blue('git配置检查'), colors.green('==='))
     await git.prepare()
-    log.info(colors.red('==='), colors.gray('git自动提交'), colors.red('==='))
+    log.info(colors.green('==='), colors.blue('git自动提交'), colors.green('==='))
     await git.commit()
-    log.info(colors.red('==='), colors.gray('云构建+云发布'), colors.red('==='))
-    await git.publish()
+    if (opt.cloudBuild) {
+      log.info(colors.green('==='), colors.blue('云构建+云发布'), colors.green('==='))
+      await git.cloudPublish()
+    }
+    else {
+      log.info(colors.green('==='), colors.blue('本地构建+本地发布'), colors.green('==='))
+      await git.localPublish()
+    }
     const endTime = new Date().getTime()
     log.verbose('elapsed time', `${new Date(startTime)}, ${new Date(endTime)}`)
     log.info('本次发布耗时：', `${Math.floor((endTime - startTime) / 1000)}秒`)
