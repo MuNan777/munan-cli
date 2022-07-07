@@ -97,7 +97,9 @@ ${targetDirName}-cos`
       })
     }
     log.success('安装所需依赖成功')
-    log.success(`配置创建成功, 可执行 npm run ${deployCmd} 尝试发布`)
+    log.success(`配置创建成功, ./${targetDirName}-cos`)
+    log.success(`可对 ./${targetDirName}-cos/index.js 进行进一步调整`)
+    log.success(`可执行 npm run ${deployCmd} 尝试发布`)
   }
   catch (err) {
     log.error('error', '配置创建失败')

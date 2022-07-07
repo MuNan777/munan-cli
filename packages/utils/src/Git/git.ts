@@ -697,7 +697,13 @@ class Git {
     })
     await this.checkPkgInstall()
     await this.prePublish()
-    await localBuild.deploy(this.getPackageJson())
+    const deployRes = await localBuild.deploy(this.getPackageJson())
+    await this.gitFlowHandler(deployRes)
+    if (deployRes)
+      log.success('发布成功')
+    else
+      log.success('发布失败')
+    return deployRes
   }
 
   // 线上发布
@@ -717,6 +723,57 @@ class Git {
     if (buildRet)
       // eslint-disable-next-line no-console
       console.log(buildRet)
+  }
+
+  // git flow
+  gitFlowHandler = async (deployRes: boolean) => {
+    if (this.prod && deployRes) {
+      await this.checkTag() // 打tag
+      await this.checkoutBranch('master') // 切换分支到master
+      await this.mergeBranchToMaster() // 将代码合并到master
+      await this.pushRemoteRepo('master') // 将代码推送到远程master
+      await this.deleteLocalBranch() // 删除本地分支
+      await this.deleteRemoteBranch() // 删除远程分支
+    }
+  }
+
+  checkTag = async () => {
+    log.notice('info', '获取远程 tag 列表')
+    const tag = `${VERSION_RELEASE}/${this.version}`
+    const tagList = await this.getRemoteBranchList(VERSION_RELEASE)
+    if (tagList.includes(this.version)) {
+      log.success('远程 tag 已存在', tag)
+      await this.git.push(['origin', `:refs/tags/${tag}`])
+      log.success('远程 tag 已删除', tag)
+    }
+    const localTagList = await this.git.tags()
+    if (localTagList.all.includes(tag)) {
+      log.success('本地 tag 已存在', tag)
+      await this.git.tag(['-d', tag])
+      log.success('本地 tag 已删除', tag)
+    }
+    await this.git.addTag(tag)
+    log.success('本地 tag 创建成功', tag)
+    await this.git.pushTags('origin')
+    log.success('远程 tag 推送成功', tag)
+  }
+
+  mergeBranchToMaster = async () => {
+    log.notice('开始合并代码', `[${this.branch}] -> [master]`)
+    await this.git.mergeFromTo(this.branch, 'master')
+    log.success('代码合并成功', `[${this.branch}] -> [master]`)
+  }
+
+  deleteLocalBranch = async () => {
+    log.notice('开始删除本地分支', this.branch)
+    await this.git.deleteLocalBranch(this.branch)
+    log.success('删除本地分支成功', this.branch)
+  }
+
+  deleteRemoteBranch = async () => {
+    log.notice('开始删除远程分支', this.branch)
+    await this.git.push(['origin', '--delete', this.branch])
+    log.success('删除远程分支成功', this.branch)
   }
 }
 
