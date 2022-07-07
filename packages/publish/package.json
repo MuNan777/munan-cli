@@ -12,7 +12,8 @@
   "files": [
     "lib",
     "*.d.ts",
-    "*.mjs"
+    "*.mjs",
+    "deployCmdTemplate"
   ],
   "engines": {
     "node": ">=v14.16.0"

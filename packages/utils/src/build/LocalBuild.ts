@@ -19,8 +19,10 @@ class LocalBuild {
     this._deployCmd = options.deployCmd
   }
 
-  deploy = async () => {
+  deploy = async (pkg: { scripts: {} }) => {
     log.notice('info', '开始发布')
+    if (!pkg.scripts || Object.keys(pkg.scripts).filter(name => name.startsWith('deploy')).length === 0)
+      throw new Error('deploy命令不存在！ 可通过 munan-cli publish --createDeployCmd 创建相关配置')
     if (this._deployCmd) {
       const deployRes = await execCommand(this._deployCmd)
       if (!deployRes)
@@ -28,7 +30,10 @@ class LocalBuild {
       else
         log.success('发布成功')
     }
-    else { log.error('error', '构建命令不存在') }
+    else {
+      log.error('error', '构建命令不存在')
+      log.notice('info', '可通过 munan-cli publish --createDeployCmd 创建相关配置')
+    }
   }
 }
 

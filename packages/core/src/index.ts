@@ -8,7 +8,6 @@ import dotenv from 'dotenv'
 import { Command } from 'commander'
 import semver from 'semver'
 import colors from 'colors/safe'
-import fse from 'fs-extra'
 
 import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
@@ -20,7 +19,6 @@ const {
   LOWEST_NODE_VERSION,
   NPM_NAME,
   USE_ORIGIN_NPM,
-  WORKPLACE_GIT_CONFIG_PATH,
 } = baseConfig
 
 let args: minimist.ParsedArgs
@@ -151,11 +149,10 @@ interface PublishExtendOptions {
   usePNpm: boolean
   prod: boolean
   keepCache: boolean
-  sshUser: string
-  sshIp: string
-  sshPath: string
   cliHome: string
   cloudBuild: boolean
+  createDeployCmd: boolean
+  createWorkPackConfig: boolean
 }
 type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
 
@@ -259,7 +256,8 @@ function registerCommand() {
     .option('-f --force', '强制更新所有缓存信息')
     .option('-CBuild --cloudBuild', '使用云发布')
     .option('--prod', '正式发布')
-    .option('-CWC --createWorkPackConfig', '创建工作空间发布配置, 以后默认使用工作空间配置')
+    .option('-CWC --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
+    .option('-CDC --createDeployCmd', '创建发布命令配置')
     .action(async ({
       packagePath,
       force,
@@ -273,58 +271,39 @@ function registerCommand() {
       pnpm,
       prod,
       keepCache,
-      sshUser,
-      sshIp,
-      sshPath,
       CWC,
       createWorkPackConfig,
       CBuild,
       cloudBuild,
+      CDC,
+      createDeployCmd,
     }) => {
-      if (CWC || createWorkPackConfig) {
-        if (!fse.existsSync(`./${WORKPLACE_GIT_CONFIG_PATH}.json`)) {
-          const gitignoreConfig = `
-# munan-cli-config.json
-${WORKPLACE_GIT_CONFIG_PATH}.json`
-          fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
-          fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
-          log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
-          if (fse.existsSync('./.gitignore'))
-            fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
-        }
+      const packageName = '@imooc-cli/publish'
+      const packageVersion = '1.0.0'
+      if (f || force) {
+        refreshToken = true
+        refreshOwner = true
+        refreshServer = true
       }
-      else {
-        const packageName = '@imooc-cli/publish'
-        const packageVersion = '1.0.0'
-        if (f || force) {
-          refreshToken = true
-          refreshOwner = true
-          refreshServer = true
-        }
 
-        const cliHome = config.cliHome
-        log.verbose('cliHome', cliHome)
+      const cliHome = config.cliHome
+      log.verbose('cliHome', cliHome)
 
-        if (CBuild)
-          cloudBuild = true
-
-        await execCommand({ packagePath, packageName, packageVersion }, {
-          refreshToken,
-          refreshOwner,
-          refreshServer,
-          buildCmd,
-          deployCmd,
-          useCNpm: cnpm,
-          usePNpm: pnpm,
-          prod,
-          keepCache,
-          sshUser,
-          sshIp,
-          sshPath,
-          cliHome,
-          cloudBuild,
-        })
-      }
+      await execCommand({ packagePath, packageName, packageVersion }, {
+        refreshToken,
+        refreshOwner,
+        refreshServer,
+        buildCmd,
+        deployCmd,
+        useCNpm: cnpm,
+        usePNpm: pnpm,
+        prod,
+        keepCache,
+        cliHome,
+        cloudBuild: CBuild || cloudBuild,
+        createDeployCmd: CDC || createDeployCmd,
+        createWorkPackConfig: CWC || createWorkPackConfig,
+      })
     })
 
   // 获取输入参数

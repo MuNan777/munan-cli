@@ -7,7 +7,7 @@ function createEntries(file, dirName, dir, entries) {
   const stat = fs.statSync(p)
   if (stat.isFile()) {
     const ext = file.split('.').pop()
-    if (ext === 'ts')
+    if (ext === 'ts' || ext === 'js' || ext === 'ejs')
       entries[file.split('.')[0]] = `./${dir}/${file}`
   }
   if (stat.isDirectory()) {

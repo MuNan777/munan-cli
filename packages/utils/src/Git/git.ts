@@ -697,7 +697,7 @@ class Git {
     })
     await this.checkPkgInstall()
     await this.prePublish()
-    await localBuild.deploy()
+    await localBuild.deploy(this.getPackageJson())
   }
 
   // 线上发布
