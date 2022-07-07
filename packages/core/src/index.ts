@@ -254,10 +254,10 @@ function registerCommand() {
     .option('--cnpm', '使用cnpm')
     .option('--pnpm', '使用pnpm')
     .option('-f --force', '强制更新所有缓存信息')
-    .option('-CBuild --cloudBuild', '使用云发布')
+    .option('--cBuild --cloudBuild', '使用云发布')
     .option('--prod', '正式发布')
-    .option('-CWC --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
-    .option('-CDC --createDeployCmd', '创建发布命令配置')
+    .option('--cwc --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
+    .option('--cdc --createDeployCmd', '创建发布命令配置')
     .action(async ({
       packagePath,
       force,
@@ -271,11 +271,11 @@ function registerCommand() {
       pnpm,
       prod,
       keepCache,
-      CWC,
+      cwc,
       createWorkPackConfig,
-      CBuild,
+      cBuild,
       cloudBuild,
-      CDC,
+      cdc,
       createDeployCmd,
     }) => {
       const packageName = '@imooc-cli/publish'
@@ -300,9 +300,9 @@ function registerCommand() {
         prod,
         keepCache,
         cliHome,
-        cloudBuild: CBuild || cloudBuild,
-        createDeployCmd: CDC || createDeployCmd,
-        createWorkPackConfig: CWC || createWorkPackConfig,
+        cloudBuild: cBuild || cloudBuild,
+        createDeployCmd: cdc || createDeployCmd,
+        createWorkPackConfig: cwc || createWorkPackConfig,
       })
     })
 

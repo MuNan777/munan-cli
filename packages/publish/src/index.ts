@@ -7,18 +7,12 @@ import Config from './config'
 const { WORKPLACE_GIT_CONFIG_PATH } = Config
 
 async function prepare(options: { buildCmd: string; deployCmd: string }) {
-  const { buildCmd } = options
-  if (!buildCmd) { options.buildCmd = 'npm run build' }
-  else {
-    if (!buildCmd.startsWith('npm run build'))
-      throw new Error('buildCmd参数不符合规范，正确格式：npm run build:xxx')
-  }
-  const { deployCmd } = options
-  if (!deployCmd) { options.deployCmd = 'npm run deploy' }
-  else {
-    if (!deployCmd.startsWith('npm run deploy'))
-      throw new Error('deployCmd参数不符合规范，正确格式：npm run deploy:xxx')
-  }
+  const { buildCmd, deployCmd } = options
+  if (buildCmd && !buildCmd.startsWith('npm run build'))
+    throw new Error('buildCmd参数不符合规范，正确格式：npm run build:xxx')
+
+  if (deployCmd && !deployCmd.startsWith('npm run deploy'))
+    throw new Error('deployCmd参数不符合规范，正确格式：npm run deploy:xxx')
 }
 
 function checkProjectInfo() {

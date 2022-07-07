@@ -708,21 +708,25 @@ class Git {
 
   // 线上发布
   cloudPublish = async () => {
-    let buildRet = false
+    let deployRes = false
     await this.prePublish()
     const cloudBuild = new CloudBuild(this, {
       prod: !!this.prod,
       keepCache: !!this.keepCache,
       useCNpm: !!this.useCNpm,
+      usePNpm: !!this.usePNpm,
       buildCmd: this.buildCmd,
       deployCmd: this.deployCmd,
     })
     // await cloudBuild.prepare()
     await cloudBuild.init()
-    buildRet = await cloudBuild.build()
-    if (buildRet)
-      // eslint-disable-next-line no-console
-      console.log(buildRet)
+    deployRes = await cloudBuild.build()
+    await this.gitFlowHandler(deployRes)
+    if (deployRes)
+      log.success('发布成功')
+    else
+      log.success('发布失败')
+    return deployRes
   }
 
   // git flow
