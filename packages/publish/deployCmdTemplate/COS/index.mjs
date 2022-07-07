@@ -8,9 +8,14 @@ export const createFn = async () => {
   const packagePath = path.resolve(process.cwd(), 'package.json')
   const pkg = fse.readJSONSync(packagePath)
   let deployCmd = 'deploy:cos'
+  deployCmd = await prompt({
+    type: 'input',
+    message: '请输入发布命令',
+    defaultValue: deployCmd,
+  })
   const keys = Object.keys(pkg.scripts)
   while (keys.includes(deployCmd) && deployCmd !== '') {
-    log.error('deploy:cos 发布命令已存在')
+    log.error(`${deployCmd} 发布命令已存在`)
     deployCmd = ''
     deployCmd = await prompt({
       type: 'input',
@@ -92,6 +97,7 @@ ${targetDirName}-cos`
       })
     }
     log.success('安装所需依赖成功')
+    log.success(`配置创建成功, 可执行 npm run ${deployCmd} 尝试发布`)
   }
   catch (err) {
     log.error('error', '配置创建失败')
