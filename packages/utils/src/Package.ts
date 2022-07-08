@@ -13,7 +13,7 @@ interface PackageProps {
   storePath: string
   packageVersion: string
   name: string
-  useCurrentPackageVersion: boolean
+  useCurrentPackageVersion?: boolean
 }
 
 class Package {
@@ -31,7 +31,7 @@ class Package {
     this.packageName = options.name // 包名
     this.packageVersion = options.packageVersion // 包版本
     this.npmFilePathPrefix = this.packageName.replace('/', '_') // npm文件名前缀
-    this.useCurrentPackageVersion = options.useCurrentPackageVersion
+    this.useCurrentPackageVersion = options.useCurrentPackageVersion || false
   }
 
   // 包默认下载文件路径
