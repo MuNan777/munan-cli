@@ -7,7 +7,8 @@
     "test": "vitest packages/",
     "lint": "eslint \"packages/**/*.{js,ts}\"",
     "create:template": "pnpm -F @munan-cli/template run create",
-    "create:module": "pnpm -F @munan-cli/template run create:module"
+    "create:module": "pnpm -F @munan-cli/template run create:module",
+    "deploy": "pnpm -r run build && pnpm publish -r"
   },
   "keywords": [],
   "author": "",

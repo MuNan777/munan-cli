@@ -8,6 +8,7 @@ import dotenv from 'dotenv'
 import { Command } from 'commander'
 import semver from 'semver'
 import colors from 'colors/safe'
+import fse from 'fs-extra'
 
 import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
 
@@ -19,6 +20,7 @@ const {
   LOWEST_NODE_VERSION,
   NPM_NAME,
   USE_ORIGIN_NPM,
+  WORKPLACE_GIT_CONFIG_PATH,
 } = baseConfig
 
 let args: minimist.ParsedArgs
@@ -152,7 +154,6 @@ interface PublishExtendOptions {
   cliHome: string
   cloudBuild: boolean
   createDeployCmd: boolean
-  createWorkPackConfig: boolean
   packageDeploy: boolean
 }
 type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
@@ -225,6 +226,30 @@ function registerCommand() {
     .version(packageConfig.version, undefined, '查看脚手架版本')
     .helpOption('-h, --help', '查看帮助信息')
     .addHelpCommand('help [command]', '查看命令帮助信息')
+    .option('--cwc --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
+    .action(async (data) => {
+      const {
+        cwc,
+        createWorkPackConfig,
+      } = data
+      if (cwc || createWorkPackConfig) {
+        if (!fse.existsSync(`./${WORKPLACE_GIT_CONFIG_PATH}.json`)) {
+          const gitignoreConfig = `
+  # munan-cli-config.json
+  ${WORKPLACE_GIT_CONFIG_PATH}.json`
+          fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
+          fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
+          if (fse.existsSync('./.gitignore'))
+            fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
+          else
+            fse.writeFileSync('./.gitignore', gitignoreConfig)
+          log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
+        }
+        else {
+          log.warn('warn', `./${WORKPLACE_GIT_CONFIG_PATH}.json 已存在`)
+        }
+      }
+    })
     .usage('<command> [options]')
 
   program
@@ -257,7 +282,6 @@ function registerCommand() {
     .option('-f --force', '强制更新所有缓存信息')
     .option('--cBuild --cloudBuild', '使用云发布')
     .option('--prod', '正式发布')
-    .option('--cwc --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
     .option('--cdc --createDeployCmd', '创建发布命令配置')
     .option('--pkg --packageDeploy', '发布 npm 包, (正式发布 prod = true)')
     .action(async ({
@@ -273,8 +297,6 @@ function registerCommand() {
       pnpm,
       prod,
       keepCache,
-      cwc,
-      createWorkPackConfig,
       cBuild,
       cloudBuild,
       cdc,
@@ -306,7 +328,6 @@ function registerCommand() {
         cliHome,
         cloudBuild: cBuild || cloudBuild,
         createDeployCmd: cdc || createDeployCmd,
-        createWorkPackConfig: cwc || createWorkPackConfig,
         packageDeploy: pkg || packageDeploy,
       })
     })
@@ -314,7 +335,7 @@ function registerCommand() {
   // 获取输入参数
   program.option('-d --debug', '打开调试模式').parse(process.argv)
 
-  if (args._.length < 1) {
+  if (args._.length < 1 && !(args.cwc || args.createWorkPackConfig)) {
     program.outputHelp() // 输出帮助信息
     // eslint-disable-next-line no-console
     console.log() // 换行

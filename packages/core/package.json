@@ -1,9 +1,8 @@
 {
   "name": "@munan-cli/core",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "munan-cli 脚手架核心包",
   "author": "munanc",
-
   "license": "MIT",
   "repository": {
     "type": "git",

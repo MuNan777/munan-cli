@@ -5,8 +5,6 @@ import { Git, getDirName, getLatestVersion, log, prompt } from '@munan-cli/utils
 import colors from 'colors'
 import type { ReleaseType } from 'semver'
 import semver from 'semver'
-import Config from './config'
-const { WORKPLACE_GIT_CONFIG_PATH } = Config
 
 async function prepare(options: { buildCmd: string; deployCmd: string }) {
   const { buildCmd, deployCmd } = options
@@ -43,7 +41,6 @@ async function publish(
     cloudBuild: boolean
     deployCmd: string
     createDeployCmd: boolean
-    createWorkPackConfig: boolean
     packageDeploy: boolean
   }) {
   try {
@@ -92,20 +89,6 @@ async function publish(
         })
         const createFn = await import(`file://${path.resolve(templateDir, type, 'index.mjs')}`)
         createFn.default()
-      }
-    }
-    else if (opt.createWorkPackConfig) {
-      if (!fse.existsSync(`./${WORKPLACE_GIT_CONFIG_PATH}.json`)) {
-        const gitignoreConfig = `
-# munan-cli-config.json
-${WORKPLACE_GIT_CONFIG_PATH}.json`
-        fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
-        fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
-        log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
-        if (fse.existsSync('./.gitignore'))
-          fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
-        else
-          fse.writeFileSync('./.gitignore', gitignoreConfig)
       }
     }
     else {

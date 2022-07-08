@@ -1,9 +1,8 @@
 {
   "name": "@munan-cli/publish",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "publish 模块",
   "author": "",
-
   "license": "MIT",
   "repository": {
     "type": "git",
