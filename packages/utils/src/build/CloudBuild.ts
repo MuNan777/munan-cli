@@ -12,6 +12,7 @@ interface CloudBuildOptions {
   prod: boolean
   keepCache: boolean
   useCNpm: boolean
+  usePNpm: boolean
   buildCmd: string
   deployCmd: string
 }
@@ -23,6 +24,7 @@ class CloudBuild {
   _prod?: boolean
   _keepCache?: boolean
   _useCNpm?: boolean
+  _usePNpm?: boolean
   _buildCmd?: string
   _deployCmd?: string
   timer: NodeJS.Timeout
@@ -35,6 +37,7 @@ class CloudBuild {
     this._prod = options.prod
     this._keepCache = options.keepCache
     this._useCNpm = options.useCNpm
+    this._usePNpm = options.usePNpm
     this._buildCmd = options.buildCmd
     this._deployCmd = options.deployCmd
   }
@@ -58,6 +61,7 @@ class CloudBuild {
           prod: this._prod,
           keepCache: this._keepCache,
           useCNpm: this._useCNpm,
+          usePNpm: this._usePNpm,
           buildCmd: this._buildCmd,
           deployCmd: this._deployCmd,
         },
@@ -71,7 +75,7 @@ class CloudBuild {
       this.timeout(() => {
         log.error('error', '云构建服务创建超时，自动终止')
         disconnect()
-      }, 5000)
+      }, 1000 * 10)
       socket.on('connect', () => {
         const id = socket.id
         log.success('云构建任务创建成功', `任务ID：${id}`)

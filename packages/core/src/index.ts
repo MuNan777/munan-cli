@@ -271,11 +271,11 @@ function registerCommand() {
       pnpm,
       prod,
       keepCache,
-      CWC,
+      cwc,
       createWorkPackConfig,
-      CB,
+      cBuild,
       cloudBuild,
-      CDC,
+      cdc,
       createDeployCmd,
     }) => {
       const packageName = '@imooc-cli/publish'
@@ -300,9 +300,9 @@ function registerCommand() {
         prod,
         keepCache,
         cliHome,
-        cloudBuild: CB || cloudBuild,
-        createDeployCmd: CDC || createDeployCmd,
-        createWorkPackConfig: CWC || createWorkPackConfig,
+        cloudBuild: cBuild || cloudBuild,
+        createDeployCmd: cdc || createDeployCmd,
+        createWorkPackConfig: cwc || createWorkPackConfig,
       })
     })
 
