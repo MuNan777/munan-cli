@@ -278,7 +278,7 @@ function registerCommand() {
       cdc,
       createDeployCmd,
     }) => {
-      const packageName = '@imooc-cli/publish'
+      const packageName = '@munan-cli/publish'
       const packageVersion = '1.0.0'
       if (f || force) {
         refreshToken = true

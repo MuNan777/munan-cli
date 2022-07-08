@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/core",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "munan-cli 脚手架核心包",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
