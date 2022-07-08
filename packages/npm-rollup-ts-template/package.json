@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/npm-rollup-ts-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "munan-cli npm-rollup-ts 模板",
   "main": "index.js",
   "devDependencies": {},
@@ -31,7 +31,8 @@
     "templateTag": "project",
     "startCommand": "npm run dev",
     "buildPath": "lib",
-    
-    "ejsIgnoreFiles": ["**/node_modules/**"]
+    "ejsIgnoreFiles": [
+      "**/node_modules/**"
+    ]
   }
 }
