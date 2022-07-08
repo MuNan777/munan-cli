@@ -1,0 +1,37 @@
+{
+  "name": "@munan-cli/npm-rollup-ts-template",
+  "version": "1.0.0",
+  "description": "munan-cli npm-rollup-ts 模板",
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "inquirer": "^7.3.3",
+    "lodash": "^4.17.21"
+  },
+  "templateConfig": {
+    "moduleName": "@munan-cli/npm-rollup-ts-template",
+    "templateName": "npm-rollup-ts 模板",
+    "templateType": "executable",
+    "templateTag": "project",
+    "startCommand": "npm run dev",
+    "buildPath": "lib",
+    
+    "ejsIgnoreFiles": ["**/node_modules/**"]
+  }
+}
