@@ -13,6 +13,7 @@ interface PackageProps {
   storePath: string
   packageVersion: string
   name: string
+  useCurrentPackageVersion: boolean
 }
 
 class Package {
@@ -21,6 +22,8 @@ class Package {
   packageName: string
   packageVersion: string
   npmFilePathPrefix: string
+  useCurrentPackageVersion: boolean
+
   constructor(options: PackageProps) {
     log.verbose('options', JSON.stringify(options))
     this.targetPath = options.targetPath // 目标路径
@@ -28,6 +31,7 @@ class Package {
     this.packageName = options.name // 包名
     this.packageVersion = options.packageVersion // 包版本
     this.npmFilePathPrefix = this.packageName.replace('/', '_') // npm文件名前缀
+    this.useCurrentPackageVersion = options.useCurrentPackageVersion
   }
 
   // 包默认下载文件路径
@@ -50,14 +54,17 @@ class Package {
 
     log.verbose('targetPath', this.targetPath)
     log.verbose('storePath', this.storePath)
-    // 获取最新版本
-    const latestVersion = await getNpmLatestSemverVersion(
-      this.packageName,
-      this.packageVersion,
-    )
-    log.verbose('latestVersion', this.packageName, latestVersion)
-    if (latestVersion)
-      this.packageVersion = latestVersion
+
+    if (!this.useCurrentPackageVersion) {
+      // 获取最新版本
+      const latestVersion = await getNpmLatestSemverVersion(
+        this.packageName,
+        this.packageVersion,
+      )
+      log.verbose('latestVersion', this.packageName, latestVersion)
+      if (latestVersion)
+        this.packageVersion = latestVersion
+    }
   }
 
   /**

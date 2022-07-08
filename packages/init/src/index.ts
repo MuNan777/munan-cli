@@ -210,6 +210,7 @@ async function downloadTemplate(
         storePath: targetPath,
         name: templateName,
         packageVersion: templateVersion,
+        useCurrentPackageVersion: true
       })
       // 如果模板不存在，进行下载
       if (!await templatePkg.exists()) {

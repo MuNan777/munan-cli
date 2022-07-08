@@ -43,7 +43,9 @@ export async function getLatestVersion(npm: string, registry?: string) {
 // 获取某个 npm 的所有版本号
 export async function getVersions(npm: string, registry?: string) {
   const body = await getNpmInfo(npm, registry)
-  const versions = Object.keys(body.versions)
+  const versions = Object.keys(body.versions).sort((a, b) => {
+    return semver.gt(b, a) ? 1 : -1
+  })
   return versions
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/template",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "munan-cli 模板构建模块/模板列表缓存",
   "directories": {},
   "files": [],
@@ -28,7 +28,7 @@
     "url": "https://github.com/MuNan777/munan-cli/issues"
   },
   "dependencies": {
-    "@munan-cli/utils": "workspace:^1.0.5",
+    "@munan-cli/utils": "workspace:^1.0.6",
     "fs-extra": "^10.1.0",
     "validate-npm-package-name": "^4.0.0"
   },

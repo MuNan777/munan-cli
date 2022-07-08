@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/core",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "munan-cli 脚手架核心包",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
@@ -32,7 +32,7 @@
   "author": "munanc",
   "license": "MIT",
   "dependencies": {
-    "@munan-cli/utils": "workspace:^1.0.5",
+    "@munan-cli/utils": "workspace:^1.0.6",
     "colors": "^1.4.0",
     "commander": "^9.3.0",
     "dotenv": "^16.0.1",

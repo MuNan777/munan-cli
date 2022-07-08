@@ -40,7 +40,7 @@ importers:
 
   packages/core:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.5
+      '@munan-cli/utils': workspace:^1.0.6
       '@types/fs-extra': ^9.0.13
       '@types/minimist': ^1.2.2
       '@types/semver': ^7.3.10
@@ -71,7 +71,7 @@ importers:
 
   packages/init:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.5
+      '@munan-cli/utils': workspace:^1.0.6
       '@types/fs-extra': ^9.0.13
       fs-extra: ^10.1.0
     dependencies:
@@ -82,7 +82,7 @@ importers:
 
   packages/publish:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.5
+      '@munan-cli/utils': workspace:^1.0.6
       '@types/fs-extra': ^9.0.13
       colors: ^1.4.0
       fs-extra: ^10.1.0
@@ -95,7 +95,7 @@ importers:
 
   packages/template:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.5
+      '@munan-cli/utils': workspace:^1.0.6
       '@types/fs-extra': ^9.0.13
       '@types/validate-npm-package-name': ^3.0.3
       fs-extra: ^10.1.0
