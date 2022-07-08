@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/template",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "munan-cli 模板构建模块/模板列表缓存",
   "directories": {},
   "files": [],
@@ -37,6 +37,17 @@
     "@types/validate-npm-package-name": "^3.0.3"
   },
   "templateConfigs": [
+    {
+      "moduleName": "@munan-cli/npm-rollup-ts-template",
+      "templateName": "npm-rollup-ts 模板",
+      "templateType": "executable",
+      "templateTag": "project",
+      "startCommand": "npm run dev",
+      "buildPath": "lib",
+      "ejsIgnoreFiles": [
+        "**/node_modules/**"
+      ]
+    },
     {
       "moduleName": "@munan-cli/vite-vue3-ts-template",
       "templateName": "vite-vue3-ts 模板",
