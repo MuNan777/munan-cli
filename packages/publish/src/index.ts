@@ -54,8 +54,6 @@ async function publish(
       let latestVersion = ''
       try {
         latestVersion = await getLatestVersion(name)
-        // eslint-disable-next-line no-console
-        console.log(version, latestVersion)
         if (semver.gt(latestVersion, version) || semver.eq(latestVersion, version)) {
           const incType = await prompt<ReleaseType>({
             type: 'list',
