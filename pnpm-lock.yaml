@@ -1,4 +1,4 @@
-lockfileVersion: 5.4
+lockfileVersion: 5.3
 
 importers:
 
@@ -98,14 +98,18 @@ importers:
     specifiers:
       '@munan-cli/utils': workspace:^1.0.8
       '@types/fs-extra': ^9.0.13
+      '@types/semver': ^7.3.10
       colors: ^1.4.0
       fs-extra: ^10.1.0
+      semver: ^7.3.7
     dependencies:
       '@munan-cli/utils': link:../utils
       colors: 1.4.0
       fs-extra: 10.1.0
+      semver: 7.3.7
     devDependencies:
       '@types/fs-extra': 9.0.13
+      '@types/semver': 7.3.10
 
   packages/template:
     specifiers:

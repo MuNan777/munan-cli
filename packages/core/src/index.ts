@@ -153,6 +153,7 @@ interface PublishExtendOptions {
   cloudBuild: boolean
   createDeployCmd: boolean
   createWorkPackConfig: boolean
+  packageDeploy: boolean
 }
 type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
 
@@ -258,6 +259,7 @@ function registerCommand() {
     .option('--prod', '正式发布')
     .option('--cwc --createWorkPackConfig', '创建工作空间脚手架配置, 以后默认使用工作空间配置')
     .option('--cdc --createDeployCmd', '创建发布命令配置')
+    .option('--pkg --packageDeploy', '发布 npm 包, (正式发布 prod = true)')
     .action(async ({
       packagePath,
       force,
@@ -277,6 +279,8 @@ function registerCommand() {
       cloudBuild,
       cdc,
       createDeployCmd,
+      pkg,
+      packageDeploy,
     }) => {
       const packageName = '@munan-cli/publish'
       const packageVersion = '1.0.0'
@@ -297,12 +301,13 @@ function registerCommand() {
         deployCmd,
         useCNpm: cnpm,
         usePNpm: pnpm,
-        prod,
+        prod: prod || pkg || packageDeploy,
         keepCache,
         cliHome,
         cloudBuild: cBuild || cloudBuild,
         createDeployCmd: cdc || createDeployCmd,
         createWorkPackConfig: cwc || createWorkPackConfig,
+        packageDeploy: pkg || packageDeploy,
       })
     })
 

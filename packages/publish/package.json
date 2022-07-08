@@ -1,7 +1,18 @@
 {
   "name": "@munan-cli/publish",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "publish 模块",
+  "author": "",
+
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "keywords": [],
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
@@ -26,22 +37,14 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@munan-cli/utils": "workspace:^1.0.8",
     "colors": "^1.4.0",
-    "fs-extra": "^10.1.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MuNan777/munan-cli.git"
-  },
-  "bugs": {
-    "url": "https://github.com/MuNan777/munan-cli/issues"
+    "fs-extra": "^10.1.0",
+    "semver": "^7.3.7"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13"
+    "@types/fs-extra": "^9.0.13",
+    "@types/semver": "^7.3.10"
   }
 }

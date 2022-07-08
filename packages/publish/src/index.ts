@@ -1,8 +1,10 @@
 import path from 'path'
 import fs from 'fs'
 import fse from 'fs-extra'
-import { Git, getDirName, log, prompt } from '@munan-cli/utils'
+import { Git, getDirName, getLatestVersion, log, prompt } from '@munan-cli/utils'
 import colors from 'colors'
+import type { ReleaseType } from 'semver'
+import semver from 'semver'
 import Config from './config'
 const { WORKPLACE_GIT_CONFIG_PATH } = Config
 
@@ -15,17 +17,23 @@ async function prepare(options: { buildCmd: string; deployCmd: string }) {
     throw new Error('deployCmd参数不符合规范，正确格式：npm run deploy:xxx')
 }
 
-function checkProjectInfo() {
+function checkPackageJson() {
   const projectPath = process.cwd()
   const pkgPath = path.resolve(projectPath, 'package.json')
   log.verbose('package.json', pkgPath)
   if (!fs.existsSync(pkgPath))
     throw new Error('package.json不存在')
+  return pkgPath
+}
+
+function checkProjectInfo() {
+  const pkgPath = checkPackageJson()
   const pkg = fse.readJSONSync(pkgPath)
-  let { name, version } = pkg
+  const { version } = pkg
+  let { name } = pkg
   name = name.replace(/@|\//g, '_').replace(/^_/, '')
   log.verbose('project', name, version)
-  return { name, version, dir: projectPath }
+  return { name, version, dir: process.cwd() }
 }
 
 async function publish(
@@ -36,8 +44,43 @@ async function publish(
     deployCmd: string
     createDeployCmd: boolean
     createWorkPackConfig: boolean
+    packageDeploy: boolean
   }) {
   try {
+    if (opt.packageDeploy) {
+      const pkgPath = checkPackageJson()
+      const pkg = fse.readJSONSync(pkgPath)
+      const { version, name } = pkg
+      let latestVersion = ''
+      try {
+        latestVersion = await getLatestVersion(name)
+        // eslint-disable-next-line no-console
+        console.log(version, latestVersion)
+        if (semver.gt(latestVersion, version) || semver.eq(latestVersion, version)) {
+          const incType = await prompt<ReleaseType>({
+            type: 'list',
+            choices: [{
+              name: `小版本（${latestVersion} -> ${semver.inc(latestVersion, 'patch')}）`,
+              value: 'patch',
+            }, {
+              name: `中版本（${latestVersion} -> ${semver.inc(latestVersion, 'minor')}）`,
+              value: 'minor',
+            }, {
+              name: `大版本（${latestVersion} -> ${semver.inc(latestVersion, 'major')}）`,
+              value: 'major',
+            }],
+            defaultValue: 'patch',
+            message: '自动升级版本，请选择升级版本类型',
+          })
+          const incVersion = semver.inc(latestVersion, incType)
+          pkg.version = incVersion
+          fse.writeJSONSync(pkgPath, pkg, { spaces: 2 })
+        }
+      }
+      catch (err) {
+        log.notice('info', '没有最新版本号，跳过升级')
+      }
+    }
     if (opt.createDeployCmd) {
       const pkgPath = path.resolve(process.cwd(), 'package.json')
       if (!fs.existsSync(pkgPath)) { throw new Error('package.json 不存在！') }
@@ -63,9 +106,8 @@ ${WORKPLACE_GIT_CONFIG_PATH}.json`
         log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
         if (fse.existsSync('./.gitignore'))
           fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
-        else {
+        else
           fse.writeFileSync('./.gitignore', gitignoreConfig)
-        }
       }
     }
     else {

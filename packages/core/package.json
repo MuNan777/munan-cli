@@ -1,7 +1,18 @@
 {
   "name": "@munan-cli/core",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "munan-cli 脚手架核心包",
+  "author": "munanc",
+
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "keywords": [],
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
@@ -28,9 +39,6 @@
     "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch --watch.include=src/** -m inline"
   },
-  "keywords": [],
-  "author": "munanc",
-  "license": "MIT",
   "dependencies": {
     "@munan-cli/utils": "workspace:^1.0.8",
     "colors": "^1.4.0",
@@ -41,13 +49,6 @@
     "minimist": "^1.2.6",
     "semver": "^7.3.7",
     "user-home": "^3.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MuNan777/munan-cli.git"
-  },
-  "bugs": {
-    "url": "https://github.com/MuNan777/munan-cli/issues"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
