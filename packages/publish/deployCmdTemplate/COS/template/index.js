@@ -3,6 +3,9 @@ const path = require('path')
 const COS = require('cos-nodejs-sdk-v5')
 const inquirer = require('inquirer')
 
+// 本地发布使用配置，下方有云发布使用配置，如使用云发布，请注释此配置，在服务端的 deployConfig 导入配置，同时名称应为 [项目名].js
+const { SECRET_ID, SECRET_KEY, BUCKET_NAME, LOCATION, DIST_NAME } = require('./config/index')
+
 async function prompt({ choices, defaultValue, message, type = 'list', require = true }) {
   const options = {
     type,
@@ -17,17 +20,7 @@ async function prompt({ choices, defaultValue, message, type = 'list', require =
   return inquirer.prompt(options).then(answer => answer.name)
 }
 
-// 可通过更换配置路径，实现云端发布需求
-const { SECRET_ID, SECRET_KEY, BUCKET_NAME, LOCATION, DIST_NAME } = require('./config/index')
-
-const DIST_PATH = path.resolve(__dirname, '..', DIST_NAME)
-
-const cos = new COS({
-  SecretId: SECRET_ID,
-  SecretKey: SECRET_KEY,
-})
-
-function getCosData() {
+function getCosData(cos) {
   return new Promise((resolve, reject) => {
     cos.getService((err, data) => {
       if (err) {
@@ -39,12 +32,12 @@ function getCosData() {
   })
 }
 
-async function checkBucket(bucketName) {
-  const { Buckets } = await getCosData()
+async function checkBucket(cos, bucketName) {
+  const { Buckets } = await getCosData(cos)
   return Buckets.find(item => item.Name === bucketName) != null
 }
 
-function createBucket(Bucket, Region) {
+function createBucket(cos, Bucket, Region) {
   return new Promise((resolve, reject) => {
     cos.putBucket({
       Bucket,
@@ -59,7 +52,7 @@ function createBucket(Bucket, Region) {
   })
 }
 
-function putObject(Bucket, Region, Key, Body) {
+function putObject(cos, Bucket, Region, Key, Body) {
   return new Promise((resolve, reject) => {
     cos.putObject({
       Bucket,
@@ -88,7 +81,7 @@ function getAllFiles(Path) {
   return files
 }
 
-function deleteMultipleObject(Bucket, Region, Objects) {
+function deleteMultipleObject(cos, Bucket, Region, Objects) {
   return new Promise((resolve, reject) => {
     cos.deleteMultipleObject({
       Bucket,
@@ -109,7 +102,7 @@ function deleteMultipleObject(Bucket, Region, Objects) {
   })
 }
 
-async function getBucketFiles(Bucket, Region, Prefix) {
+async function getBucketFiles(cos, Bucket, Region, Prefix) {
   return new Promise((resolve, reject) => {
     cos.getBucket({
       Bucket, /* 填入您自己的存储桶，必须字段 */
@@ -129,19 +122,30 @@ async function getBucketFiles(Bucket, Region, Prefix) {
   })
 }
 
-async function cleanBucket(Bucket, Region, objects) {
-  await deleteMultipleObject(Bucket, Region, objects)
+async function cleanBucket(cos, Bucket, Region, objects) {
+  await deleteMultipleObject(cos, Bucket, Region, objects)
   return objects
 }
 
-async function deploy() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function deploy(config) {
+  // 云发布使用配置，使用云发布，请注释此配置，在服务端的 deployConfig 导入配置，同时名称应为 [项目名].js
+  // const { SECRET_ID, SECRET_KEY, BUCKET_NAME, LOCATION, DIST_NAME } = config
+
+  const DIST_PATH = path.resolve(__dirname, '..', DIST_NAME)
+
+  const cos = new COS({
+    SecretId: SECRET_ID,
+    SecretKey: SECRET_KEY,
+  })
+
   // eslint-disable-next-line no-console
   console.log('开始发布')
-  if (!(await checkBucket(BUCKET_NAME)))
-    await createBucket(BUCKET_NAME, LOCATION)
+  if (!(await checkBucket(cos, BUCKET_NAME)))
+    await createBucket(cos, BUCKET_NAME, LOCATION)
 
   try {
-    const objects = await getBucketFiles(BUCKET_NAME, LOCATION, '')
+    const objects = await getBucketFiles(cos, BUCKET_NAME, LOCATION, '')
     if (objects.length > 0) {
       const isClean = await prompt({
         type: 'confirm',
@@ -150,7 +154,7 @@ async function deploy() {
       if (isClean) {
         // eslint-disable-next-line no-console
         console.log('清理旧文件')
-        await cleanBucket(BUCKET_NAME, LOCATION, objects)
+        await cleanBucket(cos, BUCKET_NAME, LOCATION, objects)
       }
     }
     // eslint-disable-next-line no-console
@@ -161,7 +165,7 @@ async function deploy() {
       const stat = fs.statSync(filePath)
       if (stat.isFile()) {
         const stream = fs.createReadStream(filePath)
-        await putObject(BUCKET_NAME, LOCATION, file, stream)
+        await putObject(cos, BUCKET_NAME, LOCATION, file, stream)
       }
     }
     // eslint-disable-next-line no-console
