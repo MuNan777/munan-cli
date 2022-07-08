@@ -22,7 +22,8 @@ function checkProjectInfo() {
   if (!fs.existsSync(pkgPath))
     throw new Error('package.json不存在')
   const pkg = fse.readJSONSync(pkgPath)
-  const { name, version } = pkg
+  let { name, version } = pkg
+  name = name.replace(/@|\//g, '_').replace(/^_/, '')
   log.verbose('project', name, version)
   return { name, version, dir: projectPath }
 }
@@ -62,6 +63,9 @@ ${WORKPLACE_GIT_CONFIG_PATH}.json`
         log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
         if (fse.existsSync('./.gitignore'))
           fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
+        else {
+          fse.writeFileSync('./.gitignore', gitignoreConfig)
+        }
       }
     }
     else {

@@ -80,6 +80,8 @@ export const createFn = async () => {
 ${targetDirName}-cos/config`
     if (fse.existsSync('./.gitignore'))
       fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
+    else
+      fse.writeFileSync('./.gitignore', gitignoreConfig)
     log.success('添加执行命令成功')
     log.notice('info', '安装所需依赖')
     const packages = ['cos-nodejs-sdk-v5', 'inquirer@^7.3.3']

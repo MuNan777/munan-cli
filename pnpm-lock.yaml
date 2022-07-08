@@ -40,7 +40,7 @@ importers:
 
   packages/core:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.6
+      '@munan-cli/utils': workspace:^1.0.7
       '@types/fs-extra': ^9.0.13
       '@types/minimist': ^1.2.2
       '@types/semver': ^7.3.10
@@ -71,7 +71,7 @@ importers:
 
   packages/init:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.6
+      '@munan-cli/utils': workspace:^1.0.7
       '@types/fs-extra': ^9.0.13
       fs-extra: ^10.1.0
     dependencies:
@@ -80,9 +80,23 @@ importers:
     devDependencies:
       '@types/fs-extra': 9.0.13
 
+  packages/npm-rollup-ts-template:
+    specifiers:
+      ejs: ^3.1.8
+      fs-extra: ^10.1.0
+      glob: ^8.0.3
+      inquirer: ^7.3.3
+      lodash: ^4.17.21
+    dependencies:
+      ejs: 3.1.8
+      fs-extra: 10.1.0
+      glob: 8.0.3
+      inquirer: 7.3.3
+      lodash: 4.17.21
+
   packages/publish:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.6
+      '@munan-cli/utils': workspace:^1.0.7
       '@types/fs-extra': ^9.0.13
       colors: ^1.4.0
       fs-extra: ^10.1.0
@@ -95,7 +109,7 @@ importers:
 
   packages/template:
     specifiers:
-      '@munan-cli/utils': workspace:^1.0.6
+      '@munan-cli/utils': workspace:^1.0.7
       '@types/fs-extra': ^9.0.13
       '@types/validate-npm-package-name': ^3.0.3
       fs-extra: ^10.1.0

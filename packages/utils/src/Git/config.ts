@@ -6,6 +6,7 @@ const WORKPLACE_CONFIG_PATH = 'munan-cli.config'
 
 const COMPONENT_GITIGNORE = `.DS_Store
 node_modules
+/lib
 
 
 # local env files
@@ -34,6 +35,7 @@ ${WORKPLACE_CONFIG_PATH}.json
 const PROJECT_GITIGNORE = `.DS_Store
 node_modules
 /dist
+/lib
 
 # local env files
 .env.local

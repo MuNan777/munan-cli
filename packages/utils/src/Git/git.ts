@@ -438,6 +438,7 @@ class Git {
   // 检查 .gitignore
   checkGitIgnore = () => {
     const gitIgnore = path.resolve(this.dir, GIT_IGNORE_FILE)
+    console.log(gitIgnore)
     if (!fs.existsSync(gitIgnore)) {
       if (this.isComponent()) {
         writeFile(gitIgnore, COMPONENT_GITIGNORE)

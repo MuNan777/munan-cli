@@ -31,7 +31,7 @@ export function readFile(path: string, options?: { toJson: boolean }) {
 export function writeFile(
   path: string,
   data: string | NodeJS.ArrayBufferView,
-  options: { rewrite: boolean } = { rewrite: true },
+  options: { rewrite: boolean, flag?: string } = { rewrite: true },
 ) {
   if (fs.existsSync(path)) {
     if (options.rewrite) {
