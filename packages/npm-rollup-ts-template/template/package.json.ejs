@@ -9,7 +9,7 @@
     "test": "vitest __test__/",
     "build": "rimraf lib && rollup -c",
     "dev": "rollup -c --watch --watch.include=src/** -m inline",
-    "deploy": "npm run test && npm run build && npm publish"
+    "deploy": "npm run build && npm publish"
   },
   "files": [
     "lib",
