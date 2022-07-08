@@ -1,21 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const COS = require('cos-nodejs-sdk-v5')
-const inquirer = require('inquirer')
-
-async function prompt({ choices, defaultValue, message, type = 'list', require = true }) {
-  const options = {
-    type,
-    name: 'name',
-    message,
-    default: defaultValue,
-    require,
-  }
-  if (type === 'list')
-    options.choices = choices
-
-  return inquirer.prompt(options).then(answer => answer.name)
-}
 
 function getCosData(cos) {
   return new Promise((resolve, reject) => {
@@ -126,7 +111,17 @@ async function cleanBucket(cos, Bucket, Region, objects) {
 
 async function deploy() {
   // 本地发布配置路径
-  const { SECRET_ID, SECRET_KEY, BUCKET_NAME, LOCATION, DIST_NAME } = require('./config/index')
+  let configPath = ''
+  // 云发布使用配置，使用云发布，
+  // 需要在服务端的 根目录下 deployConfig 文件夹，如没有则创建，然后导入配置，同时名称应为 [项目名].js
+  // 注意!!!, 发布脚本内不能存在交互代码，目前没有实现云端交互功能
+  const argv = process.argv
+  if (argv.length > 2 && argv[2])
+    configPath = argv[2].split('--config-path=')[1]
+  else
+    throw new Error('Invalid config path')
+
+  const { SECRET_ID, SECRET_KEY, BUCKET_NAME, LOCATION, DIST_NAME } = require(configPath)
 
   const DIST_PATH = path.resolve(__dirname, '..', DIST_NAME)
 
@@ -143,15 +138,9 @@ async function deploy() {
   try {
     const objects = await getBucketFiles(cos, BUCKET_NAME, LOCATION, '')
     if (objects.length > 0) {
-      const isClean = await prompt({
-        type: 'confirm',
-        message: '存在旧文件，清理旧文件',
-      })
-      if (isClean) {
-        // eslint-disable-next-line no-console
-        console.log('清理旧文件')
-        await cleanBucket(cos, BUCKET_NAME, LOCATION, objects)
-      }
+      // eslint-disable-next-line no-console
+      console.log('清理旧文件')
+      await cleanBucket(cos, BUCKET_NAME, LOCATION, objects)
     }
     // eslint-disable-next-line no-console
     console.log('上传文件')

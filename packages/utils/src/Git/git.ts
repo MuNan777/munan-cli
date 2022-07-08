@@ -40,6 +40,7 @@ const {
   VERSION_RELEASE,
   VERSION_DEVELOP,
   GIT_ROOT_CONFIG_NAME,
+  CLOUD_BUILD_URL,
 } = Config
 
 interface GitConfig {
@@ -83,6 +84,7 @@ interface publishConfigProps {
   gitServer: string
   gitToken: string
   gitPublishType: string
+  cloudBuildUrl: string
 }
 
 class Git {
@@ -167,7 +169,7 @@ class Git {
   // 检查配置
   checkConfig = async () => {
     let publishConfig = null
-    if (fse.existsSync(`${GIT_ROOT_CONFIG_NAME}.json`)) {
+    if (fse.existsSync(`${this.dir}/${GIT_ROOT_CONFIG_NAME}.json`)) {
       publishConfig = await fse.readJSONSync(`${this.dir}/${GIT_ROOT_CONFIG_NAME}.json`)
       this.useWorkPlacePublishConfig = true
     }
@@ -718,8 +720,8 @@ class Git {
       buildCmd: this.buildCmd,
       deployCmd: this.deployCmd,
     })
-    // await cloudBuild.prepare()
-    await cloudBuild.init()
+    await this.checkCloudBuildUrl()
+    await cloudBuild.init(this.publishConfig.cloudBuildUrl!)
     deployRes = await cloudBuild.build()
     await this.gitFlowHandler(deployRes)
     if (deployRes)
@@ -727,6 +729,26 @@ class Git {
     else
       log.success('发布失败')
     return deployRes
+  }
+
+  // 输入云端 api
+  checkCloudBuildUrl = async () => {
+    let cloudBuildUrl = this.publishConfig.cloudBuildUrl
+    if (!cloudBuildUrl || this.refreshServer) {
+      cloudBuildUrl = await prompt<string>({
+        type: 'input',
+        message: '请选输入云端 api 接口，如(ws://localhost:7000)',
+      })
+      this.publishConfig.cloudBuildUrl = cloudBuildUrl
+      const configPath = this.createPath()
+      if (writeJSONFile(this.createPath(), { [CLOUD_BUILD_URL]: cloudBuildUrl }))
+        log.success('接口写入成功', `${cloudBuildUrl} -> ${configPath}`)
+      else
+        log.verbose('接口写入失败', `${cloudBuildUrl} -> ${configPath} `)
+    }
+    else {
+      log.success('接口获取成功', cloudBuildUrl)
+    }
   }
 
   // git flow
@@ -743,7 +765,7 @@ class Git {
 
   checkTag = async () => {
     log.notice('info', '获取远程 tag 列表')
-    const tag = `${VERSION_RELEASE}/${this.version}`
+    const tag = `${VERSION_RELEASE} /${this.version}`
     const tagList = await this.getRemoteBranchList(VERSION_RELEASE)
     if (tagList.includes(this.version)) {
       log.success('远程 tag 已存在', tag)

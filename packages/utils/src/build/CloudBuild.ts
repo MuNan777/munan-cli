@@ -6,7 +6,7 @@ import type Git from '../Git/git'
 import type { SocketOn } from './type'
 import Config from './config'
 import { parseMsg } from './parse'
-const { WS_SERVER, FAILED_CODE } = Config
+const { FAILED_CODE } = Config
 
 interface CloudBuildOptions {
   prod: boolean
@@ -48,11 +48,11 @@ class CloudBuild {
     this.timer = setTimeout(fn, timeout)
   }
 
-  init = () => {
+  init = (path: string) => {
     log.notice('info', '开始云构建任务初始化')
     log.verbose('remote', `${this._git.remote}`)
     return new Promise((resolve, reject) => {
-      const socket = io(`${WS_SERVER}/build`, {
+      const socket = io(`${path}/build`, {
         query: {
           repo: this._git.remote,
           name: this._git.name,

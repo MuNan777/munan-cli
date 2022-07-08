@@ -61,12 +61,13 @@ ${WORKPLACE_CONFIG_PATH}.json
 export default {
   DEFAULT_CLI_HOME: '.munan-cli', // 脚手架默认主目录
   GIT_ROOT_DIR: '.git', // git 缓存目录
-  GIT_ROOT_CONFIG_NAME: 'munan-cli.config', // git 配置文件名称
+  GIT_ROOT_CONFIG_NAME: 'munan-cli.config', // 配置文件名称
   GIT_SERVER_NAME: 'gitServer', // git 服务缓存目录
   GIT_TOKEN_NAME: 'gitToken',
   GIT_OWN_NAME: 'gitOwn',
   GIT_LOGIN_NAME: 'gitLogin',
   GIT_PUBLISH_NAME: 'gitPublishType',
+  CLOUD_BUILD_URL: 'cloudBuildUrl',
   GITHUB,
   GITEE,
   GIT_SERVER_TYPE: [{
