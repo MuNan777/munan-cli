@@ -765,7 +765,7 @@ class Git {
 
   checkTag = async () => {
     log.notice('info', '获取远程 tag 列表')
-    const tag = `${VERSION_RELEASE} /${this.version}`
+    const tag = `${VERSION_RELEASE}/${this.version}`
     const tagList = await this.getRemoteBranchList(VERSION_RELEASE)
     if (tagList.includes(this.version)) {
       log.success('远程 tag 已存在', tag)
