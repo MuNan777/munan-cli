@@ -1,8 +1,8 @@
 const path = require('path')
 
 const fse = require('fs-extra')
-const inquirer = require('./lib/inquirer')
-const render = require('./lib/render')
+const inquirer = require('./utils/inquirer')
+const render = require('./utils/render')
 
 module.exports = async function (options) {
   // eslint-disable-next-line no-console
