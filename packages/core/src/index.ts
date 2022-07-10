@@ -1,226 +1,42 @@
-import fs from 'fs'
-import path from 'path'
-
-import downgradeRoot from 'downgrade-root'
-import userHome from 'user-home'
-import minimist from 'minimist'
-import dotenv from 'dotenv'
 import { Command } from 'commander'
-import semver from 'semver'
-import colors from 'colors/safe'
-import fse from 'fs-extra'
 
-import { Package, exec, getNpmLatestSemverVersion, getNpmRegistry, log } from '@munan-cli/utils'
-
+import { log } from '@munan-cli/utils'
 import packageConfig from '../package.json'
-import baseConfig from './config'
-const {
-  DEFAULT_CLI_HOME,
-  DEPENDENCIES_PATH,
-  LOWEST_NODE_VERSION,
-  NPM_NAME,
-  USE_ORIGIN_NPM,
-  WORKPLACE_GIT_CONFIG_PATH,
-} = baseConfig
+import type { coreOptions } from './types'
 
-let args: minimist.ParsedArgs
-let config: {
-  home: string
-  cliHome: string
-  useOriginNpm: boolean
+import { checkNodeVersion } from './checkNodeVersion'
+import { checkRoot } from './checkRoot'
+import { checkUserHome } from './checkUserHome'
+import { checkInputArgs } from './checkInputArgs'
+import { checkEnv } from './checkEnv'
+import { checkGlobalUpdate } from './checkGlobalUpdate'
+import { execCommandWrapper } from './execCommand'
+import { createWorkPackConfigHandle } from './createWorkPackConfigHandle'
+
+const options: coreOptions = {
+  args: {
+    _: [],
+  },
+  config: {
+    home: '',
+    cliHome: '',
+    useOriginNpm: true,
+  },
 }
 
 const program = new Command('munan-cli')
-
-function checkNodeVersion(): void {
-  if (!semver.gte(process.version, LOWEST_NODE_VERSION)) {
-    throw new Error(
-      colors.red(
-        `munan-cli 需要安装 v${LOWEST_NODE_VERSION} 以上版本的 Node.js`,
-      ),
-    )
-  }
-}
-
-function checkRoot() {
-  try {
-    downgradeRoot() // root 降级
-  }
-  catch (e) {
-    colors.red('请避免使用 root 账户启动本应用')
-  }
-}
-
-function checkUserHome() {
-  if (!userHome || !fs.existsSync(userHome))
-    throw new Error(colors.red('当前登录用户不存在主目录'))
-}
-
-function checkArgs() {
-  if (args.debug || args.d)
-    process.env.LOG_LEVEL = 'verbose'
-  else
-    process.env.LOG_LEVEL = 'info'
-
-  log.level = process.env.LOG_LEVEL
-}
-
-function checkInputArgs() {
-  log.verbose('info', '检查用户输入参数')
-  args = minimist(process.argv.slice(2))
-  if (args.d)
-    args.debug = true
-
-  checkArgs()
-}
-
-function createCliConfig() {
-  const cliConfig = {
-    home: userHome,
-    cliHome: '',
-    useOriginNpm: true,
-  }
-  if (process.env.CLI_HOME)
-    cliConfig.cliHome = path.join(userHome, process.env.CLI_HOME)
-  else
-    cliConfig.cliHome = path.join(userHome, DEFAULT_CLI_HOME)
-
-  cliConfig.useOriginNpm = process.env.USE_ORIGIN_NPM
-    ? process.env.USE_ORIGIN_NPM !== 'false'
-    : USE_ORIGIN_NPM
-  return cliConfig
-}
-
-function checkEnv() {
-  log.verbose('info', '开始检查环境变量')
-  dotenv.config({
-    path: path.resolve(userHome, '.env'),
-  })
-  config = createCliConfig()
-  log.verbose('环境变量', JSON.stringify(config))
-}
-
-async function checkGlobalUpdate() {
-  log.verbose('info', '检查工具是否需要更新')
-  const currentVersion = packageConfig.version
-  const lastVersion = await getNpmLatestSemverVersion(
-    NPM_NAME,
-    currentVersion,
-    getNpmRegistry(config.useOriginNpm),
-  )
-  if (lastVersion && semver.gt(lastVersion, currentVersion)) {
-    log.warn(
-      'warn',
-      colors.yellow(`请手动更新 ${NPM_NAME}，当前版本：${packageConfig.version}，最新版本：${lastVersion}
-                更新命令： npm install -g ${NPM_NAME}`),
-    )
-  }
-}
 
 // 准备环境
 async function prepare() {
   checkNodeVersion() // 检查 node 版本
   checkRoot() // 检查是否为 root 启动
   checkUserHome() // 检查用户主目录
-  checkInputArgs() // 检查用户输入参数
-  checkEnv() // 检查环境变量
-  await checkGlobalUpdate() // 检查工具是否需要更新
+  checkInputArgs(options) // 检查用户输入参数
+  checkEnv(options) // 检查环境变量
+  await checkGlobalUpdate(options) // 检查工具是否需要更新
 }
 
-function handleError(e) {
-  if (args.debug)
-    log.error('Error', e.stack)
-  else
-    log.error('Error', e.message)
-
-  process.exit(1)
-}
-
-interface InitExtendOptions {
-  name: string
-  moduleName: string
-}
-
-interface PublishExtendOptions {
-  refreshToken: boolean
-  refreshOwner: boolean
-  refreshServer: boolean
-  buildCmd: string
-  deployCmd: string
-  useCNpm: boolean
-  usePNpm: boolean
-  prod: boolean
-  keepCache: boolean
-  cliHome: string
-  cloudBuild: boolean
-  createDeployCmd: boolean
-  packageDeploy: boolean
-}
-type ExtendOptions = { force?: boolean } & Partial<InitExtendOptions> & Partial<PublishExtendOptions>
-
-// 执行命令
-async function execCommand(
-  { packagePath, packageName, packageVersion }: { packageName: string; packageVersion: string; packagePath: any },
-  extendOptions: ExtendOptions,
-) {
-  let rootFile: string
-  try {
-    if (packagePath) {
-      const execPackage = new Package({
-        targetPath: packagePath,
-        storePath: packagePath,
-        name: packageName,
-        packageVersion,
-      })
-      // 包的根文件路径
-      rootFile = await execPackage.getRootFilePath(true) || ''
-    }
-    else {
-      const { cliHome } = config
-      const packageDir = `${DEPENDENCIES_PATH}`
-      const targetPath = path.resolve(cliHome, packageDir)
-      const storePath = path.resolve(targetPath, 'node_modules')
-      const initPackage = new Package({
-        targetPath,
-        storePath,
-        name: packageName,
-        packageVersion,
-      })
-      // 判断是否已经安装
-      if (await initPackage.exists()) {
-        // 如果已经安装，则尝试更新包
-        await initPackage.update()
-      }
-      else {
-        // 如果未安装，则安装包
-        await initPackage.install()
-      }
-      // 包的根文件路径
-      rootFile = await initPackage.getRootFilePath() || ''
-    }
-    const _config = { ...config, ...extendOptions, debug: args.debug }
-    if (fs.existsSync(rootFile)) {
-      const code = `import('file://${rootFile}').then(callback => callback.default(${JSON.stringify(_config)}))`
-      const pack = exec('node', ['--experimental-modules', '-e', code], { stdio: 'inherit' })
-      pack.on('error', (e) => {
-        log.verbose('命令执行失败', `${e}`)
-        handleError(e)
-      })
-
-      pack.on('exit', (c) => {
-        log.verbose('命令执行完成', `${c}`)
-        process.exit(c || 0)
-      })
-    }
-    else {
-      throw new Error('入口文件不存在，请重试！')
-    }
-  }
-  catch (err) {
-    log.error('error', err.message)
-  }
-}
-
+// 注册命令
 function registerCommand() {
   program
     .version(packageConfig.version, undefined, '查看脚手架版本')
@@ -232,23 +48,8 @@ function registerCommand() {
         cwc,
         createWorkPackConfig,
       } = data
-      if (cwc || createWorkPackConfig) {
-        if (!fse.existsSync(`./${WORKPLACE_GIT_CONFIG_PATH}.json`)) {
-          const gitignoreConfig = `
-  # munan-cli-config.json
-  ${WORKPLACE_GIT_CONFIG_PATH}.json`
-          fse.ensureFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`)
-          fse.writeFileSync(`${WORKPLACE_GIT_CONFIG_PATH}.json`, '{}')
-          if (fse.existsSync('./.gitignore'))
-            fse.writeFileSync('./.gitignore', gitignoreConfig, { flag: 'a+' })
-          else
-            fse.writeFileSync('./.gitignore', gitignoreConfig)
-          log.success(`创建配置文件夹 ./${WORKPLACE_GIT_CONFIG_PATH}.json 成功`)
-        }
-        else {
-          log.warn('warn', `./${WORKPLACE_GIT_CONFIG_PATH}.json 已存在`)
-        }
-      }
+      if (cwc || createWorkPackConfig)
+        createWorkPackConfigHandle()
     })
     .usage('<command> [options]')
 
@@ -257,14 +58,18 @@ function registerCommand() {
     .description('初始化项目')
     .option('-P --package-path <packagePath>', '指定包的路径')
     .option('-f --force', '强制覆盖已存在的文件')
-    .action(async (name, { packagePath, force, f }) => {
+    .option('--selectTemplateVersion', '选择特定版本的模板')
+    .action(async (name, { packagePath, force, f, selectTemplateVersion }) => {
       const packageName = '@munan-cli/init'
       const packageVersion = '1.0.0'
       if (f)
         force = true
+
+      // 获取执行函数
+      const execCommand = execCommandWrapper(options)
       await execCommand(
         { packageName, packageVersion, packagePath },
-        { name, force },
+        { name, force, selectTemplateVersion },
       )
     })
 
@@ -311,10 +116,12 @@ function registerCommand() {
         refreshOwner = true
         refreshServer = true
       }
-
+      const { config } = options
       const cliHome = config.cliHome
       log.verbose('cliHome', cliHome)
 
+      // 获取执行函数
+      const execCommand = execCommandWrapper(options)
       await execCommand({ packagePath, packageName, packageVersion }, {
         refreshToken,
         refreshOwner,
@@ -334,7 +141,7 @@ function registerCommand() {
 
   // 获取输入参数
   program.option('-d --debug', '打开调试模式').parse(process.argv)
-
+  const { args } = options
   if (args._.length < 1 && !(args.cwc || args.createWorkPackConfig)) {
     program.outputHelp() // 输出帮助信息
     // eslint-disable-next-line no-console
