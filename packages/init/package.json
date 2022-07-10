@@ -1,9 +1,8 @@
 {
   "name": "@munan-cli/init",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "munan-cli init",
   "author": "",
-
   "license": "MIT",
   "repository": {
     "type": "git",
