@@ -112,7 +112,7 @@ async function template() {
     let isCreateModule = false
     let moduleName = ''
     if (argv[2]) {
-      isCreateModule = argv[2].match(/^-.*$/) ? true : false
+      isCreateModule = !!argv[2].match(/^-.*$/)
       moduleName = isCreateModule ? argv[3] : argv[2]
     }
     let createType = 'template'
@@ -120,8 +120,6 @@ async function template() {
       createType = argv[2]
 
     const createName = (CREATE_TYPE_LIST.find(type => type.value === createType) || CREATE_TYPE_LIST[0]).name
-    // eslint-disable-next-line no-console
-    console.log(isCreateModule, argv, targetPath, moduleName)
     while (!moduleName) {
       moduleName = await prompt<string>({
         type: 'input',
