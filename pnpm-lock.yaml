@@ -38,6 +38,15 @@ importers:
       typescript: 4.7.4
       vitest: 0.15.2
 
+  packages/config:
+    specifiers:
+      '@munan-cli/utils': workspace:^1.0.8
+      '@types/fs-extra': ^9.0.13
+    dependencies:
+      '@munan-cli/utils': link:../utils
+    devDependencies:
+      '@types/fs-extra': 9.0.13
+
   packages/core:
     specifiers:
       '@munan-cli/utils': workspace:^1.0.8
