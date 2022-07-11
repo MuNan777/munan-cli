@@ -37,7 +37,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@munan-cli/git-handle": "file:..\\git-handle",
+    "@munan-cli/git-handle": "workspace:^1.0.0",
     "@munan-cli/utils": "workspace:^1.0.9",
     "colors": "^1.4.0",
     "fs-extra": "^10.1.0",
