@@ -127,7 +127,7 @@ importers:
 
   packages/publish:
     specifiers:
-      '@munan-cli/git-handle': file:..\git-handle
+      '@munan-cli/git-handle': workspace:^1.0.0
       '@munan-cli/utils': workspace:^1.0.9
       '@types/fs-extra': ^9.0.13
       '@types/semver': ^7.3.10
@@ -135,7 +135,7 @@ importers:
       fs-extra: ^10.1.0
       semver: ^7.3.7
     dependencies:
-      '@munan-cli/git-handle': file:packages/git-handle
+      '@munan-cli/git-handle': link:../git-handle
       '@munan-cli/utils': link:../utils
       colors: 1.4.0
       fs-extra: 10.1.0
@@ -5044,24 +5044,3 @@ packages:
     resolution: {integrity: sha512-o96x3OPo8GjWeSLF+wOAbrPfhFOGY0W00GNaxCDv+9hkcDJEnev1yh8S7pgHF0ik6zc8sQLuL8hjHjJULZp8bw==}
     engines: {node: '>= 14'}
     dev: true
-
-  file:packages/git-handle:
-    resolution: {directory: packages/git-handle, type: directory}
-    name: '@munan-cli/git-handle'
-    version: 1.0.0
-    engines: {node: '>=v14.16.0'}
-    dependencies:
-      '@munan-cli/utils': link:packages/utils
-      axios: 0.27.2
-      circular-json: 0.5.9
-      lodash-es: 4.17.21
-      semver: 7.3.7
-      simple-git: 3.10.0
-      socket.io-client: 4.5.1
-      user-home: 3.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
-    dev: false
