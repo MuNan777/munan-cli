@@ -1,7 +1,7 @@
 import { get } from 'lodash-es'
 import type { ManagerOptions, Socket, SocketOptions } from 'socket.io-client'
 import io from 'socket.io-client'
-import log from '../log'
+import { log } from '@munan-cli/utils'
 import type Git from '../Git/git'
 import type { SocketOn } from './type'
 import Config from './config'

@@ -20,7 +20,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/node": "^18.0.3",
-    "esbuild": "^0.14.48",
+    "esbuild": "^0.14.49",
     "eslint": "^8.19.0",
     "fs-extra": "^10.1.0",
     "prettier": "^2.7.1",

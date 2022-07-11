@@ -1,6 +1,5 @@
-import log from '../log'
+import { execCommand, log } from '@munan-cli/utils'
 import type Git from '../Git/git'
-import { execCommand } from '../exec'
 
 interface LocalBuildOptions {
   prod: boolean

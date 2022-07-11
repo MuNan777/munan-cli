@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/template",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "munan-cli 模板构建模块/模板列表缓存",
   "directories": {},
   "author": "",
@@ -28,7 +28,7 @@
     "create:module": "node ./lib/index.mjs -M"
   },
   "dependencies": {
-    "@munan-cli/utils": "workspace:^1.0.8",
+    "@munan-cli/utils": "workspace:^1.0.9",
     "fs-extra": "^10.1.0",
     "validate-npm-package-name": "^4.0.0"
   },

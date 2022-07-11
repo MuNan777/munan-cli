@@ -1,16 +1,15 @@
 import Log from './log'
 import FormatPath from './formatPath'
 import p from './Package'
-import Exec from './exec'
+import Exec, { execCommand as ExecCommand } from './exec'
 import Spinner from './spinner'
-import git from './Git/git'
 
 export const Package = p
 export const log = Log
 export const formatPath = FormatPath
 export const exec = Exec
+export const execCommand = ExecCommand
 export const spinner = Spinner
-export const Git = git
 
 export * from './npm'
 export * from './inquirer'

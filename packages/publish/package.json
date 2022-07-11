@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/publish",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "publish 模块",
   "author": "",
   "license": "MIT",
@@ -37,7 +37,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@munan-cli/utils": "workspace:^1.0.8",
+    "@munan-cli/git-handle": "file:..\\git-handle",
+    "@munan-cli/utils": "workspace:^1.0.9",
     "colors": "^1.4.0",
     "fs-extra": "^10.1.0",
     "semver": "^7.3.7"
