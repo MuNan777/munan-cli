@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.1.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "owner/repo" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "MuNan777/munan-cli" }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
