@@ -9,7 +9,7 @@
     "create:template": "pnpm -F @munan-cli/template run create",
     "create:module": "pnpm -F @munan-cli/template run create:module",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version": "changeset version",
     "build": "pnpm turbo run build",
     "deploy": "pnpm build && pnpm deploy:only",
     "deploy:only": "changeset publish --registry=https://registry.npmjs.com/"
