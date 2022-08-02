@@ -1,0 +1,21 @@
+[36m@munan-cli/template:build[0m: cache hit, replaying output [2m281564e0268a647a[0m
+[36m@munan-cli/template:build: [0m
+[36m@munan-cli/template:build: [0m> @munan-cli/template@1.0.12 build D:\WorkPlace\my\munan-cli\packages\template
+[36m@munan-cli/template:build: [0m> node ./build.js && rimraf lib && rollup -c
+[36m@munan-cli/template:build: [0m
+[36m@munan-cli/template:build: [0m[36m
+[36m@munan-cli/template:build: [0m[1m./src/config.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[36m@munan-cli/template:build: [0m[32mcreated [1mlib[22m in [1m123ms[22m[39m
+[36m@munan-cli/template:build: [0m[36m
+[36m@munan-cli/template:build: [0m[1m./src/config.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[36m@munan-cli/template:build: [0m{
+[36m@munan-cli/template:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[36m@munan-cli/template:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\template\\src\\config.ts',
+[36m@munan-cli/template:build: [0m  message: 'Entry module "src/config.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/config.ts" to use named exports only.',
+[36m@munan-cli/template:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[36m@munan-cli/template:build: [0m  toString: [Function (anonymous)]
+[36m@munan-cli/template:build: [0m}
+[36m@munan-cli/template:build: [0m[32mcreated [1mlib[22m in [1m67ms[22m[39m
+[36m@munan-cli/template:build: [0m[36m
+[36m@munan-cli/template:build: [0m[1m./src/config.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[36m@munan-cli/template:build: [0m[32mcreated [1mlib[22m in [1m1.8s[22m[39m

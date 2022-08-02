@@ -1,0 +1,77 @@
+[32m@munan-cli/git-handle:build[0m: cache hit, replaying output [2m1bb8c65909ef199c[0m
+[32m@munan-cli/git-handle:build: [0m
+[32m@munan-cli/git-handle:build: [0m> @munan-cli/git-handle@1.0.0 build D:\WorkPlace\my\munan-cli\packages\git-handle
+[32m@munan-cli/git-handle:build: [0m> rimraf lib && rollup -c
+[32m@munan-cli/git-handle:build: [0m
+[32m@munan-cli/git-handle:build: [0m[36m
+[32m@munan-cli/git-handle:build: [0m[1m./src/build/CloudBuild.ts, ./src/Git/config.ts, ./src/build/LocalBuild.ts, ./src/build/parse.ts, ./src/build/type.ts, ./src/Git/git.ts, ./src/Git/gitee.ts, ./src/Git/giteeRequest.ts, ./src/Git/github.ts, ./src/Git/githubRequest.ts, ./src/Git/gitServer.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[32m@munan-cli/git-handle:build: [0m[32mcreated [1mlib[22m in [1m1.1s[22m[39m
+[32m@munan-cli/git-handle:build: [0m[36m
+[32m@munan-cli/git-handle:build: [0m[1m./src/build/CloudBuild.ts, ./src/Git/config.ts, ./src/build/LocalBuild.ts, ./src/build/parse.ts, ./src/build/type.ts, ./src/Git/git.ts, ./src/Git/gitee.ts, ./src/Git/giteeRequest.ts, ./src/Git/github.ts, ./src/Git/githubRequest.ts, ./src/Git/gitServer.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\build\\CloudBuild.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/build/CloudBuild.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/build/CloudBuild.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\config.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/config.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/config.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\build\\LocalBuild.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/build/LocalBuild.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/build/LocalBuild.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\git.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/git.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/git.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\github.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/github.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/github.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\gitee.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/gitee.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/gitee.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\gitServer.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/gitServer.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/gitServer.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\githubRequest.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/githubRequest.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/githubRequest.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m{
+[32m@munan-cli/git-handle:build: [0m  code: 'PREFER_NAMED_EXPORTS',
+[32m@munan-cli/git-handle:build: [0m  id: 'D:\\WorkPlace\\my\\munan-cli\\packages\\git-handle\\src\\Git\\giteeRequest.ts',
+[32m@munan-cli/git-handle:build: [0m  message: 'Entry module "src/Git/giteeRequest.ts" is implicitly using "default" export mode, which means for CommonJS output that its default export is assigned to "module.exports". For many tools, such CommonJS output will not be interchangeable with the original ES module. If this is intended, explicitly set "output.exports" to either "auto" or "default", otherwise you might want to consider changing the signature of "src/Git/giteeRequest.ts" to use named exports only.',
+[32m@munan-cli/git-handle:build: [0m  url: 'https://rollupjs.org/guide/en/#outputexports',
+[32m@munan-cli/git-handle:build: [0m  toString: [Function (anonymous)]
+[32m@munan-cli/git-handle:build: [0m}
+[32m@munan-cli/git-handle:build: [0m[32mcreated [1mlib[22m in [1m786ms[22m[39m
+[32m@munan-cli/git-handle:build: [0m[36m
+[32m@munan-cli/git-handle:build: [0m[1m./src/build/CloudBuild.ts, ./src/Git/config.ts, ./src/build/LocalBuild.ts, ./src/build/parse.ts, ./src/build/type.ts, ./src/Git/git.ts, ./src/Git/gitee.ts, ./src/Git/giteeRequest.ts, ./src/Git/github.ts, ./src/Git/githubRequest.ts, ./src/Git/gitServer.ts, ./src/index.ts[22m → [1mlib[22m...[39m
+[32m@munan-cli/git-handle:build: [0m[32mcreated [1mlib[22m in [1m2.3s[22m[39m
