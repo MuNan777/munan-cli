@@ -5,9 +5,9 @@ import commonjs from '@rollup/plugin-commonjs' // 将CommonJs模块转换为es6
 import { defineConfig } from 'rollup'
 import json from '@rollup/plugin-json'
 import fse from 'fs-extra'
+import { createEntries } from '../../rollup.config.base'
 import pkg from './package.json'
 
-const { createEntries } = require('../../utils')
 const files = fse.readdirSync('src')
 
 const entries = {}
