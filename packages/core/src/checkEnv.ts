@@ -1,7 +1,7 @@
 import path from 'path'
 
+import { homedir } from 'os'
 import dotenv from 'dotenv'
-import userHome from 'user-home'
 import { log } from '@munan-cli/utils'
 import baseConfig from './config'
 import type { configProps } from './types'
@@ -10,6 +10,8 @@ const {
   DEFAULT_CLI_HOME,
   USE_ORIGIN_NPM,
 } = baseConfig
+
+const userHome = homedir()
 
 // 检查环境变量
 export function checkEnv(opt: { config: configProps }) {

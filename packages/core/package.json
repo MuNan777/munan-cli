@@ -46,13 +46,11 @@
     "downgrade-root": "^2.0.0",
     "fs-extra": "^10.1.0",
     "minimist": "^1.2.6",
-    "semver": "^7.3.7",
-    "user-home": "^3.0.0"
+    "semver": "^7.3.7"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/minimist": "^1.2.2",
-    "@types/semver": "^7.3.10",
-    "@types/user-home": "^2.0.0"
+    "@types/semver": "^7.3.10"
   }
 }

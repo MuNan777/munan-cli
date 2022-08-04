@@ -35,8 +35,7 @@
     "lodash-es": "^4.17.21",
     "semver": "^7.3.7",
     "simple-git": "^3.10.0",
-    "socket.io-client": "^4.5.1",
-    "user-home": "^3.0.0"
+    "socket.io-client": "^4.5.1"
   },
   "repository": {
     "type": "git",
@@ -49,7 +48,6 @@
     "@types/circular-json": "^0.4.0",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash-es": "^4.17.6",
-    "@types/semver": "^7.3.10",
-    "@types/user-home": "^2.0.0"
+    "@types/semver": "^7.3.10"
   }
 }

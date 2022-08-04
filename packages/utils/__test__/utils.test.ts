@@ -1,11 +1,12 @@
+import { homedir } from 'os'
 import path from 'path'
 import { describe, expect, it } from 'vitest'
-import userHome from 'user-home'
 import { Package, getLatestVersion, getNpmInfo, getNpmLatestSemverVersion, getNpmRegistry } from '../lib'
 import packageJson from '../package.json'
 
 const DEFAULT_CLI_HOME = '.munan-cli'
 const DEPENDENCIES_PATH = 'dependencies'
+const userHome = homedir()
 
 describe('utils', () => {
   describe('npm', () => {

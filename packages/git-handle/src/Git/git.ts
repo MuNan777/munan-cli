@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import userHome from 'user-home'
+import { homedir } from 'os'
 import circularJson from 'circular-json'
 
 import type { SimpleGit } from 'simple-git'
@@ -15,6 +15,8 @@ import LocalBuild from '../build/LocalBuild'
 import Config from './config'
 import Github from './github'
 import Gitee from './gitee'
+
+const userHome = homedir()
 
 const {
   REPO_OWNER_USER,

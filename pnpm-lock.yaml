@@ -50,7 +50,6 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/minimist': ^1.2.2
       '@types/semver': ^7.3.10
-      '@types/user-home': ^2.0.0
       colors: ^1.4.0
       commander: ^9.3.0
       dotenv: ^16.0.1
@@ -58,7 +57,6 @@ importers:
       fs-extra: ^10.1.0
       minimist: ^1.2.6
       semver: ^7.3.7
-      user-home: ^3.0.0
     dependencies:
       '@munan-cli/utils': link:../utils
       colors: 1.4.0
@@ -68,12 +66,10 @@ importers:
       fs-extra: 10.1.0
       minimist: 1.2.6
       semver: 7.3.7
-      user-home: 3.0.0
     devDependencies:
       '@types/fs-extra': 9.0.13
       '@types/minimist': 1.2.2
       '@types/semver': 7.3.10
-      '@types/user-home': 2.0.0
 
   packages/git-handle:
     specifiers:
@@ -82,14 +78,12 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/lodash-es': ^4.17.6
       '@types/semver': ^7.3.10
-      '@types/user-home': ^2.0.0
       axios: ^0.27.2
       circular-json: ^0.5.9
       lodash-es: ^4.17.21
       semver: ^7.3.7
       simple-git: ^3.10.0
       socket.io-client: ^4.5.1
-      user-home: ^3.0.0
     dependencies:
       '@munan-cli/utils': link:../utils
       axios: 0.27.2
@@ -98,13 +92,11 @@ importers:
       semver: 7.3.7
       simple-git: 3.10.0
       socket.io-client: 4.5.1
-      user-home: 3.0.0
     devDependencies:
       '@types/circular-json': 0.4.0
       '@types/fs-extra': 9.0.13
       '@types/lodash-es': 4.17.6
       '@types/semver': 7.3.10
-      '@types/user-home': 2.0.0
 
   packages/init:
     specifiers:
@@ -177,7 +169,6 @@ importers:
       '@types/semver': ^7.3.10
       '@types/socket.io-client': ^3.0.0
       '@types/url-join': ^4.0.1
-      '@types/user-home': ^2.0.0
       '@types/validate-npm-package-name': ^3.0.3
       axios: ^0.27.2
       circular-json: ^0.5.9
@@ -195,7 +186,6 @@ importers:
       socket.io-client: ^4.5.1
       terminal-link: ^3.0.0
       url-join: ^4.0.1
-      user-home: ^3.0.0
       validate-npm-package-name: ^4.0.0
     dependencies:
       axios: 0.27.2
@@ -214,7 +204,6 @@ importers:
       socket.io-client: 4.5.1
       terminal-link: 3.0.0
       url-join: 4.0.1
-      user-home: 3.0.0
       validate-npm-package-name: 4.0.0
     devDependencies:
       '@types/circular-json': 0.4.0
@@ -227,7 +216,6 @@ importers:
       '@types/semver': 7.3.10
       '@types/socket.io-client': 3.0.0
       '@types/url-join': 4.0.1
-      '@types/user-home': 2.0.0
       '@types/validate-npm-package-name': 3.0.3
 
   packages/vite-vue3-ts-template:
@@ -943,10 +931,6 @@ packages:
 
   /@types/url-join/4.0.1:
     resolution: {integrity: sha512-wDXw9LEEUHyV+7UWy7U315nrJGJ7p1BzaCxDpEoLr789Dk1WDVMMlf3iBfbG2F8NdWnYyFbtTxUn2ZNbm1Q4LQ==}
-    dev: true
-
-  /@types/user-home/2.0.0:
-    resolution: {integrity: sha512-Oppqhtsz4qx9nvNTOAv+EqL8j/di9BxP0PXL46Dy/gHM3jMGqEHllUk3wqdOKHwg266TFCqQDca80ROR+9iZSg==}
     dev: true
 
   /@types/validate-npm-package-name/3.0.3:
@@ -4257,11 +4241,6 @@ packages:
       wcwidth: 1.0.1
     dev: false
 
-  /os-homedir/1.0.2:
-    resolution: {integrity: sha512-B5JU3cabzk8c67mRRd3ECmROafjYMXbuzlwtqdM8IbS8ktlTix8aFGb2bAGKrSRIlnfKwovGUUr72JUPyOb6kQ==}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /os-name/1.0.3:
     resolution: {integrity: sha512-f5estLO2KN8vgtTRaILIgEGBoBrMnZ3JQ7W9TMZCnOIGwHe8TRGSpcagnWDo+Dfhd/z08k9Xe75hvciJJ8Qaew==}
     engines: {node: '>=0.10.0'}
@@ -5622,14 +5601,6 @@ packages:
       utility: 1.17.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /user-home/3.0.0:
-    resolution: {integrity: sha512-kHp9sWxeB+EVTcVytDrGLVKgVVN1LoLiIZTwCDcvYNjIu9q7tUOXZoTv0mXjmvFvUju4J9v+RkFGHdTMx8ncmQ==}
-    engines: {node: '>=0.10.0'}
-    deprecated: Deprecated. Just use `import {homedir} from os;`.
-    dependencies:
-      os-homedir: 1.0.2
     dev: false
 
   /util-deprecate/1.0.2:

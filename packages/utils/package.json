@@ -52,7 +52,6 @@
     "socket.io-client": "^4.5.1",
     "terminal-link": "^3.0.0",
     "url-join": "^4.0.1",
-    "user-home": "^3.0.0",
     "validate-npm-package-name": "^4.0.0"
   },
   "devDependencies": {
@@ -66,7 +65,6 @@
     "@types/semver": "^7.3.10",
     "@types/socket.io-client": "^3.0.0",
     "@types/url-join": "^4.0.1",
-    "@types/user-home": "^2.0.0",
     "@types/validate-npm-package-name": "^3.0.3"
   }
 }
