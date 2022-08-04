@@ -1,5 +1,11 @@
 # @munan-cli/core
 
+## 1.0.17
+
+### Patch Changes
+
+- [`f701a97`](https://github.com/MuNan777/munan-cli/commit/f701a97b5aa10fbd2293d5e38abb9a6f78764f01) Thanks [@MuNan777](https://github.com/MuNan777)! - 处理包发布时引用错误
+
 ## 1.0.16
 
 ### Patch Changes
