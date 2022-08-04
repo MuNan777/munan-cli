@@ -27,7 +27,7 @@ jobs:
           version: 7
       
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Create Release Pull Request or Publish to npm
         # https://github.com/changesets/action
