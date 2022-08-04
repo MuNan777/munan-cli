@@ -1,5 +1,11 @@
 # @munan-cli/core
 
+## 1.0.19
+
+### Patch Changes
+
+- [`468cffe`](https://github.com/MuNan777/munan-cli/commit/468cffe75f2978b117d598c622de0a01207f6262) Thanks [@MuNan777](https://github.com/MuNan777)! - 删除 core 模块 package-lock.json 文件
+
 ## 1.0.18
 
 ### Patch Changes
