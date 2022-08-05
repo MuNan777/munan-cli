@@ -173,10 +173,12 @@ class Git {
     }
     else {
       const publishConfigHomePath = `${this.homePath!}/${GIT_ROOT_CONFIG_NAME}.json`
-      if (fse.existsSync(publishConfigHomePath))
-        publishConfig = await fse.readJSONSync(publishConfigHomePath)
-      else
+
+      if (fse.existsSync(publishConfigHomePath)) { publishConfig = await fse.readJSONSync(publishConfigHomePath) }
+      else {
         fse.writeFileSync(publishConfigHomePath, '{}')
+        publishConfig = await fse.readJSONSync(publishConfigHomePath)
+      }
       this.useWorkPlacePublishConfig = false
     }
     if (publishConfig) {
