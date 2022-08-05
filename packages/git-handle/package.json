@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/git-handle",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "git 处理模块，包含 git 和 build",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
