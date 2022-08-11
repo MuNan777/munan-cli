@@ -1,5 +1,11 @@
 # @munan-cli/npm-rollup-vue3-template
 
+## 1.0.2
+
+### Patch Changes
+
+- [`00d20b0`](https://github.com/MuNan777/munan-cli/commit/00d20b097be983c727d6cce81cc6e7734502f3af) - fix 调整可执行模板逻辑
+
 ## 1.0.1
 
 ### Patch Changes
