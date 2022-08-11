@@ -3,6 +3,7 @@ const path = require('path')
 const fse = require('fs-extra')
 const inquirer = require('./utils/inquirer')
 const render = require('./utils/render')
+const packageJson = require('./package.json')
 
 module.exports = async function (options) {
   // eslint-disable-next-line no-console
@@ -35,12 +36,13 @@ module.exports = async function (options) {
     '**/.DS_Store',
     '**/public/**',
   ]
-  const ejsData = Object.assign({}, options, { description })
+  const ejsData = Object.assign({}, options, { description, packageName })
   await render(targetDir, ejsData, {
     ignore: ejsIgnoreFiles,
   })
+  const commands = packageJson.templateConfig.startCommand.split(' ')
   await npminstall(targetDir)
-  await execStartCommand(targetDir, ['npm', 'run', 'dev'])
+  await execStartCommand(targetDir, commands)
 }
 
 async function execStartCommand(targetPath, startCommand) {

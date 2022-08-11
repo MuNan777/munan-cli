@@ -3,10 +3,12 @@ const path = require('path')
 const fse = require('fs-extra')
 const inquirer = require('./utils/inquirer')
 const render = require('./utils/render')
+const packageJson = require('./package.json')
 
 module.exports = async function (options) {
   // eslint-disable-next-line no-console
   console.log(options)
+  // 注意如果添加参数需要在下方 ejsData 补上
   let description = ''
   while (!description) {
     description = await inquirer({
@@ -31,8 +33,9 @@ module.exports = async function (options) {
   await render(targetDir, ejsData, {
     ignore: ejsIgnoreFiles,
   })
+  const commands = packageJson.templateConfig.startCommand.split(' ')
   await npminstall(targetDir)
-  await execStartCommand(targetDir, ['npm', 'run', 'dev'])
+  await execStartCommand(targetDir, commands)
 }
 
 async function execStartCommand(targetPath, startCommand) {
