@@ -1,5 +1,11 @@
 # @munan-cli/git-handle
 
+## 1.0.2
+
+### Patch Changes
+
+- [`8c0a434`](https://github.com/MuNan777/munan-cli/commit/8c0a4349ae9ab01cd6fb6fa8aabeba649427bbbd) - 调整 git-handle 模块，处理 git 配置检查时无，主配置文件报错
+
 ## 1.0.1
 
 ### Patch Changes
