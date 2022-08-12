@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/npm-rollup-vue3-template",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "munan-cli rollup vue3 组件构建项目模板",
   "main": "index.js",
   "devDependencies": {},
