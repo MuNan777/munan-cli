@@ -26,9 +26,9 @@
   },
   "templateConfig": {
     "moduleName": "@munan-cli/npm-rollup-vue3-template",
-    "templateName": "rollup vue3 组件构建项目模板",
+    "templateName": "vue3 组件库项目模板",
     "templateType": "executable",
-    "templateTag": "project",
+    "templateTag": "component",
     "startCommand": "npm run serve",
     "buildPath": "dist",
     "ejsIgnoreFiles": [
