@@ -1,5 +1,11 @@
 # @munan-cli/template
 
+## 1.0.16
+
+### Patch Changes
+
+- [`7213761`](https://github.com/MuNan777/munan-cli/commit/721376153fab3b584f1bd2a60913a60b0b84b8a9) - fix 修改 npm-rollup-vue3-template 模板类型
+
 ## 1.0.15
 
 ### Patch Changes
