@@ -73,7 +73,7 @@ export const createFn = async () => {
     log.success('配置创建成功')
     log.notice('info', '添加执行命令')
     pkg.scripts[deployCmd] = `node ./${targetDirName}-cos/index.js`
-    pkg.scripts[`${deployCmd}:cloud`] = `node ./${targetDirName}-cos/cloud.js`
+    pkg.scripts['deploy:cloud'] = `node ./${targetDirName}-cos/cloud.js`
     fse.writeJSONSync(packagePath, pkg, { spaces: 2 })
     const gitignoreConfig = `
 # munan-cli-deoploy config

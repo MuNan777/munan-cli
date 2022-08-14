@@ -352,13 +352,14 @@ class Git {
       const configPath = this.createPath()
       writeJSONFile(configPath, { [GIT_TOKEN_NAME]: token })
       log.success('token 写入成功', `${token} -> ${configPath}`)
+      return
     }
     else {
       log.verbose('token', token)
       log.success('token 获取成功')
     }
     this.token = token
-    this.gitServerInfo!.setToken(token)
+    this.gitServerInfo!.setToken(this.token)
   }
 
   // 获取用户和组织信息
@@ -402,6 +403,7 @@ class Git {
       writeJSONFile(configPath, { [GIT_LOGIN_NAME]: login })
       log.success('git owner写入成功', `${owner} -> ${configPath}`)
       log.success('git login写入成功', `${login} -> ${configPath}`)
+      return
     }
     else {
       log.success('git owner 获取成功', owner)
