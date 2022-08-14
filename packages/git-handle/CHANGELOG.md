@@ -1,5 +1,11 @@
 # @munan-cli/git-handle
 
+## 1.0.3
+
+### Patch Changes
+
+- [`f1c2006`](https://github.com/MuNan777/munan-cli/commit/f1c2006d8a3ac256885f0d560c9059a3bf1506b7) Thanks [@MuNan777](https://github.com/MuNan777)! - fix 修改 git-handle 模块代码逻辑 & 调整 publish 模块生成发布命令默认固定为 deploy:cloud
+
 ## 1.0.2
 
 ### Patch Changes
