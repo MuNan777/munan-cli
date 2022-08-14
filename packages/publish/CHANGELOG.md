@@ -1,5 +1,14 @@
 # @munan-cli/publish
 
+## 1.0.12
+
+### Patch Changes
+
+- [`f88980a`](https://github.com/MuNan777/munan-cli/commit/f88980afb03cacc2cd63d3cc591a640159c8e059) Thanks [@MuNan777](https://github.com/MuNan777)! - fit 调整发布命令行模板代码
+
+- Updated dependencies [[`f88980a`](https://github.com/MuNan777/munan-cli/commit/f88980afb03cacc2cd63d3cc591a640159c8e059)]:
+  - @munan-cli/git-handle@1.0.4
+
 ## 1.0.11
 
 ### Patch Changes
