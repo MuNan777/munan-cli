@@ -8,10 +8,16 @@ const BUCKET_NAME = '<%=bucketName %>'
 
 const DIST_NAME = '<%=distName %>'
 
+// 云发布可能需要设置 git token 以保证 docker 容器内有拉取代码权限
+// gitee 格式: user:password
+// github 格式： token
+const GIT_TOKEN = ''
+
 module.exports = {
   SECRET_ID,
   SECRET_KEY,
   LOCATION,
   BUCKET_NAME,
   DIST_NAME,
+  GIT_TOKEN,
 }

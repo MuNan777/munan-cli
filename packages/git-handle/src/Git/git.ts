@@ -740,6 +740,7 @@ class Git {
       cloudBuildUrl = await prompt<string>({
         type: 'input',
         message: '请选输入云端 api 接口，如(ws://localhost:7000)',
+        defaultValue: 'ws://localhost:7000',
       })
       this.publishConfig.cloudBuildUrl = cloudBuildUrl
       const configPath = this.createPath()

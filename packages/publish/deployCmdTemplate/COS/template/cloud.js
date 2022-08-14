@@ -113,7 +113,7 @@ async function deploy() {
   // 本地发布配置路径
   let configPath = ''
   // 云发布使用配置，使用云发布，
-  // 需要在服务端的 根目录下 deployConfig 文件夹，如没有则创建，然后导入配置，同时名称应为 [项目名].js
+  // 需要在服务端的 根目录下 .docker-volumes/deployConfig 文件夹，如没有则创建，然后导入配置，同时名称应为 [项目名].js
   // 服务端: https://github.com/MuNan777/munan-cli-server
   // 注意!!!, 发布脚本内不能存在交互代码，目前没有实现云端交互功能
   const argv = process.argv
