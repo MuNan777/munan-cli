@@ -4,7 +4,14 @@ import controls from './controls'
 import renderer from "./renderer"
 import scene from "./scene"
 
-export type animateFn = (allElapsedTime: number, index: number, arr: animateFn[]) => void
+export interface AnimateFnOption {
+  elapsedTime: number
+  delta: number
+  index: number
+  arrFn: animateFn[]
+}
+
+export type animateFn = (options: AnimateFnOption) => void
 
 const clock = new Clock()
 
@@ -12,10 +19,16 @@ export const arrFn: animateFn[] = []
 
 function animate() {
   // 时间
-  const time = clock.getElapsedTime()
+  const delta = clock.getDelta()
+  const elapsedTime = clock.getElapsedTime()
   // 执行回调
   arrFn.forEach((fn, index) => {
-    fn(time, index, arrFn)
+    fn({
+      elapsedTime,
+      index,
+      delta,
+      arrFn
+    })
   })
   // 帧回调函数
   requestAnimationFrame(animate)
