@@ -1,6 +1,6 @@
 import { Clock } from "three"
-import camera from "./camera"
-import controls from './controls'
+import cameraModule from "./camera"
+import controlsModule from './controls'
 import renderer from "./renderer"
 import scene from "./scene"
 
@@ -33,9 +33,9 @@ function animate() {
   // 帧回调函数
   requestAnimationFrame(animate)
   // 控制器更新
-  controls.update()
+  controlsModule.controls.update(delta)
   // 重新渲染
-  renderer.render(scene, camera)
+  renderer.render(scene, cameraModule.activeCamera)
 }
 
 export default animate
