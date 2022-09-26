@@ -1,16 +1,16 @@
 
 import { Ref } from 'vue'
 import animate from './animate'
-import camera from './camera'
+import cameraModule from './camera'
 import renderer from './renderer'
 import { addAxesHelper } from './axesHelper'
 import { createMesh } from './createMesh'
 
 const eventFn = () => {
   // 更新摄像头
-  camera.aspect = window.innerWidth / window.innerHeight;
+  cameraModule.activeCamera.aspect = window.innerWidth / window.innerHeight;
   // 更新摄像机投影矩阵
-  camera.updateProjectionMatrix();
+  cameraModule.activeCamera.updateProjectionMatrix();
   // 更新渲染器
   renderer.setSize(window.innerWidth, window.innerHeight);
   // 设置渲染器的像素比

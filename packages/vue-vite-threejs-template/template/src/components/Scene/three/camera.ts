@@ -4,7 +4,7 @@ import eventHub from "../../../utils/eventHub"
 // 创建相机
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
 // 设置相机位置 xyz
-camera.position.set(500, 500, 1000)
+camera.position.set(5, 5, 10)
 
 class CameraModule {
   activeCamera: PerspectiveCamera
