@@ -71,6 +71,17 @@
       ]
     },
     {
+      "moduleName": "@munan-cli/vue-vite-threejs-template",
+      "templateName": "vue-vite-threejs 模板",
+      "templateType": "executable",
+      "templateTag": "project",
+      "startCommand": "npm run dev",
+      "buildPath": "dist",
+      "ejsIgnoreFiles": [
+        "**/node_modules/**"
+      ]
+    },
+    {
       "moduleName": "@munan-cli/webpack-vue2-standard-template",
       "templateName": "webpack-vue2-standard 模板",
       "templateType": "general",
