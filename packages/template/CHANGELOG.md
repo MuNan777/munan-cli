@@ -1,5 +1,11 @@
 # @munan-cli/template
 
+## 1.0.17
+
+### Patch Changes
+
+- [`ca6e9be`](https://github.com/MuNan777/munan-cli/commit/ca6e9bead4a9ed09cd1c7924e55fa768567c8416) - feat 新增 npm-rollup-vue3-template 模板配置
+
 ## 1.0.16
 
 ### Patch Changes

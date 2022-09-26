@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/template",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "munan-cli 模板构建模块/模板列表缓存",
   "directories": {},
   "author": "",
