@@ -1,5 +1,11 @@
 # @munan-cli/vue-vite-threejs-template
 
+## 1.0.3
+
+### Patch Changes
+
+- [`0817108`](https://github.com/MuNan777/munan-cli/commit/081710815ea1f1bad205d43bed6dd6898622131d) - feat vue-vite-threejs-template 模板调整
+
 ## 1.0.2
 
 ### Patch Changes
