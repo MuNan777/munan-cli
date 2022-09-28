@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/vue-vite-threejs-template",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "munan-cli vue-vite-threejs 模板",
   "main": "index.js",
   "devDependencies": {},
