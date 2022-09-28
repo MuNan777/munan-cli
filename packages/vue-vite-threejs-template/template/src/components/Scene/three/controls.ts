@@ -23,11 +23,13 @@ class ControlsModule {
     // 设置阻尼
     this.controls.enableDamping = true
     // 设置自动旋转
-    // controls.autoRotate = true;
+    this.controls.autoRotate = true;
     // 最大角度
     this.controls.maxPolarAngle = Math.PI / 2;
     // 最小角度
     this.controls.minPolarAngle = 0
+    // 是否可以放大缩小
+    this.controls.enableZoom = false
     return this.controls
   }
   // 自由视角

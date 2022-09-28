@@ -1,18 +1,26 @@
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, ref } from "vue"
 import Scene from './components/Scene/index.vue'
+import BaseMesh from "./components/Scene/three/mesh/baseMesh"
 export default defineComponent({
   components: {
     Scene
   },
   setup() {
-    return {}
+    const meshRef = ref<null | BaseMesh>(null)
+    const getMeshes = (meshes: BaseMesh[]) => {
+      meshRef.value = meshes[0]
+      console.log(meshRef.value)
+    }
+    return {
+      getMeshes
+    }
   }
 })
 </script>
 
 <template>
-  <Scene></Scene>
+  <Scene :getMeshes="getMeshes"></Scene>
 </template>
 
 <style scoped>

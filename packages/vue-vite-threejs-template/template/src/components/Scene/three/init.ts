@@ -5,17 +5,23 @@ import cameraModule from './camera'
 import renderer from './renderer'
 import { addAxesHelper } from './axesHelper'
 import { createMesh } from './createMesh'
+import BaseMesh from './mesh/baseMesh'
 
-const eventFn = () => {
-  // 更新摄像头
-  cameraModule.activeCamera.aspect = window.innerWidth / window.innerHeight;
+function eventFn(this: { body: Ref<HTMLElement | null> }) {
+  if (this.body.value) {
+    const { clientWidth, clientHeight } = this.body.value
+    // 更新摄像头
+    cameraModule.activeCamera.aspect = clientWidth / clientHeight
+    // 更新渲染器
+    renderer.setSize(clientWidth, clientHeight)
+  }
   // 更新摄像机投影矩阵
-  cameraModule.activeCamera.updateProjectionMatrix();
-  // 更新渲染器
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  cameraModule.activeCamera.updateProjectionMatrix()
   // 设置渲染器的像素比
   renderer.setPixelRatio(window.devicePixelRatio)
 }
+
+const meshes: BaseMesh[] = []
 
 export function init(body: Ref<HTMLElement | null>) {
   if (body.value) {
@@ -29,12 +35,22 @@ export function init(body: Ref<HTMLElement | null>) {
     addAxesHelper()
 
     // 添加物体
-    createMesh()
+    meshes.push(...createMesh())
 
-    window.addEventListener('resize', eventFn)
+    // 设置渲染尺寸大小
+    renderer.setSize(body.value.clientWidth, body.value.clientHeight)
+
+    // 更新摄像头
+    cameraModule.activeCamera.aspect = body.value.clientWidth / body.value.clientHeight;
+
+    window.addEventListener('resize', eventFn.bind({ body }))
   }
+  return meshes
 }
 
 export function remove() {
+  meshes.forEach(mesh => {
+    mesh.remove()
+  })
   window.removeEventListener('resize', eventFn)
 }
