@@ -1,5 +1,11 @@
 # @munan-cli/electron-react-template
 
+## 1.0.1
+
+### Patch Changes
+
+- 更新 electron-react 模板版本
+
 ## 0.1.0
 
 ### Minor Changes
