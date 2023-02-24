@@ -1,0 +1,119 @@
+{
+  "name": "<%=packageName %>",
+  "version": "1.0.0",
+  "description": "<%=description %>",
+  "private": false,
+  "main": "main.js",
+  "author": "Test",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "electron-edge-js": "^22.0.1",
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build:react": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
+    "watch:cp": "webpack -w",
+    "build:cp": "webpack",
+    "watch:ele": "nodemon ele/esbuild/index.ts --watch \"./ele\"",
+    "build:ele": "ts-node ele/esbuild/index.ts",
+    "dev": "concurrently \"npm run watch:ele\" \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none npm run start\"",
+    "build": "npm run build:react && npm run build:cp && npm run build:ele && electron-builder",
+    "release": "node release-config/index.js electron-builder",
+    "prerelease": "npm run build:react && npm run build:ele && npm run build:cp"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "./",
+  "build": {
+    "appId": "myTestDemo",
+    "productName": "测试",
+    "copyright": "Copyright © 2023 ${author}",
+    "files": [
+      "main.js",
+      "preload.js",
+      "build/**/*",
+      "node_modules/**/*",
+      "children-pages-build/**/*",
+      "package.json"
+    ],
+    "publish": [
+      "github"
+    ],
+    "extraResources": {
+      "from": "./resources/extraResources/",
+      "to": "extraResources"
+    },
+    "directories": {
+      "buildResources": "assets"
+    },
+    "extends": null,
+    "win": {
+      "target": [
+        "msi",
+        "nsis"
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "${productName}-Web-Setup-${version}.${ext}",
+      "verifyUpdateCodeSignature": false,
+      "publisherName": [
+        "Test"
+      ]
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.12",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.3",
+    "customize-cra": "^1.0.0",
+    "electron": "22.0.0",
+    "electron-builder": "^23.6.0",
+    "electron-reloader": "^1.2.3",
+    "electron-updater": "^5.3.0",
+    "esbuild": "^0.17.10",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "nodemon": "^2.0.20",
+    "react-app-rewired": "^2.2.1",
+    "style-loader": "^3.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5",
+    "wait-on": "^7.0.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
