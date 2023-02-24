@@ -4,7 +4,7 @@
   "description": "<%=description %>",
   "private": false,
   "main": "main.js",
-  "author": "Test",
+  "author": "<%=author %>",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -54,8 +54,8 @@
   },
   "homepage": "./",
   "build": {
-    "appId": "myTestDemo",
-    "productName": "测试",
+    "appId": "<%=appId %>",
+    "productName": "<%=productName %>",
     "copyright": "Copyright © 2023 ${author}",
     "files": [
       "main.js",
@@ -85,7 +85,7 @@
       "artifactName": "${productName}-Web-Setup-${version}.${ext}",
       "verifyUpdateCodeSignature": false,
       "publisherName": [
-        "Test"
+        "<%=author %>"
       ]
     },
     "nsis": {

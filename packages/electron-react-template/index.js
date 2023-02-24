@@ -9,12 +9,14 @@ module.exports = async function (options) {
   // eslint-disable-next-line no-console
   console.log(options)
   // 注意如果添加参数需要在下方 ejsData 补上
-  let projectName = ''
+  let appId = ''
+  let productName = ''
+  let author = ''
   let description = ''
-  while (!projectName) {
-    projectName = await inquirer({
+  while (!author) {
+    author = await inquirer({
       type: 'string',
-      message: '请输入项目名称',
+      message: '作者 (可在 package.json 修改)',
       defaultValue: '',
     })
   }
@@ -22,6 +24,20 @@ module.exports = async function (options) {
     description = await inquirer({
       type: 'string',
       message: '请输入描述信息',
+      defaultValue: '',
+    })
+  }
+  while (!appId) {
+    appId = await inquirer({
+      type: 'string',
+      message: '应用 id (可在 package.json 修改)',
+      defaultValue: '',
+    })
+  }
+  while (!productName) {
+    productName = await inquirer({
+      type: 'string',
+      message: '应用名称 (可在 package.json 修改)',
       defaultValue: '',
     })
   }
@@ -37,7 +53,7 @@ module.exports = async function (options) {
     '**/.DS_Store',
     '**/public/**',
   ]
-  const ejsData = Object.assign({}, options, { projectName, description })
+  const ejsData = Object.assign({}, options, { author, appId, description, productName })
   await render(targetDir, ejsData, {
     ignore: ejsIgnoreFiles,
   })

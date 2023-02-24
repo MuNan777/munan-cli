@@ -1,11 +1,11 @@
+import path from 'path'
 import { app, ipcMain } from 'electron'
 import isDev from 'electron-is-dev'
-import path from 'path'
-import { AppWindow } from './common'
 import electronReload from 'electron-reloader'
-import { loadIpcMainHandle, setWindowMap } from './ipc/ipcMainHandle'
 import Store from 'electron-store'
-import { initAutoUpdater } from './common/autoUpdaterConf'
+import { AppWindow } from './common'
+import { loadIpcMainHandle, setWindowMap } from './ipc/ipcMainHandle'
+// import { initAutoUpdater } from './common/autoUpdaterConf'
 
 const urlLocation = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, './build/index.html')}`
 
@@ -19,14 +19,16 @@ const createWindow = () => {
       nodeIntegration: true,
       contextIsolation: false,
       // 允许，则可以通过 window.require('path') 方式使用 node
-    }
+    },
   }, urlLocation)
 
   loadIpcMainHandle()
 
   Store.initRenderer()
 
-  initAutoUpdater(mainWindow)
+  // 需要自动更新可自行开启
+  // 开发测试可自行编写 ./dev-app-update.yml
+  // initAutoUpdater(mainWindow)
 
   const testStore = new Store<Record<string, { [key: string]: unknown }>>({ name: 'test' })
   testStore.set('abc', { test: 123 })
@@ -46,7 +48,7 @@ const createWindow = () => {
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false,
-        }
+        },
       }
       const childrenFileLocation = `file://${path.join(__dirname, './children-pages-build/childrenPage.html')}`
       let childrenWindow: AppWindow | null = new AppWindow(childrenConfig, childrenFileLocation)
@@ -64,8 +66,9 @@ const createWindow = () => {
 
 // 热重载
 try {
-  electronReload(module, {});
-} catch (_) { }
+  electronReload(module, {})
+}
+catch (_) { }
 
 app.whenReady().then(() => {
   createWindow()
