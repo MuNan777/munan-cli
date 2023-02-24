@@ -38,6 +38,17 @@
   },
   "templateConfigs": [
     {
+      "moduleName": "@munan-cli/electron-react-template",
+      "templateName": "electron-react 模板",
+      "templateType": "executable",
+      "templateTag": "project",
+      "startCommand": "npm run dev",
+      "buildPath": "dist",
+      "ejsIgnoreFiles": [
+        "**/node_modules/**"
+      ]
+    },
+    {
       "moduleName": "@munan-cli/npm-rollup-ts-template",
       "templateName": "npm-rollup-ts 模板",
       "templateType": "executable",
