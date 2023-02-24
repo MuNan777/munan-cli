@@ -9,7 +9,7 @@
     "create:template": "pnpm -F @munan-cli/template run create",
     "create:module": "pnpm -F @munan-cli/template run create:module",
     "changeset": "changeset",
-    "version": "node version-config/index.js changeset version",
+    "version": "changeset version",
     "build": "pnpm turbo run build",
     "deploy": "pnpm build && pnpm deploy:only",
     "deploy:only": "changeset publish --registry=https://registry.npmjs.com/"
@@ -26,7 +26,6 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/node": "^18.7.3",
-    "cross-env": "^7.0.3",
     "esbuild": "^0.14.54",
     "eslint": "^8.22.0",
     "fs-extra": "^10.1.0",
