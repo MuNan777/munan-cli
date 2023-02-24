@@ -1,0 +1,15 @@
+export default {
+  postgreSqlConfig: {
+    host: 'localhost',
+    user: '<%=pgUser %>',
+    password: '<%=pgPassword %>',
+    port: <%=pgPort %>,
+    database: '<%=pgDb %>',
+  },
+
+  // jwt 过期时间
+  jwtExpiresIn: '1d', // 1. 字符串，如 '1h' '2d'； 2. 数字，单位是 s
+
+  // 项目域名
+  projectDomain: '',
+}

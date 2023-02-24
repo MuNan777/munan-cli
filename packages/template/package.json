@@ -71,6 +71,17 @@
       ]
     },
     {
+      "moduleName": "@munan-cli/serverless-koa-pg-template",
+      "templateName": "serverless-koa-pg 模板",
+      "templateType": "executable",
+      "templateTag": "project",
+      "startCommand": "npm run dev",
+      "buildPath": "dist",
+      "ejsIgnoreFiles": [
+        "**/node_modules/**"
+      ]
+    },
+    {
       "moduleName": "@munan-cli/vite-vue3-ts-template",
       "templateName": "vite-vue3-ts 模板",
       "templateType": "executable",
