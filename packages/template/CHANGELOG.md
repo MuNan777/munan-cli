@@ -1,5 +1,11 @@
 # @munan-cli/template
 
+## 2.0.0
+
+### Major Changes
+
+- [`bbf96bb`](https://github.com/MuNan777/munan-cli/commit/bbf96bb67954b1ba6dc1e6e84f796471777c77f3) - 新增 electron-react-template 模板配置
+
 ## 1.0.17
 
 ### Patch Changes

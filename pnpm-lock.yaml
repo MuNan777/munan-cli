@@ -12,6 +12,7 @@ importers:
       '@rollup/plugin-json': ^4.1.0
       '@rollup/plugin-node-resolve': ^13.3.0
       '@types/node': ^18.7.3
+      cross-env: ^7.0.3
       esbuild: ^0.14.54
       eslint: ^8.22.0
       fs-extra: ^10.1.0
@@ -32,6 +33,7 @@ importers:
       '@rollup/plugin-json': 4.1.0_rollup@2.78.0
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.78.0
       '@types/node': 18.7.3
+      cross-env: 7.0.3
       esbuild: 0.14.54
       eslint: 8.22.0
       fs-extra: 10.1.0
@@ -1680,6 +1682,14 @@ packages:
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
     dev: false
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: true
 
   /cross-spawn/5.1.0:
     resolution: {integrity: sha512-pTgQJ5KC0d2hcY8eyL1IzlBPYjTkyH72XRZPnLyKus2mBfNjQs3klqbJU2VILqZryAZUt9JOb3h/mWMy23/f5A==}
