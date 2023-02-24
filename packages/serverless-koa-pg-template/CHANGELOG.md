@@ -1,5 +1,11 @@
 # @munan-cli/serverless-koa-pg-template
 
+## 1.0.2
+
+### Patch Changes
+
+- [`e5b21f7`](https://github.com/MuNan777/munan-cli/commit/e5b21f7692d3ecfbd97d6a485ac8c308704c9afa) - fix bug 修复无法正常使用 ejs 渲染
+
 ## 1.0.1
 
 ### Patch Changes
