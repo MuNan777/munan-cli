@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/serverless-koa-pg-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "munan-cli serverless-koa-pg 模板",
   "main": "index.js",
   "devDependencies": {},
@@ -31,7 +31,8 @@
     "templateTag": "project",
     "startCommand": "npm run dev",
     "buildPath": "dist",
-    
-    "ejsIgnoreFiles": ["**/node_modules/**"]
+    "ejsIgnoreFiles": [
+      "**/node_modules/**"
+    ]
   }
 }
