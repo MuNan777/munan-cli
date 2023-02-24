@@ -88,6 +88,7 @@ module.exports = async function (options) {
     '**/.vscode/**',
     '**/.DS_Store',
     '**/public/**',
+    '**/node-v16.14.2-linux-x64/**',
   ]
   const ejsData = Object.assign({}, options, { description, access, region, fcName, pgDb, pgUser, pgPassword, pgPort })
   await render(targetDir, ejsData, {

@@ -6,6 +6,7 @@
   "source": "src/index.ts",
   "scripts": {
     "dev": "npx nodemon ./dist/index.js",
+    "predev": "npm run build",
     "watch": "parcel watch",
     "build": "parcel build",
     "deploy": "pnpm build && node ./build/index.js && s deploy"

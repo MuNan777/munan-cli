@@ -12,7 +12,7 @@ module.exports = async function (dir, options, extraOptions) {
     glob('**', {
       cwd: dir,
       nodir: true,
-      ignore: ignore || '**/node_modules/**',
+      ignore: ignore || ['**/node_modules/**', '**/node-v16.14.2-linux-x64/**'],
     }, (err, files) => {
       if (err)
         return reject(err)
