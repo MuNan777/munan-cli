@@ -1,5 +1,11 @@
 # @munan-cli/electron-react-template
 
+## 1.0.2
+
+### Patch Changes
+
+- [`cc5e7bf`](https://github.com/MuNan777/munan-cli/commit/cc5e7bf4def7d43af25bd3a87c5e5d26260eabe6) - 修改 electron-react 模板配置
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/electron-react-template",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "munan-cli electron-react 模板",
   "main": "index.js",
   "devDependencies": {},
