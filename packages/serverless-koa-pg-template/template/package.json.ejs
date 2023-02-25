@@ -5,11 +5,11 @@
   "main": "code/index.js",
   "source": "src/index.ts",
   "scripts": {
-    "dev": "npx nodemon ./dist/index.js",
-    "predev": "npm run build",
+    "dev": "concurrently \"npm run watch\" \"npx nodemon ./dist/index.js\"",
     "watch": "parcel watch",
     "build": "parcel build",
-    "deploy": "pnpm build && node ./build/index.js && s deploy"
+    "deploy": "pnpm build && node ./build/index.js && s deploy",
+    "init": "node init"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.9",
@@ -23,7 +23,8 @@
     "nodemon": "^2.0.20",
     "parcel": "^2.7.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "concurrently": "^7.6.0",
   },
   "keywords": [],
   "author": "",
