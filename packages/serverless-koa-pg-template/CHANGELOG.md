@@ -1,5 +1,11 @@
 # @munan-cli/serverless-koa-pg-template
 
+## 1.0.5
+
+### Patch Changes
+
+- [`7cb55f2`](https://github.com/MuNan777/munan-cli/commit/7cb55f20e0153efd9ba185d3e49c68ae3ebfa22d) Thanks [@MuNan777](https://github.com/MuNan777)! - 修复 serverless-koa-pg-template 模板无法正常安装依赖
+
 ## 1.0.4
 
 ### Patch Changes
