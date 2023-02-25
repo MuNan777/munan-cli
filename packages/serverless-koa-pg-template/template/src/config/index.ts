@@ -1,6 +1,6 @@
 import { isProd } from '../utils/env'
 import dev from './env/dev'
-import prod from './env/prod.ts.ejs'
+import prod from './env/prod.ts'
 
 export * from './constant'
 
