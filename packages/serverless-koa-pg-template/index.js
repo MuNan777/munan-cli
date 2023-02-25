@@ -78,7 +78,7 @@ module.exports = async function (options) {
       pgPort = 5432
   }
   const sourceDir = options.templatePath || path.resolve(__dirname, 'template')
-  const targetDir = options.targetPath
+  const targetDir = options.targetPath || path.resolve(process.cwd(), 'template')
   fse.ensureDirSync(sourceDir)
   fse.ensureDirSync(targetDir)
   fse.copySync(sourceDir, targetDir)
@@ -88,7 +88,6 @@ module.exports = async function (options) {
     '**/.vscode/**',
     '**/.DS_Store',
     '**/public/**',
-    '**/node-v16.14.2-linux-x64/**',
   ]
   const ejsData = Object.assign({}, options, { description, access, region, fcName, pgDb, pgUser, pgPassword, pgPort })
   await render(targetDir, ejsData, {
