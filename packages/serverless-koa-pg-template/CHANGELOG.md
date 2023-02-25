@@ -1,5 +1,11 @@
 # @munan-cli/serverless-koa-pg-template
 
+## 1.0.3
+
+### Patch Changes
+
+- [`c3a521a`](https://github.com/MuNan777/munan-cli/commit/c3a521a5f7c6d88e171957956cd4642384eb2691) Thanks [@MuNan777](https://github.com/MuNan777)! - 修改 serverless-koa-pg-template 模板
+
 ## 1.0.2
 
 ### Patch Changes
