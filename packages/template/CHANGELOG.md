@@ -1,5 +1,11 @@
 # @munan-cli/template
 
+## 2.0.2
+
+### Patch Changes
+
+- [`c60fca2`](https://github.com/MuNan777/munan-cli/commit/c60fca203d082a57afd3d1dedbbc71f1a151ef10) - 新增 vscode-vite-template 模板信息
+
 ## 2.0.1
 
 ### Patch Changes
