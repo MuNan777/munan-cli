@@ -75,7 +75,7 @@
       "templateName": "serverless-koa-pg 模板",
       "templateType": "executable",
       "templateTag": "project",
-      "startCommand": "npm run dev",
+      "startCommand": "npm run init",
       "buildPath": "dist",
       "ejsIgnoreFiles": [
         "**/node_modules/**"
@@ -88,6 +88,17 @@
       "templateTag": "project",
       "startCommand": "npm run dev",
       "buildPath": "dist",
+      "ejsIgnoreFiles": [
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "moduleName": "@munan-cli/vscode-vite-template",
+      "templateName": "vscode-vite 模板",
+      "templateType": "executable",
+      "templateTag": "project",
+      "startCommand": "yarn watch",
+      "buildPath": "out",
       "ejsIgnoreFiles": [
         "**/node_modules/**"
       ]

@@ -1,0 +1,38 @@
+{
+  "name": "@munan-cli/vscode-vite-template",
+  "version": "1.0.1",
+  "description": "munan-cli vscode-vite 模板",
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuNan777/munan-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MuNan777/munan-cli/issues"
+  },
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "inquirer": "^7.3.3",
+    "lodash": "^4.17.21"
+  },
+  "templateConfig": {
+    "moduleName": "@munan-cli/vscode-vite-template",
+    "templateName": "vscode-vite 模板",
+    "templateType": "executable",
+    "templateTag": "project",
+    "startCommand": "yarn watch",
+    "buildPath": "out",
+    "ejsIgnoreFiles": [
+      "**/node_modules/**"
+    ]
+  }
+}

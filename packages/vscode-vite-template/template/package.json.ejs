@@ -1,0 +1,100 @@
+{
+  "name": "<%=packageName %>",
+  "displayName": "<%=description %>",
+  "description": "test",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension/index.js",
+  "browser": "./out/extension/index.js",
+  "icon": "./icon/icon.png",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "<%=packageName %>",
+          "title": "Test Page",
+          "icon": "icon/icon-24.svg"
+        }
+      ]
+    },
+    "views": {
+      "<%=packageName %>": [
+        {
+          "type": "webview",
+          "id": "<%=packageName %>",
+          "name": "Test Page"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "<%=packageName %>.showText",
+          "when": "view == <%=packageName %> && <%=packageName %>.show == 0",
+          "group": "navigation"
+        },
+        {
+          "command": "<%=packageName %>.hiddenText",
+          "when": "view == <%=packageName %> && <%=packageName %>.show == 1",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "test-vscode-extension.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "<%=packageName %>.showText",
+        "title": "Show Text",
+        "icon": "$(diff-insert)",
+        "category": "<%=packageName %>"
+      },
+      {
+        "command": "<%=packageName %>.hiddenText",
+        "title": "Hidden Text",
+        "icon": "$(diff-remove)",
+        "category": "<%=packageName %>"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "vite build && rollup -c rollup.config.prod.js",
+    "watch": "vite build --sourcemap --minify=false && rollup -c rollup.config.js",
+    "package": "vite build && rollup -c rollup.config.prod.js",
+    "lint": "eslint src --ext ts",
+    "compile-tests": "tsc -p . --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^7.0.1",
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "eslint": "^8.47.0",
+    "rimraf": "^5.0.1",
+    "rollup": "^3.29.1",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "sass": "^1.67.0",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9",
+    "vue-eslint-parser": "^9.3.1",
+    "@types/vscode-webview": "^1.57.2",
+    "@vscode/test-electron": "^2.3.4"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  }
+}

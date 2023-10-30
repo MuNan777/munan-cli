@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["vue/base", "@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/semi": "warn",
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn",
+    "semi": "off"
+  },
+  "overrides": [
+    {
+      "parser": "vue-eslint-parser",
+      "files": ["*.vue"]
+    }
+  ],
+  "ignorePatterns": ["out", "dist", "**/*.d.ts"]
+}
