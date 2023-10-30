@@ -1,6 +1,7 @@
 import axios from 'axios'
 import urlJoin from 'url-join'
 import semver from 'semver'
+import inquirer from 'inquirer'
 
 // 获取 registry 信息
 export function getNpmRegistry(useOriginal?: boolean) {
@@ -66,4 +67,19 @@ export function getNpmLatestSemverVersion(npm: string, baseVersion: string, regi
   return getVersions(npm, registry).then((versions) => {
     return getLatestSemverVersion(baseVersion, versions)
   })
+}
+
+
+export async function chooseInstall() {
+  const { install } = await inquirer.prompt({
+    type: 'list',
+    name: 'install',
+    message: '请选择安装方式',
+    choices: [
+      { name: 'npm', value: 'npm' },
+      { name: 'yarn', value: 'yarn' },
+      { name: 'pnpm', value: 'pnpm' },
+    ],
+  })
+  return install
 }

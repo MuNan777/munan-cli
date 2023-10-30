@@ -4,6 +4,7 @@ import { createComponentFile } from './createComponentFile'
 import { execStartCommand } from './execStartCommand'
 import { npmInstall } from './npmInstall'
 import type { ProjectProps, TemplateProps } from './types'
+import { chooseInstall } from '@munan-cli/utils'
 
 // 安装模板
 export async function installTemplate(
@@ -37,7 +38,7 @@ export async function installTemplate(
   await createComponentFile(template, projectData, targetDir)
   // 安装依赖文件
   log.notice('info', '开始安装依赖')
-  await npmInstall(targetDir)
+  await npmInstall(targetDir, await chooseInstall())
   log.success('依赖安装成功')
   // 启动代码
   if (template.startCommand) {
