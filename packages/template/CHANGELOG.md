@@ -1,5 +1,12 @@
 # @munan-cli/template
 
+## 2.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`28cc670`](https://github.com/MuNan777/munan-cli/commit/28cc670577030ca9fde26b24c62910582441b738)]:
+  - @munan-cli/utils@1.0.11
+
 ## 2.0.2
 
 ### Patch Changes

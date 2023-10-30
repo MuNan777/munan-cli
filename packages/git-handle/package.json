@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/git-handle",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "git 处理模块，包含 git 和 build",
   "main": "./lib/index.mjs",
   "module": "./lib/index.mjs",
@@ -29,7 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@munan-cli/utils": "workspace:^1.0.10",
+    "@munan-cli/utils": "workspace:^1.0.11",
     "axios": "^0.27.2",
     "circular-json": "^0.5.9",
     "lodash-es": "^4.17.21",
