@@ -76,7 +76,7 @@ function exec(command, args, options) {
 }
 
 async function chooseInstall() {
-  const { install } = await inquirer({
+  const install = await inquirer({
     type: 'list',
     name: 'install',
     message: '请选择安装方式',
