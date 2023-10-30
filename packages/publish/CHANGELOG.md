@@ -1,5 +1,13 @@
 # @munan-cli/publish
 
+## 1.0.13
+
+### Patch Changes
+
+- Updated dependencies [[`28cc670`](https://github.com/MuNan777/munan-cli/commit/28cc670577030ca9fde26b24c62910582441b738)]:
+  - @munan-cli/utils@1.0.11
+  - @munan-cli/git-handle@1.0.5
+
 ## 1.0.12
 
 ### Patch Changes
