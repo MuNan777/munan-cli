@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/vscode-vite-template",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "munan-cli vscode-vite 模板",
   "main": "index.js",
   "devDependencies": {},
