@@ -1,5 +1,11 @@
 # @munan-cli/vscode-vite-template
 
+## 1.0.3
+
+### Patch Changes
+
+- [`9144a2c`](https://github.com/MuNan777/munan-cli/commit/9144a2c9924d028441d531373fc42be7ede7201b) - 修复模板安装依赖 bug
+
 ## 1.0.2
 
 ### Patch Changes
