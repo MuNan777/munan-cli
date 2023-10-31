@@ -13,6 +13,8 @@ module.exports = async function (options) {
   let access = ''
   let region = ''
   let fcName = ''
+  if (!options.packageName)
+    options.packageName = options.name
   while (!access) {
     access = await inquirer({
       type: 'string',
@@ -94,7 +96,7 @@ module.exports = async function (options) {
     ignore: ejsIgnoreFiles,
   })
   const commands = packageJson.templateConfig.startCommand.split(' ')
-  await npminstall(targetDir)
+  await npmInstall(targetDir)
   await execStartCommand(targetDir, commands)
 }
 
@@ -110,9 +112,10 @@ async function execStartCommand(targetPath, startCommand) {
   })
 }
 
-async function npminstall(targetPath) {
+async function npmInstall(targetPath) {
+  const install = await chooseInstall()
   return new Promise((resolve, reject) => {
-    const p = exec('npm', ['install'], { stdio: 'inherit', cwd: targetPath })
+    const p = exec(install, ['install'], { stdio: 'inherit', cwd: targetPath })
     p.on('error', (e) => {
       reject(e)
     })
@@ -129,4 +132,18 @@ function exec(command, args, options) {
   const cmdArgs = win32 ? ['/c'].concat(command, args) : args
 
   return require('child_process').spawn(cmd, cmdArgs, options || {})
+}
+
+async function chooseInstall() {
+  const install = await inquirer({
+    type: 'list',
+    name: 'install',
+    message: '请选择安装方式',
+    choices: [
+      { name: 'npm', value: 'npm' },
+      { name: 'yarn', value: 'yarn' },
+      { name: 'pnpm', value: 'pnpm' },
+    ],
+  })
+  return install
 }
