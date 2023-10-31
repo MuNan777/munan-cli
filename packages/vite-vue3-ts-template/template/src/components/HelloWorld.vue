@@ -49,4 +49,8 @@ code {
   border-radius: 4px;
   color: #304455;
 }
+
+p {
+  line-height: 2em;
+}
 </style>
