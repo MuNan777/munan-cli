@@ -9,20 +9,21 @@ import accessControlAllowOrigin from './middleware/access-control-allow-origin'
 import getStaticWebFromCos from './middleware/get-static-web-from-cos'
 import { onerror } from './middleware/onerror'
 import { routers } from './router'
-
+import getStaticWebFromLocal from './middleware/get-static-web-from-local'
 
 const app = new Koa()
 // 安装预防，设置必要的 http 头
 app.use(
   helmet({
     contentSecurityPolicy: false,
-  })
+  }),
 )
 
 app.use(onerror)
 
 // 获取前端静态文件
 // app.use(getStaticWebFromCos)
+app.use(getStaticWebFromLocal) // 从本地获取静态文件
 
 // x-response-time
 app.use(async (ctx, next) => {
@@ -42,7 +43,7 @@ app.use(async (ctx, next) => {
 })
 app.use(logger())
 
-function normalizePort (p: string | undefined) {
+function normalizePort(p: string | undefined) {
   if (p) {
     const port = parseInt(p, 10)
     if (Number.isNaN(port)) {
@@ -71,17 +72,17 @@ if (isDev) {
 
 // middleWares
 app.use(bodyParse({
-  multipart: true,  // 支持文件上传
+  multipart: true, // 支持文件上传
   strict: false, // 如果启用，则不解析GET，HEAD，DELETE请求，默认为true
   formidable: {
     keepExtensions: true, // 保持文件的后缀
     maxFieldsSize: 10 * 1024 * 1024, // 文件上传大小，缺省2M
-  }
+  },
 }))
 app.use(json())
 
 // routes
-routers.forEach(router => {
+routers.forEach((router) => {
   app.use(router.routes()).use(router.allowedMethods())
 })
 

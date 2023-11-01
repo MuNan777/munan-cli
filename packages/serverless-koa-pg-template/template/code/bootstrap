@@ -1,4 +1,5 @@
 #!/bin/bash
 # 配置 如使用 node-v16.14.2-linux-x64 版本 node
 # ./node-v16.14.2-linux-x64/bin/node index.js
+# 如果 bootstrap 无法被识别，可直接修改 s.yaml customRuntimeConfig 属性
 node index.js
