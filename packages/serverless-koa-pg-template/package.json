@@ -1,6 +1,6 @@
 {
   "name": "@munan-cli/serverless-koa-pg-template",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "munan-cli serverless-koa-pg 模板",
   "main": "index.js",
   "devDependencies": {},

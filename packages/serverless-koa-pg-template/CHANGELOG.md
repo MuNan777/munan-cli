@@ -1,5 +1,11 @@
 # @munan-cli/serverless-koa-pg-template
 
+## 1.0.7
+
+### Patch Changes
+
+- [`486c5eb`](https://github.com/MuNan777/munan-cli/commit/486c5eb24f32844910da1c122a8c143949058f57) - feat 新增本地静态文件读取
+
 ## 1.0.6
 
 ### Patch Changes
